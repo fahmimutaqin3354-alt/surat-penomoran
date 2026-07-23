@@ -1,9 +1,9 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SuratMasukController;
 use App\Http\Controllers\SuratKeluarController;
+use Illuminate\Support\Facades\Route;
 
 Route::resource('surat-masuk', SuratMasukController::class);
 Route::resource('surat-keluar', SuratKeluarController::class);
