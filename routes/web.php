@@ -2,6 +2,17 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SuratKeluarController;
+
+Route::middleware(['auth'])->group(function () {
+
+    Route::get('/dashboard', function () {
+        return view('dashboard.index');
+    })->name('dashboard');
+
+    Route::resource('surat_keluar', SuratKeluarController::class);
+
+});
 
 Route::get('/', function () {
     return view('welcome');
