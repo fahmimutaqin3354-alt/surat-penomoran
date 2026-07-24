@@ -3,6 +3,9 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SuratKeluarController;
+use App\Http\Controllers\SuratMasukController;
+
+Route::resource('surat_masuk', SuratMasukController::class);
 
 Route::middleware(['auth'])->group(function () {
 

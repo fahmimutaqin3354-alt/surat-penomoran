@@ -3,15 +3,23 @@
 
     <div class="p-4">
 
-        <h5 class="fw-bold">
+      <div class="text-center mb-4">
 
-            PT Microdata Indonesia
+    <img
+        src="{{ asset('image/logo.jpg') }}"
+        alt="Logo PT Microdata Indonesia"
+        class="img-fluid mb-3"
+        style="max-width:170px;">
 
-        </h5>
+    <small class="text-light d-block">
 
-        <small>Sistem Arsip Surat</small>
+        Sistem Arsip Surat
 
-        <hr>
+    </small>
+
+</div>
+
+<hr class="text-secondary">
 
         <ul class="nav flex-column">
 
@@ -30,14 +38,14 @@
 
             <li class="nav-item mb-2">
 
-                <a href="#"
-                   class="nav-link text-white">
+                <a href="{{ route('surat_masuk.index') }}"
+class="nav-link text-white">
 
-                    <i class="bi bi-envelope-arrow-down"></i>
+<i class="bi bi-envelope-arrow-down"></i>
 
-                    Surat Masuk
+Surat Masuk
 
-                </a>
+</a>
 
             </li>
 
