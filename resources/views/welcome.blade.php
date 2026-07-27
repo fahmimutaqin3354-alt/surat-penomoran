@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,705 +9,381 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
+    <!-- CDN Tailwind CSS (Dapat diganti dengan Vite / Tailwind CLI) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#080a16',
+                            card: 'rgba(13, 17, 38, 0.75)',
+                            purple: '#6366f1',
+                            pink: '#ec4899',
+                        }
+                    },
+                    animation: {
+                        'float': 'float 5s ease-in-out infinite',
+                        'float-delayed': 'float 6s ease-in-out infinite 1s',
+                        'float-slow': 'float 7s ease-in-out infinite 0.5s',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+                            '50%': { transform: 'translateY(-12px) rotate(0.5deg)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        :root {
-            --primary-blue: #0f2b5c;
-            --accent-blue: #2563eb;
-            --accent-cyan: #06b6d4;
-            --accent-purple: #8b5cf6;
-            --light-bg: #f8fafc;
-            --text-dark: #0f172a;
-            --text-muted: #64748b;
+        /* Custom Blend Mode & Glowing Effects */
+        .logo-blend {
+            mix-blend-mode: screen;
+            filter: brightness(115%) contrast(125%);
+        }
+        
+        /* Custom Glassmorphism Border & Backdrops */
+        .glass-card {
+            background-color: rgba(13, 17, 38, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        body {
-            background-color: var(--light-bg);
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            color: var(--text-dark);
-            overflow-x: hidden;
-        }
-
-        /* Navbar Styling */
-        .navbar {
-            background-color: rgba(255, 255, 255, 0.85);
+        .glass-nav {
+            background-color: rgba(8, 10, 22, 0.85);
             backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
-            transition: all 0.3s ease;
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .navbar-brand {
-            color: var(--primary-blue) !important;
-            letter-spacing: -0.5px;
-        }
-
-        .brand-icon {
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
-            color: white;
-            padding: 8px 10px;
-            border-radius: 10px;
-            font-size: 1.1rem;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
-        }
-
-        /* Hero Section Styling */
-        .hero {
-            padding: 120px 0 90px;
-            background: radial-gradient(circle at 10% 20%, #1e3a8a 0%, #0f172a 90%);
-            color: white;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: -20%;
-            right: -10%;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(37, 99, 235, 0.35) 0%, rgba(0,0,0,0) 70%);
-            border-radius: 50%;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        .hero-title {
-            letter-spacing: -1.5px;
-            line-height: 1.15;
-            font-size: 3.2rem;
+        .glass-badge {
+            background-color: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .gradient-text {
-            background: linear-gradient(135deg, #60a5fa 0%, #38bdf8 50%, #818cf8 100%);
+            background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .badge-sub {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            backdrop-filter: blur(12px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Hero Visual - Dashboard Preview Mockup */
-        .hero-visual-wrapper {
-            position: relative;
-            padding: 10px;
-            z-index: 1;
-        }
-
-        .glow-effect {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(50px);
-            opacity: 0.6;
-            z-index: 0;
-        }
-
-        .glow-1 {
-            width: 250px;
-            height: 250px;
-            background: #3b82f6;
-            top: -20px;
-            right: 20px;
-        }
-
-        .glow-2 {
-            width: 220px;
-            height: 220px;
-            background: #8b5cf6;
-            bottom: -20px;
-            left: 20px;
-        }
-
-        .dashboard-preview-card {
-            position: relative;
-            z-index: 1;
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 24px;
-            padding: 24px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 30px rgba(59, 130, 246, 0.2);
-            animation: float 5s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-12px) rotate(0.5deg); }
-        }
-
-        .card-header-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding-bottom: 16px;
-            margin-bottom: 18px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .window-dots {
-            display: flex;
-            gap: 6px;
-        }
-
-        .dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-        }
-
-        .dot.red { background-color: #ef4444; }
-        .dot.yellow { background-color: #f59e0b; }
-        .dot.green { background-color: #10b981; }
-
-        .mock-search-bar {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 8px;
-            padding: 6px 14px;
-            font-size: 0.8rem;
-            color: #94a3b8;
-            display: flex;
-            align-items: center;
-            width: 65%;
-        }
-
-        .mini-stat-box {
-            border-radius: 14px;
-            padding: 12px 14px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: left;
-        }
-
-        .bg-blue-gradient {
-            background: linear-gradient(135deg, rgba(37, 99, 235, 0.3) 0%, rgba(30, 58, 138, 0.3) 100%);
-        }
-
-        .bg-purple-gradient {
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(88, 28, 135, 0.3) 100%);
-        }
-
-        .stat-icon-bg {
-            width: 34px;
-            height: 34px;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.15);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.95rem;
-            color: white;
-        }
-
-        .stat-label {
-            font-size: 0.72rem;
-            color: #94a3b8;
-            display: block;
-        }
-
-        .stat-val {
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: white;
-        }
-
-        .doc-item-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 14px;
-            padding: 12px 16px;
-            margin-top: 12px;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            text-align: left;
-            transition: all 0.3s ease;
-        }
-
-        .doc-item-card:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateX(4px);
-        }
-
-        .doc-icon {
-            width: 42px;
-            height: 42px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-            flex-shrink: 0;
-        }
-
-        .doc-icon.pdf {
-            background: rgba(239, 68, 68, 0.2);
-            color: #f87171;
-            border: 1px solid rgba(239, 68, 68, 0.3);
-        }
-
-        .doc-icon.word {
-            background: rgba(59, 130, 246, 0.2);
-            color: #60a5fa;
-            border: 1px solid rgba(59, 130, 246, 0.3);
-        }
-
-        .doc-code {
-            font-size: 0.72rem;
-            font-weight: 600;
-            color: #38bdf8;
-            letter-spacing: 0.5px;
-        }
-
-        .doc-title {
-            font-size: 0.88rem;
-            font-weight: 600;
-            color: #f8fafc;
-            margin: 2px 0 1px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 230px;
-        }
-
-        .doc-meta {
-            font-size: 0.72rem;
-            color: #94a3b8;
-        }
-
-        .status-badge {
-            font-size: 0.68rem;
-            padding: 3px 8px;
-            border-radius: 20px;
-            font-weight: 600;
-        }
-
-        .status-badge.success {
-            background: rgba(16, 185, 129, 0.2);
-            color: #34d399;
-            border: 1px solid rgba(16, 185, 129, 0.3);
-        }
-
-        .status-badge.primary {
-            background: rgba(59, 130, 246, 0.2);
-            color: #60a5fa;
-            border: 1px solid rgba(59, 130, 246, 0.3);
-        }
-
-        /* Floating Overlay Badges */
-        .floating-badge {
-            position: absolute;
-            background: rgba(15, 23, 42, 0.88);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 10px 16px;
-            border-radius: 16px;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            z-index: 2;
-        }
-
-        .badge-top-right {
-            top: -15px;
-            right: -15px;
-            animation: float 6s ease-in-out infinite 1s;
-        }
-
-        .badge-bottom-left {
-            bottom: -20px;
-            left: -20px;
-            animation: float 7s ease-in-out infinite 0.5s;
-        }
-
-        .badge-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.1rem;
-        }
-
-        .badge-title {
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: white;
-            display: block;
-        }
-
-        .badge-sub-text {
-            font-size: 0.7rem;
-            color: #94a3b8;
-            display: block;
-        }
-
-        /* Cards Styling */
-        .feature-card {
-            background: white;
-            border-radius: 20px;
-            border: 1px solid #e2e8f0;
-            padding: 32px 24px;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            height: 100%;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: transparent;
-            transition: all 0.3s ease;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 30px -10px rgba(15, 23, 42, 0.08);
-            border-color: #cbd5e1;
-        }
-
-        .card-1:hover::before { background: linear-gradient(90deg, #2563eb, #3b82f6); }
-        .card-2:hover::before { background: linear-gradient(90deg, #10b981, #059669); }
-        .card-3:hover::before { background: linear-gradient(90deg, #f59e0b, #d97706); }
-        .card-4:hover::before { background: linear-gradient(90deg, #06b6d4, #0891b2); }
-
-        .icon-box {
-            width: 64px;
-            height: 64px;
-            border-radius: 16px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            margin-bottom: 22px;
-            transition: transform 0.3s ease;
-        }
-
-        .feature-card:hover .icon-box {
-            transform: scale(1.08);
-        }
-
-        /* Custom Buttons */
-        .btn-custom-primary {
-            background: linear-gradient(135deg, var(--accent-blue) 0%, #1d4ed8 100%);
-            color: white;
-            border: none;
-            font-weight: 600;
-            border-radius: 12px;
-            padding: 12px 28px;
-            box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.4);
-            transition: all 0.3s ease;
-        }
-
-        .btn-custom-primary:hover {
-            background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 15px 25px -5px rgba(37, 99, 235, 0.5);
-        }
-
-        .btn-custom-outline {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(8px);
-            font-weight: 600;
-            border-radius: 12px;
-            padding: 12px 26px;
-            transition: all 0.3s ease;
-        }
-
-        .btn-custom-outline:hover {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border-color: rgba(255, 255, 255, 0.4);
-            transform: translateY(-2px);
-        }
-
-        /* About Section Card */
-        .about-card {
-            background: white;
-            border-radius: 24px;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.03);
-        }
-
-        .about-icon-wrapper {
-            width: 100px;
-            height: 100px;
-            border-radius: 24px;
-            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--accent-blue);
-            font-size: 48px;
-        }
-
-        /* Footer */
-        footer {
-            background: #0f172a;
-            color: #94a3b8;
-            padding: 50px 0 30px;
-            margin-top: 90px;
-            border-top: 1px solid #1e293b;
+        .gradient-btn {
+            background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
         }
     </style>
 </head>
-<body>
+<body class="bg-[#080a16] text-slate-100 font-sans antialiased selection:bg-pink-500 selection:text-white relative min-h-screen overflow-x-hidden">
 
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg fixed-top py-3">
-    <div class="container">
-        <a class="navbar-brand fw-bold fs-5 d-flex align-items-center gap-2" href="#">
-            <span class="brand-icon"><i class="bi bi-box-seam-fill"></i></span>
-            <span class="fw-extrabold">PT MICRODATA INDONESIA</span>
-        </a>
-
-        <div class="d-flex align-items-center gap-2">
-            @auth
-                <a href="{{ url('/dashboard') }}" class="btn btn-custom-primary btn-sm px-3">
-                    <i class="bi bi-speedometer2 me-1"></i> Dashboard
-                </a>
-            @else
-                <a href="{{ route('login') }}" class="btn btn-light border btn-sm px-3 fw-semibold text-secondary me-1">
-                    Masuk
-                </a>
-                <a href="{{ route('register') }}" class="btn btn-custom-primary btn-sm px-3">
-                    Daftar Akun
-                </a>
-            @endauth
-        </div>
+    <!-- Dynamic Background Ambient Lighting -->
+    <div class="fixed inset-0 pointer-events-none z-0">
+        <div class="absolute top-1/4 left-10 w-[400px] h-[400px] bg-indigo-600/15 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-1/4 right-10 w-[450px] h-[450px] bg-pink-500/12 rounded-full blur-[140px]"></div>
     </div>
-</nav>
 
-<!-- Hero Section -->
-<section class="hero">
-    <div class="container">
-        <div class="row align-items-center gy-5">
-            <div class="col-lg-6">
-                <span class="badge badge-sub rounded-pill px-3 py-2 text-white fw-medium mb-3 d-inline-flex align-items-center gap-2">
-                    <i class="bi bi-shield-check text-warning fs-6"></i> Sistem Administrasi Digital V2.0
-                </span>
-                <h1 class="hero-title fw-extrabold text-white mb-3">
-                    Kelola <span class="gradient-text">Arsip Surat</span> Perusahaan Lebih Efisien
-                </h1>
-                <p class="fs-5 text-white-50 fw-normal leading-relaxed mb-4">
-                    Solusi terpusat untuk surat masuk, surat keluar, dan penomoran otomatis secara terstruktur, aman, dan dapat diakses kapan saja.
-                </p>
+    <!-- Navigation Header -->
+    <header class="fixed top-0 inset-x-0 z-50 glass-nav transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Brand Logo -->
+                <a href="#" class="flex items-center group">
+                    <div class="relative flex items-center justify-center">
+                        <img src="{{ asset('images/microdata-logo.webp') }}" 
+                             alt="Logo PT Microdata Indonesia" 
+                             class="h-16 md:h-20 max-h-20 w-auto object-contain logo-blend transition-transform duration-300 group-hover:scale-105">
+                    </div>
+                </a>
 
-                @guest
-                <div class="d-flex flex-wrap gap-3">
-                    <a href="{{ route('login') }}" class="btn btn-custom-primary btn-lg fs-6">
-                        Akses Sistem <i class="bi bi-arrow-right ms-2"></i>
-                    </a>
-                    <a href="#fitur" class="btn btn-custom-outline btn-lg fs-6">
-                        Pelajari Fitur
-                    </a>
+                <!-- Navigation Actions -->
+                <div class="flex items-center space-x-3">
+                    @auth
+                        <a href="{{ url('/dashboard') }}" 
+                           class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white gradient-btn shadow-lg shadow-pink-500/20 hover:shadow-pink-500/35 hover:-translate-y-0.5 transition-all">
+                            <i class="bi bi-speedometer2"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    @else
+                        <a href="{{ route('login') }}" 
+                           class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-semibold text-slate-200 glass-badge hover:bg-white/10 border border-white/10 hover:border-white/20 hover:-translate-y-0.5 transition-all">
+                            Masuk
+                        </a>
+                        <a href="{{ route('register') }}" 
+                           class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-semibold text-white gradient-btn shadow-lg shadow-pink-500/20 hover:shadow-pink-500/35 hover:-translate-y-0.5 transition-all">
+                            Daftar Akun
+                        </a>
+                    @endauth
                 </div>
-                @endguest
             </div>
+        </div>
+    </header>
 
-            <!-- Modern Interactive UI Preview Mockup (Pengganti Gambar Logo Besar) -->
-            <div class="col-lg-6">
-                <div class="hero-visual-wrapper">
-                    <div class="glow-effect glow-1"></div>
-                    <div class="glow-effect glow-2"></div>
+    <!-- Main Content Wrapper -->
+    <main class="relative z-10">
 
-                    <div class="dashboard-preview-card">
-                        <div class="card-header-bar">
-                            <div class="window-dots">
-                                <span class="dot red"></span>
-                                <span class="dot yellow"></span>
-                                <span class="dot green"></span>
-                            </div>
-                            <div class="mock-search-bar">
-                                <i class="bi bi-search me-2"></i>
-                                <span>Cari nomor / perihal / pengirim...</span>
-                            </div>
+        <!-- Hero Section -->
+        <section class="pt-36 pb-20 lg:pt-44 lg:pb-28">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+                    
+                    <!-- Hero Content Left -->
+                    <div class="lg:col-span-6 space-y-6 text-center lg:text-left">
+                        <div>
+                            <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide text-slate-200 glass-badge mb-6">
+                                <i class="bi bi-shield-check text-amber-400 text-sm"></i>
+                                Sistem Administrasi Digital V2.0
+                            </span>
+                            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.15]">
+                                Kelola <span class="gradient-text">Arsip Surat</span> Perusahaan Lebih Efisien
+                            </h1>
                         </div>
+                        
+                        <p class="text-lg text-slate-400 font-normal leading-relaxed max-w-xl mx-auto lg:mx-0">
+                            Solusi terpusat untuk pengelolaan surat masuk, surat keluar, dan penomoran otomatis secara terstruktur, aman, dan mudah diakses.
+                        </p>
 
-                        <div class="card-body-content">
-                            <!-- Mini Stat Widgets -->
-                            <div class="row g-2 mb-3">
-                                <div class="col-6">
-                                    <div class="mini-stat-box bg-blue-gradient">
-                                        <div class="d-flex align-items-center gap-2">
-                                            <div class="stat-icon-bg"><i class="bi bi-inbox-fill"></i></div>
+                        @guest
+                        <div class="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-4">
+                            <a href="{{ route('login') }}" 
+                               class="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-semibold text-white gradient-btn shadow-xl shadow-pink-500/25 hover:shadow-pink-500/40 hover:-translate-y-0.5 transition-all">
+                                <span>Akses Sistem</span>
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+                            <a href="#fitur" 
+                               class="inline-flex items-center px-7 py-3.5 rounded-xl font-semibold text-white glass-badge hover:bg-white/10 hover:-translate-y-0.5 transition-all">
+                                Pelajari Fitur
+                            </a>
+                        </div>
+                        @endguest
+                    </div>
+
+                    <!-- Hero Visual Right (Mockup UI Dashboard) -->
+                    <div class="lg:col-span-6 relative">
+                        <div class="relative mx-auto max-w-lg lg:max-w-none">
+                            <!-- Background Radial Glows -->
+                            <div class="absolute -top-10 -right-10 w-64 h-64 bg-indigo-600/30 rounded-full blur-3xl pointer-events-none"></div>
+                            <div class="absolute -bottom-10 -left-10 w-64 h-64 bg-pink-500/25 rounded-full blur-3xl pointer-events-none"></div>
+
+                            <!-- Interactive Dashboard Card -->
+                            <div class="glass-card rounded-3xl p-6 shadow-2xl shadow-black/80 animate-float relative z-10">
+                                
+                                <!-- Card Header Bar -->
+                                <div class="flex items-center justify-between pb-4 mb-5 border-b border-white/10">
+                                    <div class="flex items-center space-x-1.5">
+                                        <span class="w-3 h-3 rounded-full bg-red-500 inline-block"></span>
+                                        <span class="w-3 h-3 rounded-full bg-amber-500 inline-block"></span>
+                                        <span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span>
+                                    </div>
+                                    <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs text-slate-400 w-2/3">
+                                        <i class="bi bi-search"></i>
+                                        <span class="truncate">Cari nomor / perihal / pengirim...</span>
+                                    </div>
+                                </div>
+
+                                <!-- Mini Stats -->
+                                <div class="grid grid-cols-2 gap-3 mb-4">
+                                    <div class="p-3.5 rounded-2xl border border-white/10 bg-gradient-to-br from-indigo-500/20 to-purple-500/10">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-white text-base">
+                                                <i class="bi bi-inbox-fill"></i>
+                                            </div>
                                             <div>
-                                                <span class="stat-label">Surat Masuk</span>
-                                                <h6 class="stat-val mb-0">842 Dokumen</h6>
+                                                <span class="block text-[11px] font-medium text-slate-400">Surat Masuk</span>
+                                                <span class="block text-sm font-bold text-white">842 Dokumen</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="p-3.5 rounded-2xl border border-white/10 bg-gradient-to-br from-pink-500/20 to-rose-500/10">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-white text-base">
+                                                <i class="bi bi-send-fill"></i>
+                                            </div>
+                                            <div>
+                                                <span class="block text-[11px] font-medium text-slate-400">Surat Keluar</span>
+                                                <span class="block text-sm font-bold text-white">438 Dokumen</span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-6">
-                                    <div class="mini-stat-box bg-purple-gradient">
-                                        <div class="d-flex align-items-center gap-2">
-                                            <div class="stat-icon-bg"><i class="bi bi-send-fill"></i></div>
-                                            <div>
-                                                <span class="stat-label">Surat Keluar</span>
-                                                <h6 class="stat-val mb-0">438 Dokumen</h6>
+
+                                <!-- Document List Items -->
+                                <div class="space-y-3">
+                                    <!-- Item 1 -->
+                                    <div class="p-3 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center gap-3.5 hover:bg-white/[0.08] hover:translate-x-1 transition-all">
+                                        <div class="w-11 h-11 rounded-xl bg-pink-500/15 border border-pink-500/30 flex items-center justify-center text-pink-400 text-xl shrink-0">
+                                            <i class="bi bi-file-earmark-pdf-fill"></i>
+                                        </div>
+                                        <div class="flex-grow min-w-0">
+                                            <div class="flex items-center justify-between gap-2">
+                                                <span class="text-[11px] font-semibold text-purple-400 tracking-wider">042/MD-SM/III/2026</span>
+                                                <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center gap-1">
+                                                    <i class="bi bi-check-circle-fill"></i> Terarsip
+                                                </span>
                                             </div>
+                                            <h4 class="text-xs font-semibold text-slate-100 truncate mt-0.5">Surat Kerjasama IT Infrastructure</h4>
+                                            <p class="text-[11px] text-slate-400 mt-0.5 flex items-center gap-1">
+                                                <i class="bi bi-building"></i> PT Telecom Nusantara • Hari Ini
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Item 2 -->
+                                    <div class="p-3 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center gap-3.5 hover:bg-white/[0.08] hover:translate-x-1 transition-all">
+                                        <div class="w-11 h-11 rounded-xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-indigo-400 text-xl shrink-0">
+                                            <i class="bi bi-file-earmark-text-fill"></i>
+                                        </div>
+                                        <div class="flex-grow min-w-0">
+                                            <div class="flex items-center justify-between gap-2">
+                                                <span class="text-[11px] font-semibold text-purple-400 tracking-wider">118/MD-SK/III/2026</span>
+                                                <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-500/15 border border-indigo-500/30 text-indigo-400 flex items-center gap-1">
+                                                    <i class="bi bi-gear-wide-connected"></i> Otomatis
+                                                </span>
+                                            </div>
+                                            <h4 class="text-xs font-semibold text-slate-100 truncate mt-0.5">Penawaran Lisensi & Software Dev</h4>
+                                            <p class="text-[11px] text-slate-400 mt-0.5 flex items-center gap-1">
+                                                <i class="bi bi-person-check"></i> Disetujui Direksi • Kemarin
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Document Item Preview 1 -->
-                            <div class="doc-item-card">
-                                <div class="doc-icon pdf">
-                                    <i class="bi bi-file-earmark-pdf-fill"></i>
+                            <!-- Floating Badges -->
+                            <!-- Top Right -->
+                            <div class="absolute -top-4 -right-4 glass-card p-3 rounded-2xl shadow-xl flex items-center gap-3 z-20 animate-float-delayed hidden sm:flex">
+                                <div class="w-9 h-9 rounded-xl bg-amber-400 flex items-center justify-center text-slate-900 font-bold text-base">
+                                    <i class="bi bi-lightning-charge-fill"></i>
                                 </div>
-                                <div class="doc-details flex-grow-1">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span class="doc-code">042/MD-SM/III/2026</span>
-                                        <span class="status-badge success"><i class="bi bi-check-circle-fill"></i> Terarsip</span>
-                                    </div>
-                                    <h6 class="doc-title">Surat Kerjasama IT Infrastructure</h6>
-                                    <small class="doc-meta"><i class="bi bi-building"></i> PT Telecom Nusantara • Hari Ini</small>
+                                <div>
+                                    <span class="block text-xs font-bold text-white">Penomoran Otomatis</span>
+                                    <span class="block text-[10px] text-slate-400">Format Standar Perusahaan</span>
                                 </div>
                             </div>
 
-                            <!-- Document Item Preview 2 -->
-                            <div class="doc-item-card">
-                                <div class="doc-icon word">
-                                    <i class="bi bi-file-earmark-text-fill"></i>
+                            <!-- Bottom Left -->
+                            <div class="absolute -bottom-5 -left-5 glass-card p-3 rounded-2xl shadow-xl flex items-center gap-3 z-20 animate-float-slow hidden sm:flex">
+                                <div class="w-9 h-9 rounded-xl bg-emerald-500 flex items-center justify-center text-white text-base">
+                                    <i class="bi bi-shield-lock-fill"></i>
                                 </div>
-                                <div class="doc-details flex-grow-1">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span class="doc-code">118/MD-SK/III/2026</span>
-                                        <span class="status-badge primary"><i class="bi bi-gear-wide-connected"></i> Otomatis</span>
-                                    </div>
-                                    <h6 class="doc-title">Penawaran Lisensi & Software Dev</h6>
-                                    <small class="doc-meta"><i class="bi bi-person-check"></i> Disetujui Direksi • Kemarin</small>
+                                <div>
+                                    <span class="block text-xs font-bold text-white">Arsip Terenkripsi</span>
+                                    <span class="block text-[10px] text-slate-400">Akses Terkontrol & Aman</span>
                                 </div>
                             </div>
+
                         </div>
                     </div>
 
-                    <!-- Floating Badge 1 -->
-                    <div class="floating-badge badge-top-right">
-                        <div class="badge-icon bg-warning text-dark"><i class="bi bi-lightning-charge-fill"></i></div>
-                        <div>
-                            <span class="badge-title">Penomoran Otomatis</span>
-                            <span class="badge-sub-text">Format Standar Perusahaan</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="fitur" class="py-20 relative">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <!-- Section Title -->
+                <div class="text-center max-w-xl mx-auto mb-16">
+                    <span class="inline-flex items-center px-3.5 py-1 rounded-full text-xs font-semibold text-slate-200 glass-badge mb-3">
+                        SOLUSI DIGITAL
+                    </span>
+                    <h2 class="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-3">Fitur Utama Sistem</h2>
+                    <p class="text-slate-400 text-sm sm:text-base">Sistem terpadu untuk efisiensi administrasi operasional PT Microdata Indonesia.</p>
+                </div>
+
+                <!-- Features Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    
+                    <!-- Card 1 -->
+                    <div class="group relative glass-card p-8 rounded-3xl transition-all duration-300 hover:-translate-y-2 hover:border-white/20 hover:shadow-2xl hover:shadow-indigo-500/10 overflow-hidden">
+                        <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-indigo-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-pink-500 text-2xl mb-6 transition-transform duration-300 group-hover:scale-110 group-hover:bg-gradient-to-br group-hover:from-indigo-500 group-hover:to-pink-500 group-hover:text-white">
+                            <i class="bi bi-inbox-fill"></i>
                         </div>
+                        <h3 class="text-lg font-bold text-white mb-2">Surat Masuk</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">Pencatatan, pengkategorian, dan pencarian dokumen masuk dengan cepat.</p>
                     </div>
 
-                    <!-- Floating Badge 2 -->
-                    <div class="floating-badge badge-bottom-left">
-                        <div class="badge-icon bg-success text-white"><i class="bi bi-shield-lock-fill"></i></div>
-                        <div>
-                            <span class="badge-title">Arsip Terenkripsi</span>
-                            <span class="badge-sub-text">Akses Terkontrol & Aman</span>
+                    <!-- Card 2 -->
+                    <div class="group relative glass-card p-8 rounded-3xl transition-all duration-300 hover:-translate-y-2 hover:border-white/20 hover:shadow-2xl hover:shadow-indigo-500/10 overflow-hidden">
+                        <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-indigo-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-pink-500 text-2xl mb-6 transition-transform duration-300 group-hover:scale-110 group-hover:bg-gradient-to-br group-hover:from-indigo-500 group-hover:to-pink-500 group-hover:text-white">
+                            <i class="bi bi-send-fill"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">Surat Keluar</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">Pembuatan, alur verifikasi, dan distribusi surat keluar internal/eksternal.</p>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="group relative glass-card p-8 rounded-3xl transition-all duration-300 hover:-translate-y-2 hover:border-white/20 hover:shadow-2xl hover:shadow-indigo-500/10 overflow-hidden">
+                        <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-indigo-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-pink-500 text-2xl mb-6 transition-transform duration-300 group-hover:scale-110 group-hover:bg-gradient-to-br group-hover:from-indigo-500 group-hover:to-pink-500 group-hover:text-white">
+                            <i class="bi bi-folder-symlink-fill"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">Arsip Digital</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">Penyimpanan dokumen terpusat yang aman dengan dukungan pencarian pintar.</p>
+                    </div>
+
+                    <!-- Card 4 -->
+                    <div class="group relative glass-card p-8 rounded-3xl transition-all duration-300 hover:-translate-y-2 hover:border-white/20 hover:shadow-2xl hover:shadow-indigo-500/10 overflow-hidden">
+                        <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-indigo-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-pink-500 text-2xl mb-6 transition-transform duration-300 group-hover:scale-110 group-hover:bg-gradient-to-br group-hover:from-indigo-500 group-hover:to-pink-500 group-hover:text-white">
+                            <i class="bi bi-hash"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">Nomor Otomatis</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">Penomoran surat otomatis yang mencegah bentrok dan sesuai format resmi.</p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section class="py-12 mb-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="glass-card rounded-3xl p-8 sm:p-12">
+                    <div class="flex flex-col md:flex-row items-center gap-8">
+                        <div class="shrink-0">
+                            <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center text-pink-500 text-4xl sm:text-5xl shadow-inner">
+                                <i class="bi bi-building-gear"></i>
+                            </div>
+                        </div>
+                        <div class="text-center md:text-left space-y-3">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold text-slate-200 glass-badge">
+                                TENTANG SISTEM
+                            </span>
+                            <h3 class="text-2xl sm:text-3xl font-bold text-white">Optimalisasi Tata Kelola Arsip</h3>
+                            <p class="text-slate-400 text-sm sm:text-base leading-relaxed">
+                                Sistem Arsip Surat PT Microdata Indonesia memodernisasi administrasi kantor menjadi berbasis digital. Dengan integrasi terpusat, tim dapat memangkas waktu pencarian fisik, meminimalisir duplikasi nomor surat, dan menyajikan laporan arsip secara <span class="italic text-slate-300">real-time</span>.
+                            </p>
                         </div>
                     </div>
                 </div>
             </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-[#05070f]/95 border-t border-white/10 py-12 text-center text-slate-400 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+            <h4 class="text-white font-bold text-lg">PT Microdata Indonesia</h4>
+            <p class="text-xs sm:text-sm text-slate-400">Sistem Pengelolaan Arsip Surat Masuk & Keluar Digital</p>
+            <div class="w-24 h-px bg-white/10 mx-auto my-6"></div>
+            <p class="text-xs text-slate-400">
+                &copy; {{ date('Y') }} PT Microdata Indonesia. All Rights Reserved.
+            </p>
         </div>
-    </div>
-</section>
+    </footer>
 
-<!-- Fitur Section -->
-<section id="fitur" class="container py-5 my-4">
-    <div class="text-center max-w-xl mx-auto mb-5">
-        <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2 fw-semibold mb-2">SOLUSI DIGITAL</span>
-        <h2 class="fw-bold text-dark mb-2 fs-2">Fitur Utama Sistem</h2>
-        <p class="text-secondary fs-6">Sistem terpadu untuk efisiensi administrasi operasional PT Microdata Indonesia.</p>
-    </div>
-
-    <div class="row g-4">
-        <!-- Fitur 1 -->
-        <div class="col-md-6 col-lg-3">
-            <div class="feature-card card-1 text-center">
-                <div class="icon-box bg-primary-subtle text-primary">
-                    <i class="bi bi-inbox-fill"></i>
-                </div>
-                <h5 class="fw-bold mb-2">Surat Masuk</h5>
-                <p class="text-secondary small mb-0">Pencatatan, pengkategorian, dan pencarian dokumen masuk dengan cepat.</p>
-            </div>
-        </div>
-
-        <!-- Fitur 2 -->
-        <div class="col-md-6 col-lg-3">
-            <div class="feature-card card-2 text-center">
-                <div class="icon-box bg-success-subtle text-success">
-                    <i class="bi bi-send-fill"></i>
-                </div>
-                <h5 class="fw-bold mb-2">Surat Keluar</h5>
-                <p class="text-secondary small mb-0">Pembuatan, alur verifikasi, dan distribusi surat keluar internal/eksternal.</p>
-            </div>
-        </div>
-
-        <!-- Fitur 3 -->
-        <div class="col-md-6 col-lg-3">
-            <div class="feature-card card-3 text-center">
-                <div class="icon-box bg-warning-subtle text-warning">
-                    <i class="bi bi-folder-symlink-fill"></i>
-                </div>
-                <h5 class="fw-bold mb-2">Arsip Digital</h5>
-                <p class="text-secondary small mb-0">Penyimpanan dokumen terpusat yang aman dengan dukungan pencarian pintar.</p>
-            </div>
-        </div>
-
-        <!-- Fitur 4 -->
-        <div class="col-md-6 col-lg-3">
-            <div class="feature-card card-4 text-center">
-                <div class="icon-box bg-info-subtle text-info">
-                    <i class="bi bi-hash"></i>
-                </div>
-                <h5 class="fw-bold mb-2">Nomor Otomatis</h5>
-                <p class="text-secondary small mb-0">Penomoran surat otomatis yang mencegah bentrok dan sesuai format resmi.</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Tentang Section -->
-<section class="container mb-5">
-    <div class="about-card p-4 p-md-5">
-        <div class="row align-items-center">
-            <div class="col-md-3 text-center mb-4 mb-md-0">
-                <div class="about-icon-wrapper">
-                    <i class="bi bi-building-gear"></i>
-                </div>
-            </div>
-            <div class="col-md-9">
-                <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-1 fw-semibold mb-2">TENTANG SISTEM</span>
-                <h3 class="fw-bold mb-3">Optimalisasi Tata Kelola Arsip</h3>
-                <p class="text-secondary leading-relaxed mb-0">
-                    Sistem Arsip Surat PT Microdata Indonesia memodernisasi administrasi kantor menjadi berbasis digital. Dengan integrasi terpusat, tim dapat memangkas waktu pencarian fisik, meminimalisir duplikasi nomor surat, dan menyajikan laporan arsip secara *real-time*.
-                </p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Footer -->
-<footer class="text-center">
-    <div class="container">
-        <h6 class="text-white fw-bold mb-1">PT Microdata Indonesia</h6>
-        <p class="small text-white-50 mb-3">Sistem Pengelolaan Arsip Surat Masuk & Keluar Digital</p>
-        <hr class="border-secondary opacity-25 my-4">
-        <small class="text-secondary">
-            © {{ date('Y') }} PT Microdata Indonesia. All Rights Reserved.
-        </small>
-    </div>
-</footer>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
