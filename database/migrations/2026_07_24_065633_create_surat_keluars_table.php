@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('surat_keluars', function (Blueprint $table) {
 
             $table->id();
-
+            $table->unsignedBigInteger('surat_masuk_id')->nullable();
             // Nomor surat otomatis
             $table->string('nomor_surat')->unique();
 

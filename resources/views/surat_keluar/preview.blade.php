@@ -1,261 +1,268 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Preview Surat</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Preview Surat Keluar</title>
 
-    <style>
-
-        body{
-            background:#dcdcdc;
-            font-family:'Times New Roman', serif;
-        }
-
-        .toolbar{
-            width:210mm;
-            margin:20px auto 10px;
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-        }
-
-        .paper{
-            width:210mm;
-            min-height:297mm;
-            background:#fff;
-            margin:auto;
-            padding:35px 45px;
-            box-shadow:0 0 20px rgba(0,0,0,.25);
-        }
-
-        .kop{
-            display:flex;
-            align-items:center;
-        }
-
-        .logo{
-            width:95px;
-            margin-right:20px;
-        }
-
-        .company{
-            flex:1;
-            text-align:center;
-        }
-
-        .company h2{
-            margin:0;
-            font-weight:bold;
-        }
-
-        .company h4{
-            margin:0;
-            font-weight:bold;
-        }
-
-        .company p{
-            margin:0;
-            font-size:14px;
-        }
-
-        .line{
-            border-top:4px solid #000;
-            border-bottom:2px solid #000;
-            margin:12px 0 30px;
-        }
-
-        .info{
-            width:100%;
-            margin-bottom:25px;
-        }
-
-        .info td{
-            padding:3px;
-            vertical-align:top;
-        }
-
-        .isi{
-            text-align:justify;
-            line-height:1.8;
-        }
-
-        .ttd{
-            width:280px;
-            margin-left:auto;
-            text-align:center;
-            margin-top:60px;
-        }
-
-        @media print{
-
-            body{
-                background:white;
-            }
-
-            .toolbar{
-                display:none;
-            }
-
-            .paper{
-                width:100%;
-                margin:0;
-                box-shadow:none;
-                padding:20px;
-            }
-
-        }
-
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
 
 </head>
-<body>
 
-<div class="toolbar">
+<body class="bg-gray-200 py-10">
 
-    <div>
+<div class="max-w-4xl mx-auto bg-white shadow-xl">
 
-        <a href="{{ route('surat_keluar.index') }}"
-           class="btn btn-secondary">
+    <div class="p-12">
 
-            ← Kembali
+        {{-- Kop Surat --}}
+        <div class="border-b-4 border-black pb-6">
 
-        </a>
+            <div class="flex items-center">
 
-        <a href="{{ route('surat_keluar.edit',$surat->id) }}"
-           class="btn btn-warning">
+                <img
+                    src="{{ asset('image/logo.jpg') }}"
+                    class="w-24 h-24 object-contain mr-6"
+                    alt="Logo">
 
-            Edit
+                <div>
 
-        </a>
+                    <h1 class="text-3xl font-bold uppercase">
 
-    </div>
+                        PT Microdata Indonesia
 
-    <button onclick="window.print()"
-            class="btn btn-primary">
+                    </h1>
 
-        🖨 Cetak
+                    <p>
 
-    </button>
+                        Jl. Contoh Alamat No.123
 
-</div>
+                    </p>
 
-<div class="paper">
+                    <p>
 
-    <div class="kop">
+                        Bandar Lampung
 
-        <img src="{{ asset('image/logo.jpg') }}"
-             class="logo">
+                    </p>
 
-        <div class="company">
+                    <p>
 
-            <h2>PT MICRODATA INDONESIA</h2>
+                        Email : info@microdata.co.id
 
-            <h4>Sistem Arsip Surat</h4>
+                    </p>
 
-            <p>
-                Jl. ZA Pagar Alam No. 9 Bandar Lampung
+                </div>
+
+            </div>
+
+        </div>
+
+        {{-- Judul --}}
+        <div class="text-center mt-8">
+
+            <h2 class="text-2xl font-bold underline">
+
+                SURAT KELUAR
+
+            </h2>
+
+            <p class="mt-2">
+
+                Nomor :
+                <span class="font-semibold">
+
+                    {{ $surat->nomor_surat }}
+
+                </span>
+
             </p>
 
+        </div>
+
+        {{-- Informasi Surat --}}
+        <div class="mt-10 space-y-4">
+
+        {{-- Jenis Surat --}}
+        <div class="grid grid-cols-4 gap-4">
+
+            <div class="font-semibold">
+                Jenis Surat
+            </div>
+
+            <div class="col-span-3">
+                : {{ $surat->jenis_surat }}
+            </div>
+
+        </div>
+
+        {{-- Tanggal --}}
+        <div class="grid grid-cols-4 gap-4">
+
+            <div class="font-semibold">
+                Tanggal
+            </div>
+
+            <div class="col-span-3">
+                : {{ \Carbon\Carbon::parse($surat->tanggal_surat)->translatedFormat('d F Y') }}
+            </div>
+
+        </div>
+
+        {{-- Tujuan --}}
+        <div class="grid grid-cols-4 gap-4">
+
+            <div class="font-semibold">
+                Tujuan
+            </div>
+
+            <div class="col-span-3">
+                : {{ $surat->tujuan }}
+            </div>
+
+        </div>
+
+        {{-- Lampiran --}}
+        <div class="grid grid-cols-4 gap-4">
+
+            <div class="font-semibold">
+                Lampiran
+            </div>
+
+            <div class="col-span-3">
+                : {{ $surat->lampiran ?: '-' }}
+            </div>
+
+        </div>
+
+        {{-- Perihal --}}
+        <div class="grid grid-cols-4 gap-4">
+
+            <div class="font-semibold">
+                Perihal
+            </div>
+
+            <div class="col-span-3">
+                : {{ $surat->perihal }}
+            </div>
+
+        </div>
+
+        {{-- Salam Pembuka --}}
+        <div class="mt-10">
+
             <p>
-                www.microdata.co.id
+                Dengan hormat,
             </p>
+
+        </div>
+
+        {{-- Isi Surat --}}
+        <div class="mt-6 text-justify leading-8 indent-10 whitespace-pre-line">
+
+            {{ $surat->isi_surat }}
+
+        </div>
+
+        {{-- Salam Penutup --}}
+        <div class="mt-10">
+
+            <p>
+                Demikian surat ini kami sampaikan. Atas perhatian dan kerja samanya kami ucapkan terima kasih.
+            </p>
+
+        </div>
+        {{-- Tanda Tangan --}}
+        <div class="mt-16 flex justify-end">
+
+            <div class="text-center w-72">
+
+                <p>
+                    Bandar Lampung,
+                    {{ \Carbon\Carbon::parse($surat->tanggal_surat)->translatedFormat('d F Y') }}
+                </p>
+
+                <p class="mt-2">
+                    Hormat Kami,
+                </p>
+
+                {{-- Ruang Tanda Tangan --}}
+                <div class="h-24"></div>
+
+                <p class="font-bold underline">
+
+                    {{ $surat->penandatangan }}
+
+                </p>
+
+                <p>
+
+                    {{ $surat->jabatan_penandatangan }}
+
+                </p>
+
+            </div>
 
         </div>
 
     </div>
 
-    <div class="line"></div>
+    {{-- Tombol --}}
+    <div class="bg-gray-100 border-t p-6 flex justify-center gap-4 print:hidden">
 
-    <table class="info">
+        <button
+            onclick="window.print()"
+            class="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold">
 
-        <tr>
-            <td width="130">Nomor</td>
-            <td width="15">:</td>
-            <td>{{ $surat->nomor_surat }}</td>
-        </tr>
+            <i class="fa-solid fa-print"></i>
 
-        <tr>
-            <td>Lampiran</td>
-            <td>:</td>
-            <td>{{ $surat->lampiran ?: '-' }}</td>
-        </tr>
+            Cetak Surat
 
-        <tr>
-            <td>Perihal</td>
-            <td>:</td>
-            <td><strong>{{ $surat->perihal }}</strong></td>
-        </tr>
+        </button>
 
-    </table>
+        <a
+            href="{{ route('surat_keluar.show', $surat->id) }}"
+            class="inline-flex items-center gap-2 px-6 py-3 bg-slate-700 hover:bg-slate-800 text-white rounded-lg font-semibold">
 
-    <div style="text-align:right">
+            <i class="fa-solid fa-arrow-left"></i>
 
-        Bandar Lampung,
-        {{ \Carbon\Carbon::parse($surat->tanggal_surat)->translatedFormat('d F Y') }}
+            Kembali
 
-    </div>
-
-    <br>
-
-    <p>
-
-        Kepada Yth.
-
-        <br>
-
-        <strong>{{ $surat->tujuan }}</strong>
-
-        <br>
-
-        Di Tempat
-
-    </p>
-
-    <br>
-
-    <div class="isi">
-
-        <p>Dengan hormat,</p>
-
-        <p>
-
-            {!! nl2br(e($surat->isi_surat)) !!}
-
-        </p>
-
-        <p>
-
-            Demikian surat ini kami sampaikan.
-            Atas perhatian dan kerja sama yang baik,
-            kami ucapkan terima kasih.
-
-        </p>
-
-    </div>
-
-    <div class="ttd">
-
-        Bandar Lampung,
-        {{ \Carbon\Carbon::parse($surat->tanggal_surat)->translatedFormat('d F Y') }}
-
-        <br><br><br><br><br>
-
-        <strong>
-
-            {{ $surat->penandatangan }}
-
-        </strong>
-
-        <br>
-
-        {{ $surat->jabatan_penandatangan }}
+        </a>
 
     </div>
 
 </div>
 
+<style>
+
+@media print{
+
+    body{
+
+        background:white;
+
+    }
+
+    .print\:hidden{
+
+        display:none !important;
+
+    }
+
+    .shadow-xl{
+
+        box-shadow:none !important;
+
+    }
+
+}
+
+</style>
+
 </body>
+
 </html>

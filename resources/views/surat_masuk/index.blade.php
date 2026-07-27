@@ -1,142 +1,274 @@
 @extends('layouts.app')
 
-@section('title','Surat Masuk')
+@section('title', 'Data Surat Masuk')
 
 @section('content')
 
-<div class="container-fluid">
+<div class="space-y-6">
 
-<div class="d-flex justify-content-between mb-4">
+    {{-- Header --}}
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
-<div>
+        <div>
+            <h1 class="text-3xl font-bold text-white">
+                Data Surat Masuk
+            </h1>
 
-<h2 class="fw-bold">
+            <p class="text-slate-400 mt-1">
+                Kelola seluruh data surat masuk PT Microdata Indonesia.
+            </p>
+        </div>
 
-Surat Masuk
+        <a href="{{ route('surat_masuk.create') }}"
+           class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-xl font-semibold transition">
 
-</h2>
+            <i class="fa-solid fa-plus"></i>
 
-<p class="text-muted">
+            Tambah Surat
 
-Kelola seluruh surat masuk perusahaan.
+        </a>
 
-</p>
+    </div>
 
-</div>
+    {{-- Search --}}
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
 
-<a href="{{ route('surat_masuk.create') }}"
-class="btn btn-primary">
+        <form method="GET">
 
-<i class="bi bi-plus-circle"></i>
+            <div class="flex flex-col md:flex-row gap-3">
 
-Tambah Surat
+                <div class="relative flex-1">
 
-</a>
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-4 text-slate-500"></i>
 
-</div>
+                    <input
+                        type="text"
+                        name="search"
+                        value="{{ request('search') }}"
+                        placeholder="Cari nomor agenda, nomor surat atau perihal..."
+                        class="w-full bg-slate-950 border border-slate-700 rounded-xl pl-11 pr-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
 
-<div class="card shadow-sm border-0">
+                </div>
 
-<div class="card-body">
+                <button
+                    class="bg-indigo-600 hover:bg-indigo-700 px-6 rounded-xl font-semibold">
 
-<table class="table table-bordered table-hover">
+                    Cari
 
-<thead class="table-primary">
+                </button>
 
-<tr>
+            </div>
 
-<th>No</th>
+        </form>
 
-<th>No Agenda</th>
+    </div>
 
-<th>No Surat</th>
+    {{-- Table --}}
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
 
-<th>Pengirim</th>
+        <div class="overflow-x-auto">
 
-<th>Perihal</th>
+            <table class="w-full">
 
-<th>Tanggal Terima</th>
+                <thead class="bg-slate-800">
 
-<th>Status</th>
+                    <tr class="text-left text-slate-300">
 
-<th>Aksi</th>
+                        <th class="px-6 py-4">No</th>
+                        <th class="px-6 py-4">No Agenda</th>
+                        <th class="px-6 py-4">Nomor Surat</th>
+                        <th class="px-6 py-4">Tanggal</th>
+                        <th class="px-6 py-4">Asal Surat</th>
+                        <th class="px-6 py-4">Jenis Surat</th>
+                        <th class="px-6 py-4">Perihal</th>
+                        <th class="px-6 py-4">Status</th>
+                        <th class="px-6 py-4 text-center">Aksi</th>
 
-</tr>
+                    </tr>
 
-</thead>
+                </thead>
 
-<tbody>
+                <tbody>
 
-@forelse($surat as $item)
+                @forelse($surat as $item)
 
-<tr>
+                    <tr class="border-t border-slate-800 hover:bg-slate-800/40 transition">
 
-<td>{{ $loop->iteration }}</td>
+                        <td class="px-6 py-4 text-slate-300">
+                            {{ $loop->iteration + ($surat->currentPage()-1) * $surat->perPage() }}
+                        </td>
 
-<td>{{ $item->nomor_agenda }}</td>
+                        <td class="px-6 py-4 font-semibold text-white">
+                            {{ $item->nomor_agenda }}
+                        </td>
 
-<td>{{ $item->nomor_surat }}</td>
+                        <td class="px-6 py-4 text-slate-300">
+                            {{ $item->nomor_surat }}
+                        </td>
 
-<td>{{ $item->pengirim }}</td>
+                        <td class="px-6 py-4 text-slate-300">
+                            {{ \Carbon\Carbon::parse($item->tanggal_surat)->format('d-m-Y') }}
+                        </td>
 
-<td>{{ $item->perihal }}</td>
+                        <td class="px-6 py-4 text-slate-300">
+                            {{ Str::limit($item->asal_surat,30) }}
+                        </td>
 
-<td>{{ $item->tanggal_terima }}</td>
+                        <td class="px-6 py-4 text-slate-300">
+                            {{ $item->jenis_surat }}
+                        </td>
 
-<td>
+                        <td class="px-6 py-4 text-slate-300">
+                            {{ Str::limit($item->perihal,35) }}
+                        </td>
 
-<span class="badge bg-success">
+                        <td class="px-6 py-4">
 
-{{ $item->status }}
+                            @if($item->status=='Baru')
 
-</span>
+                                <span class="px-3 py-1 rounded-full text-xs bg-blue-500/20 text-blue-400 border border-blue-500/30">
 
-</td>
+                                    Baru
 
-<td>
+                                </span>
 
-<a href="{{ route('surat_masuk.show',$item->id) }}"
-class="btn btn-info btn-sm">
+                            @elseif($item->status=='Diproses')
 
-<i class="bi bi-eye"></i>
+                                <span class="px-3 py-1 rounded-full text-xs bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">
 
-</a>
+                                    Diproses
 
-<a href="{{ route('surat_masuk.edit',$item->id) }}"
-class="btn btn-warning btn-sm">
+                                </span>
 
-<i class="bi bi-pencil"></i>
+                            @else
 
-</a>
+                                <span class="px-3 py-1 rounded-full text-xs bg-green-500/20 text-green-400 border border-green-500/30">
 
-</td>
+                                    Selesai
 
-</tr>
+                                </span>
 
-@empty
+                            @endif
 
-<tr>
+                        </td>
 
-<td colspan="8" class="text-center">
+                        <td class="px-6 py-4">
 
-Belum ada data surat masuk.
+                            <div class="flex justify-center gap-2">
 
-</td>
+                                <a href="{{ route('surat_masuk.show',$item->id) }}"
+                                   class="w-9 h-9 rounded-lg bg-cyan-600 hover:bg-cyan-700 flex items-center justify-center">
 
-</tr>
+                                    <i class="fa-solid fa-eye text-white text-sm"></i>
 
-@endforelse
+                                </a>
 
-</tbody>
+                                <a href="{{ route('surat_masuk.edit',$item->id) }}"
+                                   class="w-9 h-9 rounded-lg bg-amber-500 hover:bg-amber-600 flex items-center justify-center">
 
-</table>
+                                    <i class="fa-solid fa-pen text-white text-sm"></i>
 
-{{ $surat->links() }}
+                                </a>
 
-</div>
+                                <form
+                                    action="{{ route('surat_masuk.destroy',$item->id) }}"
+                                    method="POST"
+                                    class="deleteForm">
 
-</div>
+                                    @csrf
+                                    @method('DELETE')
+
+                                    <button
+                                        class="w-9 h-9 rounded-lg bg-rose-600 hover:bg-rose-700 flex items-center justify-center">
+
+                                        <i class="fa-solid fa-trash text-white text-sm"></i>
+
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                @empty
+
+                    <tr>
+
+                        <td colspan="9"
+                            class="text-center py-12 text-slate-400">
+
+                            <i class="fa-regular fa-folder-open text-5xl mb-4 block"></i>
+
+                            Belum ada data surat masuk.
+
+                        </td>
+
+                    </tr>
+
+                @endforelse
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    {{-- Pagination --}}
+    <div>
+
+        {{ $surat->links() }}
+
+    </div>
 
 </div>
 
 @endsection
+
+@push('scripts')
+
+<script>
+
+document.querySelectorAll('.deleteForm').forEach(form=>{
+
+    form.addEventListener('submit',function(e){
+
+        e.preventDefault();
+
+        Swal.fire({
+
+            title:'Hapus surat?',
+
+            text:'Data tidak dapat dikembalikan.',
+
+            icon:'warning',
+
+            showCancelButton:true,
+
+            confirmButtonColor:'#6366f1',
+
+            cancelButtonColor:'#ef4444',
+
+            confirmButtonText:'Ya, Hapus'
+
+        }).then((result)=>{
+
+            if(result.isConfirmed){
+
+                form.submit();
+
+            }
+
+        });
+
+    });
+
+});
+
+</script>
+
+@endpush

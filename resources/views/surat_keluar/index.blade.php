@@ -4,197 +4,292 @@
 
 @section('content')
 
-<div class="container-fluid">
+<div class="space-y-6">
 
-    <div class="card shadow border-0">
+    {{-- Header --}}
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
-        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-
-            <h4 class="mb-0">
-                <i class="bi bi-envelope-paper"></i>
+        <div>
+            <h1 class="text-3xl font-bold text-white">
                 Data Surat Keluar
-            </h4>
+            </h1>
 
-            <a href="{{ route('surat_keluar.create') }}" class="btn btn-light">
-                <i class="bi bi-plus-circle"></i>
-                Tambah Surat
-            </a>
-
+            <p class="text-slate-400 mt-1">
+                Kelola seluruh data surat keluar PT Microdata Indonesia.
+            </p>
         </div>
 
-        <div class="card-body">
+        <a href="{{ route('surat_keluar.create') }}"
+           class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-xl font-semibold transition">
 
-            @if(session('success'))
+            <i class="fa-solid fa-plus"></i>
 
-                <div class="alert alert-success alert-dismissible fade show">
+            Tambah Surat
 
-                    {{ session('success') }}
+        </a>
 
-                    <button type="button"
-                            class="btn-close"
-                            data-bs-dismiss="alert"></button>
+    </div>
+
+    {{-- Search --}}
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+
+        <form method="GET">
+
+            <div class="flex flex-col md:flex-row gap-3">
+
+                <div class="relative flex-1">
+
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-4 text-slate-500"></i>
+
+                    <input
+                        type="text"
+                        name="search"
+                        value="{{ request('search') }}"
+                        placeholder="Cari nomor surat, tujuan atau perihal..."
+                        class="w-full bg-slate-950 border border-slate-700 rounded-xl pl-11 pr-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
 
                 </div>
 
-            @endif
+                <button
+                    class="bg-indigo-600 hover:bg-indigo-700 px-6 rounded-xl font-semibold">
 
-            <div class="table-responsive">
+                    Cari
 
-                <table class="table table-bordered table-hover align-middle">
+                </button>
 
-                    <thead class="table-dark text-center">
+            </div>
 
-                        <tr>
+        </form>
 
-                            <th width="5%">No</th>
+    </div>
 
-                            <th>Nomor Surat</th>
+    {{-- Tabel --}}
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
 
-                            <th>Tanggal</th>
+        <div class="overflow-x-auto">
 
-                            <th>Jenis Surat</th>
+            <table class="w-full">
 
-                            <th>Tujuan</th>
+                <thead class="bg-slate-800">
 
-                            <th>Perihal</th>
+                    <tr class="text-left text-slate-300">
 
-                            <th>Status</th>
+                        <th class="px-6 py-4">No</th>
 
-                            <th width="260">Aksi</th>
+                        <th class="px-6 py-4">Nomor Surat</th>
 
-                        </tr>
+                        <th class="px-6 py-4">Tanggal</th>
 
-                    </thead>
+                        <th class="px-6 py-4">Jenis Surat</th>
 
-                    <tbody>
+                        <th class="px-6 py-4">Tujuan</th>
 
-                        @forelse($surat as $item)
+                        <th class="px-6 py-4">Perihal</th>
 
-                        <tr>
+                        <th class="px-6 py-4">Status</th>
 
-                            <td class="text-center">
-                                {{ $loop->iteration }}
-                            </td>
+                        <th class="px-6 py-4 text-center">Aksi</th>
 
-                            <td>
-                                {{ $item->nomor_surat }}
-                            </td>
+                    </tr>
 
-                            <td>
-                                {{ \Carbon\Carbon::parse($item->tanggal_surat)->format('d-m-Y') }}
-                            </td>
+                </thead>
 
-                            <td>
-                                {{ $item->jenis_surat }}
-                            </td>
+                <tbody>
 
-                            <td>
-                                {{ $item->tujuan }}
-                            </td>
+                @forelse($surat as $item)
 
-                            <td>
-                                {{ $item->perihal }}
-                            </td>
+                    <tr class="border-t border-slate-800 hover:bg-slate-800/40 transition">
 
-                            <td class="text-center">
+                        <td class="px-6 py-4 text-slate-300">
 
-                                @if($item->status=='Draft')
+                            {{ $loop->iteration + ($surat->currentPage()-1) * $surat->perPage() }}
 
-                                    <span class="badge bg-secondary">
-                                        Draft
-                                    </span>
+                        </td>
 
-                                @elseif($item->status=='Dikirim')
+                        <td class="px-6 py-4 font-semibold text-white">
 
-                                    <span class="badge bg-warning text-dark">
-                                        Dikirim
-                                    </span>
+                            {{ $item->nomor_surat }}
 
-                                @else
+                        </td>
 
-                                    <span class="badge bg-success">
-                                        Selesai
-                                    </span>
+                        <td class="px-6 py-4 text-slate-300">
 
-                                @endif
+                            {{ \Carbon\Carbon::parse($item->tanggal_surat)->format('d-m-Y') }}
 
-                            </td>
+                        </td>
 
-                            <td class="text-center">
+                        <td class="px-6 py-4 text-slate-300">
+
+                            {{ $item->jenis_surat }}
+
+                        </td>
+
+                        <td class="px-6 py-4 text-slate-300">
+
+                            {{ Str::limit($item->tujuan,30) }}
+
+                        </td>
+
+                        <td class="px-6 py-4 text-slate-300">
+
+                            {{ Str::limit($item->perihal,35) }}
+
+                        </td>
+
+                        <td class="px-6 py-4">
+
+                            @if($item->status=='Draft')
+
+                                <span class="px-3 py-1 rounded-full text-xs bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">
+
+                                    Draft
+
+                                </span>
+
+                            @elseif($item->status=='Dikirim')
+
+                                <span class="px-3 py-1 rounded-full text-xs bg-blue-500/20 text-blue-400 border border-blue-500/30">
+
+                                    Dikirim
+
+                                </span>
+
+                            @else
+
+                                <span class="px-3 py-1 rounded-full text-xs bg-green-500/20 text-green-400 border border-green-500/30">
+
+                                    Selesai
+
+                                </span>
+
+                            @endif
+
+                        </td>
+
+                        <td class="px-6 py-4">
+
+                            <div class="flex justify-center gap-2">
 
                                 <a href="{{ route('surat_keluar.show',$item->id) }}"
-                                   class="btn btn-info btn-sm">
+                                   class="w-9 h-9 rounded-lg bg-cyan-600 hover:bg-cyan-700 flex items-center justify-center">
 
-                                    <i class="bi bi-eye"></i>
-
-                                </a>
-
-                                <a href="{{ route('surat_keluar.preview',$item->id) }}"
-                                   class="btn btn-primary btn-sm">
-
-                                    <i class="bi bi-file-earmark-text"></i>
+                                    <i class="fa-solid fa-eye text-white text-sm"></i>
 
                                 </a>
 
                                 <a href="{{ route('surat_keluar.edit',$item->id) }}"
-                                   class="btn btn-warning btn-sm">
+                                   class="w-9 h-9 rounded-lg bg-amber-500 hover:bg-amber-600 flex items-center justify-center">
 
-                                    <i class="bi bi-pencil-square"></i>
+                                    <i class="fa-solid fa-pen text-white text-sm"></i>
 
                                 </a>
 
-                                <form action="{{ route('surat_keluar.destroy',$item->id) }}"
-                                      method="POST"
-                                      class="d-inline">
+                                <a href="{{ route('surat_keluar.preview',$item->id) }}"
+                                   class="w-9 h-9 rounded-lg bg-indigo-600 hover:bg-indigo-700 flex items-center justify-center">
+
+                                    <i class="fa-solid fa-file-lines text-white text-sm"></i>
+
+                                </a>
+
+                                <form
+                                    action="{{ route('surat_keluar.destroy',$item->id) }}"
+                                    method="POST"
+                                    class="deleteForm">
 
                                     @csrf
                                     @method('DELETE')
 
                                     <button
-                                        type="submit"
-                                        class="btn btn-danger btn-sm"
-                                        onclick="return confirm('Yakin ingin menghapus surat ini?')">
+                                        class="w-9 h-9 rounded-lg bg-rose-600 hover:bg-rose-700 flex items-center justify-center">
 
-                                        <i class="bi bi-trash"></i>
+                                        <i class="fa-solid fa-trash text-white text-sm"></i>
 
                                     </button>
 
                                 </form>
 
-                            </td>
+                            </div>
 
-                        </tr>
+                        </td>
 
-                        @empty
+                    </tr>
 
-                        <tr>
+                @empty
 
-                            <td colspan="8" class="text-center text-muted">
+                    <tr>
 
-                                Belum ada data surat keluar.
+                        <td colspan="8"
+                            class="text-center py-12 text-slate-400">
 
-                            </td>
+                            <i class="fa-regular fa-folder-open text-5xl mb-4 block"></i>
 
-                        </tr>
+                            Belum ada data surat keluar.
 
-                        @endforelse
+                        </td>
 
-                    </tbody>
+                    </tr>
 
-                </table>
+                @endforelse
 
-            </div>
+                </tbody>
 
-            <div class="mt-3">
-
-                {{ $surat->links() }}
-
-            </div>
+            </table>
 
         </div>
+
+    </div>
+
+    {{-- Pagination --}}
+    <div>
+
+        {{ $surat->links() }}
 
     </div>
 
 </div>
 
 @endsection
+
+@push('scripts')
+
+<script>
+
+document.querySelectorAll('.deleteForm').forEach(form=>{
+
+    form.addEventListener('submit',function(e){
+
+        e.preventDefault();
+
+        Swal.fire({
+
+            title:'Hapus surat?',
+
+            text:'Data tidak dapat dikembalikan.',
+
+            icon:'warning',
+
+            showCancelButton:true,
+
+            confirmButtonColor:'#6366f1',
+
+            cancelButtonColor:'#ef4444',
+
+            confirmButtonText:'Ya, Hapus'
+
+        }).then((result)=>{
+
+            if(result.isConfirmed){
+
+                form.submit();
+
+            }
+
+        });
+
+    });
+
+});
+
+</script>
+
+@endpush

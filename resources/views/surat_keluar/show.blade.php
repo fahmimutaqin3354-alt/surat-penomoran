@@ -4,177 +4,303 @@
 
 @section('content')
 
-<div class="container-fluid">
+<div class="max-w-7xl mx-auto">
 
-    <div class="card shadow border-0">
+    {{-- Header --}}
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
 
-        <div class="card-header bg-info text-white">
-            <h4 class="mb-0">
-                <i class="bi bi-eye"></i>
+        <div>
+
+            <h1 class="text-3xl font-bold text-white">
                 Detail Surat Keluar
-            </h4>
+            </h1>
+
+            <p class="text-slate-400 mt-1">
+                Informasi lengkap surat keluar.
+            </p>
+
         </div>
 
-        <div class="card-body">
+        <div class="flex gap-3">
 
-            <div class="row">
+            <a href="{{ route('surat_keluar.edit', $surat->id) }}"
+               class="inline-flex items-center gap-2 bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-3 rounded-xl font-semibold transition">
 
-                <div class="col-md-6 mb-3">
-                    <label class="form-label fw-bold">Nomor Surat</label>
-                    <input type="text"
-                           class="form-control"
-                           value="{{ $surat->nomor_surat }}"
-                           readonly>
-                </div>
+                <i class="fa-solid fa-pen"></i>
 
-                <div class="col-md-6 mb-3">
-                    <label class="form-label fw-bold">Tanggal Surat</label>
-                    <input type="text"
-                           class="form-control"
-                           value="{{ \Carbon\Carbon::parse($surat->tanggal_surat)->format('d-m-Y') }}"
-                           readonly>
-                </div>
+                Edit
 
-                <div class="col-md-6 mb-3">
-                    <label class="form-label fw-bold">Jenis Surat</label>
-                    <input type="text"
-                           class="form-control"
-                           value="{{ $surat->jenis_surat }}"
-                           readonly>
-                </div>
+            </a>
 
-                <div class="col-md-6 mb-3">
-                    <label class="form-label fw-bold">Tujuan</label>
-                    <input type="text"
-                           class="form-control"
-                           value="{{ $surat->tujuan }}"
-                           readonly>
-                </div>
+            <a href="{{ route('surat_keluar.index') }}"
+               class="inline-flex items-center gap-2 bg-slate-700 hover:bg-slate-600 text-white px-5 py-3 rounded-xl font-semibold transition">
 
-                <div class="col-md-12 mb-3">
-                    <label class="form-label fw-bold">Perihal</label>
-                    <input type="text"
-                           class="form-control"
-                           value="{{ $surat->perihal }}"
-                           readonly>
-                </div>
+                <i class="fa-solid fa-arrow-left"></i>
 
-                <div class="col-md-12 mb-3">
-                    <label class="form-label fw-bold">Isi Surat</label>
+                Kembali
 
-                    <textarea class="form-control"
-                              rows="8"
-                              readonly>{{ $surat->isi_surat }}</textarea>
-                </div>
+            </a>
 
-                <div class="col-md-6 mb-3">
-                    <label class="form-label fw-bold">Lampiran</label>
-                    <input type="text"
-                           class="form-control"
-                           value="{{ $surat->lampiran }}"
-                           readonly>
-                </div>
+        </div>
 
-                <div class="col-md-6 mb-3">
-                    <label class="form-label fw-bold">Status</label>
+    </div>
 
-                    @if($surat->status == 'Draft')
-                        <span class="badge bg-secondary fs-6">
-                            Draft
-                        </span>
+    {{-- Card --}}
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-lg">
 
-                    @elseif($surat->status == 'Dikirim')
-                        <span class="badge bg-warning text-dark fs-6">
-                            Dikirim
-                        </span>
+        <div class="border-b border-slate-800 px-6 py-5">
 
-                    @else
-                        <span class="badge bg-success fs-6">
-                            Selesai
-                        </span>
-                    @endif
-                </div>
+            <h2 class="text-xl font-bold text-white flex items-center gap-2">
 
-                <div class="col-md-6 mb-3">
-                    <label class="form-label fw-bold">
-                        Penandatangan
-                    </label>
+                <i class="fa-solid fa-file-lines text-indigo-400"></i>
 
-                    <input type="text"
-                           class="form-control"
-                           value="{{ $surat->penandatangan }}"
-                           readonly>
-                </div>
+                Data Surat Keluar
 
-                <div class="col-md-6 mb-3">
-                    <label class="form-label fw-bold">
-                        Jabatan Penandatangan
-                    </label>
+            </h2>
 
-                    <input type="text"
-                           class="form-control"
-                           value="{{ $surat->jabatan_penandatangan }}"
-                           readonly>
-                </div>
+        </div>
 
-                <div class="col-md-12 mb-4">
+        <div class="p-6">
 
-                    <label class="form-label fw-bold">
-                        File Surat
-                    </label>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                    @if($surat->file_surat)
+ {{-- Nomor Surat --}}
+<div>
 
-                        <br>
+    <label class="block text-sm font-medium text-slate-400 mb-2">
+        Nomor Surat
+    </label>
 
-                        <a href="{{ asset('storage/surat_keluar/'.$surat->file_surat) }}"
-                           target="_blank"
-                           class="btn btn-danger">
+    <div class="bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white">
 
-                            <i class="bi bi-file-earmark-pdf"></i>
+        {{ $surat->nomor_surat }}
 
-                            Lihat PDF
+    </div>
 
-                        </a>
+</div>
 
-                    @else
+{{-- Jenis Surat --}}
+<div>
 
-                        <div class="alert alert-warning mb-0">
-                            File surat belum diupload.
-                        </div>
+    <label class="block text-sm font-medium text-slate-400 mb-2">
+        Jenis Surat
+    </label>
 
-                    @endif
+    <div class="bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white">
 
-                </div>
+        {{ $surat->jenis_surat }}
 
+    </div>
+
+</div>
+
+{{-- Tanggal Surat --}}
+<div>
+
+    <label class="block text-sm font-medium text-slate-400 mb-2">
+        Tanggal Surat
+    </label>
+
+    <div class="bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white">
+
+        {{ \Carbon\Carbon::parse($surat->tanggal_surat)->format('d-m-Y') }}
+
+    </div>
+
+</div>
+
+{{-- Tujuan --}}
+<div>
+
+    <label class="block text-sm font-medium text-slate-400 mb-2">
+        Tujuan
+    </label>
+
+    <div class="bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white">
+
+        {{ $surat->tujuan }}
+
+    </div>
+
+</div>
+
+{{-- Perihal --}}
+<div class="md:col-span-2">
+
+    <label class="block text-sm font-medium text-slate-400 mb-2">
+        Perihal
+    </label>
+
+    <div class="bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white">
+
+        {{ $surat->perihal }}
+
+    </div>
+
+</div>
+
+{{-- Isi Surat --}}
+<div class="md:col-span-2">
+
+    <label class="block text-sm font-medium text-slate-400 mb-2">
+        Isi Surat
+    </label>
+
+    <div class="bg-slate-950 border border-slate-700 rounded-xl px-4 py-4 text-white whitespace-pre-line">
+
+        {{ $surat->isi_surat }}
+
+    </div>
+
+</div>
+
+{{-- Lampiran --}}
+<div>
+
+    <label class="block text-sm font-medium text-slate-400 mb-2">
+        Lampiran
+    </label>
+
+    <div class="bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white">
+
+        {{ $surat->lampiran ?: '-' }}
+
+    </div>
+
+</div>
+
+{{-- Status --}}
+<div>
+
+    <label class="block text-sm font-medium text-slate-400 mb-2">
+        Status
+    </label>
+
+    <div>
+
+        @if($surat->status == 'Draft')
+
+            <span class="px-3 py-1 rounded-full bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">
+
+                Draft
+
+            </span>
+
+        @elseif($surat->status == 'Dikirim')
+
+            <span class="px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">
+
+                Dikirim
+
+            </span>
+
+        @else
+
+            <span class="px-3 py-1 rounded-full bg-green-500/20 text-green-400 border border-green-500/30">
+
+                Selesai
+
+            </span>
+
+        @endif
+
+    </div>
+
+</div>
+
+{{-- Penandatangan --}}
+<div>
+
+    <label class="block text-sm font-medium text-slate-400 mb-2">
+        Penandatangan
+    </label>
+
+    <div class="bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white">
+
+        {{ $surat->penandatangan }}
+
+    </div>
+
+</div>
+
+{{-- Jabatan Penandatangan --}}
+<div>
+
+    <label class="block text-sm font-medium text-slate-400 mb-2">
+        Jabatan Penandatangan
+    </label>
+
+    <div class="bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white">
+
+        {{ $surat->jabatan_penandatangan }}
+
+    </div>
+
+</div>
+
+{{-- File PDF --}}
+<div class="md:col-span-2">
+
+    <label class="block text-sm font-medium text-slate-400 mb-2">
+        File Surat
+    </label>
+
+    @if($surat->file_surat)
+
+        <a
+            href="{{ asset('storage/'.$surat->file_surat) }}"
+            target="_blank"
+            class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-5 py-3 rounded-xl transition">
+
+            <i class="fa-solid fa-file-pdf"></i>
+
+            Lihat File PDF
+
+        </a>
+
+    @else
+
+        <div class="bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-slate-400">
+
+            Tidak ada file yang diupload.
+
+        </div>
+
+    @endif
+
+</div>
             </div>
 
-            <div class="d-flex gap-2">
+            {{-- Tombol --}}
+            <div class="mt-8 flex flex-col sm:flex-row gap-3">
 
-                <a href="{{ route('surat_keluar.index') }}"
-                   class="btn btn-secondary">
+                <a
+                    href="{{ route('surat_keluar.preview', $surat->id) }}"
+                    class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 rounded-xl text-white font-semibold transition duration-200 shadow">
 
-                    <i class="bi bi-arrow-left"></i>
-
-                    Kembali
-
-                </a>
-
-                <a href="{{ route('surat_keluar.edit', $surat->id) }}"
-                   class="btn btn-warning">
-
-                    <i class="bi bi-pencil-square"></i>
-
-                    Edit
-
-                </a>
-
-                <a href="{{ route('surat_keluar.preview', $surat->id) }}"
-                   class="btn btn-primary">
-
-                    <i class="bi bi-file-earmark-text"></i>
+                    <i class="fa-solid fa-file-lines"></i>
 
                     Preview Surat
+
+                </a>
+
+                <a
+                    href="{{ route('surat_keluar.edit', $surat->id) }}"
+                    class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-yellow-500 hover:bg-yellow-600 rounded-xl text-white font-semibold transition duration-200 shadow">
+
+                    <i class="fa-solid fa-pen-to-square"></i>
+
+                    Edit Surat
+
+                </a>
+
+                <a
+                    href="{{ route('surat_keluar.index') }}"
+                    class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-slate-700 hover:bg-slate-600 rounded-xl text-white font-semibold transition duration-200">
+
+                    <i class="fa-solid fa-arrow-left"></i>
+
+                    Kembali
 
                 </a>
 
