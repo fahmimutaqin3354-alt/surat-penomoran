@@ -525,7 +525,7 @@
                 <div class="hero-visual-wrapper">
                     <div class="glow-effect glow-1"></div>
                     <div class="glow-effect glow-2"></div>
-                    
+
                     <div class="dashboard-preview-card">
                         <div class="card-header-bar">
                             <div class="window-dots">
@@ -538,7 +538,7 @@
                                 <span>Cari nomor / perihal / pengirim...</span>
                             </div>
                         </div>
-                        
+
                         <div class="card-body-content">
                             <!-- Mini Stat Widgets -->
                             <div class="row g-2 mb-3">
