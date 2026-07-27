@@ -64,7 +64,7 @@
                 <div class="w-7 h-7 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center font-bold text-xs uppercase">
                     {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}
                 </div>
-                <span class="text-sm font-medium text-slate-200 hidden xs:inline">{{ Auth::user()->name ?? 'User' }}</span>
+                <span class="text-sm font-medium text-slate-200 hidden sm:inline">{{ Auth::user()->name ?? 'User' }}</span>
                 <form method="POST" action="{{ route('logout') }}" class="inline">
                     @csrf
                     <button type="submit" title="Logout" class="text-slate-400 hover:text-rose-400 transition-colors ml-1 p-1">
@@ -82,18 +82,11 @@
     <aside id="sidebar" class="fixed top-16 left-0 bottom-0 w-64 bg-slate-900/90 backdrop-blur-xl border-r border-slate-800/80 z-30 transition-transform -translate-x-full md:translate-x-0 overflow-y-auto">
         <div class="p-4 space-y-6">
             
-            <!-- Brand Logo Inside Sidebar (Sama seperti halaman Login/Register) -->
-            <div class="p-3 rounded-2xl bg-slate-950/80 border border-slate-800/80 backdrop-blur-xl flex items-center gap-3 shadow-md">
-                <!-- Logo Box 'M' -->
-                <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-black text-xl shadow-lg shadow-indigo-600/30 shrink-0">
-                    M
-                </div>
-                
-                <!-- Text Branding -->
-                <div class="flex flex-col">
-                    <span class="text-sm font-black tracking-wider text-white uppercase leading-none">MICRODATA</span>
-                    <span class="text-[10px] font-medium text-slate-400 leading-none mt-1">Indonesia</span>
-                </div>
+            <!-- Brand Logo -->
+            <div class="p-3 rounded-2xl bg-slate-950/80 border border-slate-800/80 backdrop-blur-xl flex items-center justify-center shadow-md">
+                <img src="{{ asset('images/microdata-logo.webp') }}" 
+                     alt="Microdata Indonesia" 
+                     class="h-9 w-auto object-contain">
             </div>
 
             <!-- Navigation Links -->
@@ -137,7 +130,7 @@
                 <!-- Laporan -->
                 <a href="#" 
                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 transition-all">
-                    <i class="fa-solid fa-file-chart-column w-5 text-center"></i>
+                    <i class="fa-solid fa-file-lines w-5 text-center"></i>
                     <span>Laporan</span>
                 </a>
 
@@ -152,26 +145,23 @@
         </div>
     </main>
 
-    <!-- Mobile Sidebar Backdrop & Toggle Script -->
+    <!-- Mobile Sidebar Toggle Script -->
     <script>
-        const toggleBtn = document.getElementById('toggleSidebar');
-        const sidebar = document.getElementById('sidebar');
-        const backdrop = document.getElementById('sidebarBackdrop');
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggleBtn = document.getElementById('toggleSidebar');
+            const sidebar = document.getElementById('sidebar');
+            const backdrop = document.getElementById('sidebarBackdrop');
 
-        function toggleMenu() {
-            if (sidebar && backdrop) {
-                sidebar.classList.toggle('-translate-x-full');
-                backdrop.classList.toggle('hidden');
+            function toggleMenu() {
+                if (sidebar && backdrop) {
+                    sidebar.classList.toggle('-translate-x-full');
+                    backdrop.classList.toggle('hidden');
+                }
             }
-        }
 
-        if (toggleBtn) {
-            toggleBtn.addEventListener('click', toggleMenu);
-        }
-
-        if (backdrop) {
-            backdrop.addEventListener('click', toggleMenu);
-        }
+            if (toggleBtn) toggleBtn.addEventListener('click', toggleMenu);
+            if (backdrop) backdrop.addEventListener('click', toggleMenu);
+        });
     </script>
 
     <!-- Flash Alert Handler (SweetAlert2) -->
@@ -180,7 +170,7 @@
             Swal.fire({
                 icon: 'success',
                 title: 'Berhasil!',
-                text: "{{ session('success') }}",
+                text: @json(session('success')),
                 background: '#0f172a',
                 color: '#f8fafc',
                 confirmButtonColor: '#6366f1'
@@ -191,7 +181,7 @@
             Swal.fire({
                 icon: 'error',
                 title: 'Gagal!',
-                text: "{{ session('error') }}",
+                text: @json(session('error')),
                 background: '#0f172a',
                 color: '#f8fafc',
                 confirmButtonColor: '#6366f1'

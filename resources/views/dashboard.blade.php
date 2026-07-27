@@ -8,24 +8,11 @@
     <!-- Header & Welcome Banner -->
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 p-6 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl relative overflow-hidden">
         <!-- Subtle Glow Background -->
-        <div class="absolute -right-10 -bottom-10 w-60 h-60 bg-orange-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -right-10 -bottom-10 w-60 h-60 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
         <div class="space-y-3 relative z-10">
-            <!-- Brand & Tag Section -->
+            <!-- Tag Section (Logo Microdata dihapus dari sini) -->
             <div class="flex items-center gap-3 flex-wrap">
-                
-                <!-- Brand Badge Microdata -->
-                <div class="flex items-center gap-3 px-3.5 py-2 rounded-xl bg-slate-950/90 border border-slate-800/90 shadow-md">
-                    <!-- Pastikan file logo diletakkan di public/img/logo-microdata.png -->
-                    <img src="{{ asset('img/logo-microdata.png') }}" alt="Microdata Indonesia" class="h-8 w-auto object-contain" onerror="this.remove()">
-                    
-                    <!-- Fallback Teks jika Gambar Belum Di-upload -->
-                    <div class="flex flex-col justify-center">
-                        <span class="text-xs font-black tracking-widest text-white uppercase leading-none">MICRODATA</span>
-                        <span class="text-[9px] font-bold tracking-wider text-orange-500 leading-none mt-1">INDONESIA.CO.ID</span>
-                    </div>
-                </div>
-
                 <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold uppercase tracking-wider">
                     <i class="fa-solid fa-chart-pie"></i>
                     <span>Overview</span>
@@ -125,8 +112,6 @@
         </div>
 
     </div>
-
-</div>
 
     <!-- Grafik & Aktivitas Section -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -255,10 +240,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const ctx = canvas.getContext('2d');
     
-    // Gradient fill untuk bar chart
     const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-    gradient.addColorStop(0, 'rgba(99, 102, 241, 0.8)'); // Indigo-500
-    gradient.addColorStop(1, 'rgba(168, 85, 247, 0.1)'); // Purple-500 translucent
+    gradient.addColorStop(0, 'rgba(99, 102, 241, 0.8)'); 
+    gradient.addColorStop(1, 'rgba(168, 85, 247, 0.1)'); 
 
     new Chart(ctx, {
         type: 'bar',
