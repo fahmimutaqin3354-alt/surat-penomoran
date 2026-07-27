@@ -1,86 +1,188 @@
 @extends('layouts.app')
 
-@section('title','Detail Surat Keluar')
+@section('title', 'Detail Surat Keluar')
 
 @section('content')
 
 <div class="container-fluid">
 
-<div class="card shadow-sm border-0">
+    <div class="card shadow border-0">
 
-<div class="card-header bg-success text-white">
+        <div class="card-header bg-info text-white">
+            <h4 class="mb-0">
+                <i class="bi bi-eye"></i>
+                Detail Surat Keluar
+            </h4>
+        </div>
 
-<h4>
+        <div class="card-body">
 
-Detail Surat Keluar
+            <div class="row">
 
-</h4>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Nomor Surat</label>
+                    <input type="text"
+                           class="form-control"
+                           value="{{ $surat->nomor_surat }}"
+                           readonly>
+                </div>
 
-</div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Tanggal Surat</label>
+                    <input type="text"
+                           class="form-control"
+                           value="{{ \Carbon\Carbon::parse($surat->tanggal_surat)->format('d-m-Y') }}"
+                           readonly>
+                </div>
 
-<div class="card-body">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Jenis Surat</label>
+                    <input type="text"
+                           class="form-control"
+                           value="{{ $surat->jenis_surat }}"
+                           readonly>
+                </div>
 
-<table class="table">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Tujuan</label>
+                    <input type="text"
+                           class="form-control"
+                           value="{{ $surat->tujuan }}"
+                           readonly>
+                </div>
 
-<tr>
+                <div class="col-md-12 mb-3">
+                    <label class="form-label fw-bold">Perihal</label>
+                    <input type="text"
+                           class="form-control"
+                           value="{{ $surat->perihal }}"
+                           readonly>
+                </div>
 
-<th width="200">Nomor Surat</th>
+                <div class="col-md-12 mb-3">
+                    <label class="form-label fw-bold">Isi Surat</label>
 
-<td>002/MI/VII/2026</td>
+                    <textarea class="form-control"
+                              rows="8"
+                              readonly>{{ $surat->isi_surat }}</textarea>
+                </div>
 
-</tr>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Lampiran</label>
+                    <input type="text"
+                           class="form-control"
+                           value="{{ $surat->lampiran }}"
+                           readonly>
+                </div>
 
-<tr>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Status</label>
 
-<th>Perihal</th>
+                    @if($surat->status == 'Draft')
+                        <span class="badge bg-secondary fs-6">
+                            Draft
+                        </span>
 
-<td>Undangan Rapat</td>
+                    @elseif($surat->status == 'Dikirim')
+                        <span class="badge bg-warning text-dark fs-6">
+                            Dikirim
+                        </span>
 
-</tr>
+                    @else
+                        <span class="badge bg-success fs-6">
+                            Selesai
+                        </span>
+                    @endif
+                </div>
 
-<tr>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">
+                        Penandatangan
+                    </label>
 
-<th>Tujuan</th>
+                    <input type="text"
+                           class="form-control"
+                           value="{{ $surat->penandatangan }}"
+                           readonly>
+                </div>
 
-<td>PT ABC</td>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">
+                        Jabatan Penandatangan
+                    </label>
 
-</tr>
+                    <input type="text"
+                           class="form-control"
+                           value="{{ $surat->jabatan_penandatangan }}"
+                           readonly>
+                </div>
 
-<tr>
+                <div class="col-md-12 mb-4">
 
-<th>Tanggal</th>
+                    <label class="form-label fw-bold">
+                        File Surat
+                    </label>
 
-<td>24 Juli 2026</td>
+                    @if($surat->file_surat)
 
-</tr>
+                        <br>
 
-<tr>
+                        <a href="{{ asset('storage/surat_keluar/'.$surat->file_surat) }}"
+                           target="_blank"
+                           class="btn btn-danger">
 
-<th>File</th>
+                            <i class="bi bi-file-earmark-pdf"></i>
 
-<td>
+                            Lihat PDF
 
-<a href="#" class="btn btn-primary btn-sm">
+                        </a>
 
-Download PDF
+                    @else
 
-</a>
+                        <div class="alert alert-warning mb-0">
+                            File surat belum diupload.
+                        </div>
 
-</td>
+                    @endif
 
-</tr>
+                </div>
 
-</table>
+            </div>
 
-<a href="{{ route('surat_keluar.index') }}" class="btn btn-secondary">
+            <div class="d-flex gap-2">
 
-Kembali
+                <a href="{{ route('surat_keluar.index') }}"
+                   class="btn btn-secondary">
 
-</a>
+                    <i class="bi bi-arrow-left"></i>
 
-</div>
+                    Kembali
 
-</div>
+                </a>
+
+                <a href="{{ route('surat_keluar.edit', $surat->id) }}"
+                   class="btn btn-warning">
+
+                    <i class="bi bi-pencil-square"></i>
+
+                    Edit
+
+                </a>
+
+                <a href="{{ route('surat_keluar.preview', $surat->id) }}"
+                   class="btn btn-primary">
+
+                    <i class="bi bi-file-earmark-text"></i>
+
+                    Preview Surat
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </div>
 

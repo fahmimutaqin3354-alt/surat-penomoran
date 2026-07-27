@@ -10,33 +10,56 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-{
-    Schema::create('surat_keluars', function (Blueprint $table) {
-        $table->id();
+    {
+        Schema::create('surat_keluars', function (Blueprint $table) {
 
-        $table->string('nomor_surat')->unique();
-        $table->date('tanggal_surat');
+            $table->id();
 
-        $table->string('tujuan');
-        $table->string('perihal');
+            // Nomor surat otomatis
+            $table->string('nomor_surat')->unique();
 
-        $table->text('isi_surat')->nullable();
+            // Tanggal surat dibuat
+            $table->date('tanggal_surat');
 
-        $table->string('file_surat')->nullable();
+            // Jenis surat
+            $table->string('jenis_surat');
 
-        $table->enum('status', [
-            'Draft',
-            'Dikirim',
-            'Selesai'
-        ])->default('Draft');
+            // Tujuan surat
+            $table->string('tujuan');
 
-        $table->foreignId('user_id')
-              ->constrained()
-              ->cascadeOnDelete();
+            // Perihal surat
+            $table->string('perihal');
 
-        $table->timestamps();
-    });
-}
+            // Isi surat
+            $table->longText('isi_surat');
+
+            // Lampiran (opsional)
+            $table->string('lampiran')->nullable();
+
+            // Nama penandatangan
+            $table->string('penandatangan')->nullable();
+
+            // Jabatan penandatangan
+            $table->string('jabatan_penandatangan')->nullable();
+
+            // File PDF hasil generate (opsional)
+            $table->string('file_surat')->nullable();
+
+            // Status surat
+            $table->enum('status', [
+                'Draft',
+                'Dikirim',
+                'Selesai'
+            ])->default('Draft');
+
+            // Admin yang membuat surat
+            $table->foreignId('user_id')
+                  ->constrained()
+                  ->cascadeOnDelete();
+
+            $table->timestamps();
+        });
+    }
 
     /**
      * Reverse the migrations.

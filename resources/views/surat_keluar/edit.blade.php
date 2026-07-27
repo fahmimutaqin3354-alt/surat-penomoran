@@ -1,99 +1,235 @@
 @extends('layouts.app')
 
-@section('title','Tambah Surat Keluar')
+@section('title', 'Edit Surat Keluar')
 
 @section('content')
-<h4>Edit Surat Keluar</h4>
 
 <div class="container-fluid">
 
-<div class="card shadow-sm border-0">
+    <div class="card shadow border-0">
 
-<div class="card-header bg-primary text-white">
+        <div class="card-header bg-warning text-dark">
+            <h4 class="mb-0">
+                <i class="bi bi-pencil-square"></i>
+                Edit Surat Keluar
+            </h4>
+        </div>
 
-<h4 class="mb-0">
+        <div class="card-body">
 
-Tambah Surat Keluar
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
-</h4>
+            <form action="{{ route('surat_keluar.update', $surat->id) }}"
+                  method="POST"
+                  enctype="multipart/form-data">
 
-</div>
+                @csrf
+                @method('PUT')
 
-<div class="card-body">
+                <div class="row">
 
-<form>
+                    {{-- Nomor Surat --}}
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Nomor Surat</label>
 
-<div class="row">
+                        <input type="text"
+                               class="form-control"
+                               value="{{ $surat->nomor_surat }}"
+                               readonly>
+                    </div>
 
-<div class="col-md-6 mb-3">
+                    {{-- Jenis Surat --}}
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Jenis Surat</label>
 
-<label>Nomor Surat</label>
+                        <select name="jenis_surat"
+                                class="form-select"
+                                required>
 
-<input type="text" class="form-control">
+                            <option value="">-- Pilih Jenis Surat --</option>
 
-</div>
+                            <option value="Surat Tugas"
+                                {{ $surat->jenis_surat == 'Surat Tugas' ? 'selected' : '' }}>
+                                Surat Tugas
+                            </option>
 
-<div class="col-md-6 mb-3">
+                            <option value="Surat Undangan"
+                                {{ $surat->jenis_surat == 'Surat Undangan' ? 'selected' : '' }}>
+                                Surat Undangan
+                            </option>
 
-<label>Tanggal Surat</label>
+                            <option value="Surat Pemberitahuan"
+                                {{ $surat->jenis_surat == 'Surat Pemberitahuan' ? 'selected' : '' }}>
+                                Surat Pemberitahuan
+                            </option>
 
-<input type="date" class="form-control">
+                            <option value="Surat Permohonan"
+                                {{ $surat->jenis_surat == 'Surat Permohonan' ? 'selected' : '' }}>
+                                Surat Permohonan
+                            </option>
 
-</div>
+                        </select>
+                    </div>
 
-<div class="col-md-6 mb-3">
+                    {{-- Tanggal --}}
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Tanggal Surat</label>
 
-<label>Tujuan</label>
+                        <input type="date"
+                               name="tanggal_surat"
+                               class="form-control"
+                               value="{{ old('tanggal_surat', $surat->tanggal_surat) }}"
+                               required>
+                    </div>
 
-<input type="text" class="form-control">
+                    {{-- Tujuan --}}
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Tujuan</label>
 
-</div>
+                        <input type="text"
+                               name="tujuan"
+                               class="form-control"
+                               value="{{ old('tujuan', $surat->tujuan) }}"
+                               required>
+                    </div>
 
-<div class="col-md-6 mb-3">
+                    {{-- Perihal --}}
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label">Perihal</label>
 
-<label>Perihal</label>
+                        <input type="text"
+                               name="perihal"
+                               class="form-control"
+                               value="{{ old('perihal', $surat->perihal) }}"
+                               required>
+                    </div>
 
-<input type="text" class="form-control">
+                    {{-- Isi Surat --}}
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label">Isi Surat</label>
 
-</div>
+                        <textarea name="isi_surat"
+                                  rows="6"
+                                  class="form-control"
+                                  required>{{ old('isi_surat', $surat->isi_surat) }}</textarea>
+                    </div>
 
-<div class="col-md-12 mb-3">
+                    {{-- Lampiran --}}
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Lampiran</label>
 
-<label>Isi Surat</label>
+                        <input type="text"
+                               name="lampiran"
+                               class="form-control"
+                               value="{{ old('lampiran', $surat->lampiran) }}">
+                    </div>
 
-<textarea class="form-control" rows="5"></textarea>
+                    {{-- Status --}}
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Status</label>
 
-</div>
+                        <select name="status"
+                                class="form-select"
+                                required>
 
-<div class="col-md-12 mb-3">
+                            <option value="Draft"
+                                {{ $surat->status == 'Draft' ? 'selected' : '' }}>
+                                Draft
+                            </option>
 
-<label>Upload File PDF</label>
+                            <option value="Dikirim"
+                                {{ $surat->status == 'Dikirim' ? 'selected' : '' }}>
+                                Dikirim
+                            </option>
 
-<input type="file" class="form-control">
+                            <option value="Selesai"
+                                {{ $surat->status == 'Selesai' ? 'selected' : '' }}>
+                                Selesai
+                            </option>
 
-</div>
+                        </select>
+                    </div>
 
-</div>
+                    {{-- Penandatangan --}}
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Penandatangan</label>
 
-<button class="btn btn-primary">
+                        <input type="text"
+                               name="penandatangan"
+                               class="form-control"
+                               value="{{ old('penandatangan', $surat->penandatangan) }}"
+                               required>
+                    </div>
 
-<i class="bi bi-save"></i>
+                    {{-- Jabatan --}}
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Jabatan Penandatangan</label>
 
-Simpan
+                        <input type="text"
+                               name="jabatan_penandatangan"
+                               class="form-control"
+                               value="{{ old('jabatan_penandatangan', $surat->jabatan_penandatangan) }}"
+                               required>
+                    </div>
 
-</button>
+                    {{-- File Lama --}}
+                    @if($surat->file_surat)
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label">File Saat Ini</label>
 
-<a href="{{ route('surat_keluar.index') }}" class="btn btn-secondary">
+                        <div>
+                            <a href="{{ asset('storage/surat_keluar/'.$surat->file_surat) }}"
+                               target="_blank"
+                               class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-file-earmark-pdf"></i>
+                                Lihat PDF
+                            </a>
+                        </div>
+                    </div>
+                    @endif
 
-Kembali
+                    {{-- Upload Baru --}}
+                    <div class="col-md-12 mb-4">
+                        <label class="form-label">
+                            Upload File Baru (Opsional)
+                        </label>
 
-</a>
+                        <input type="file"
+                               name="file_surat"
+                               class="form-control"
+                               accept=".pdf">
+                    </div>
 
-</form>
+                </div>
 
-</div>
+                <div class="d-flex gap-2">
 
-</div>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="bi bi-save"></i>
+                        Update
+                    </button>
+
+                    <a href="{{ route('surat_keluar.index') }}"
+                       class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i>
+                        Kembali
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
 
 </div>
 
