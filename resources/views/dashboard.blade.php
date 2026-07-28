@@ -1,134 +1,226 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard')
+@section('title', 'Dashboard Utama')
 
 @section('content')
-<div class="container-fluid">
+<div class="space-y-8">
 
-    {{-- Header --}}
-    <div class="flex justify-between items-center mb-6">
-        <div>
-            <h2 class="text-2xl font-bold text-gray-800">Dashboard</h2>
-            <p class="text-sm text-gray-500 mt-1">
-                Selamat datang,
-                <strong>{{ Auth::user()->name }}</strong>
-                di Sistem Arsip Surat PT Microdata Indonesia.
+    <!-- Header & Welcome Banner -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 p-6 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl relative overflow-hidden">
+        <!-- Subtle Glow Background -->
+        <div class="absolute -right-10 -bottom-10 w-60 h-60 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="space-y-3 relative z-10">
+            <!-- Tag Section (Logo Microdata dihapus dari sini) -->
+            <div class="flex items-center gap-3 flex-wrap">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold uppercase tracking-wider">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Overview</span>
+                </span>
+            </div>
+
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                Dashboard Utama
+            </h1>
+            <p class="text-slate-400 text-sm">
+                Selamat datang kembali, <strong class="text-indigo-400 font-semibold">{{ Auth::user()->name ?? 'Pengguna' }}</strong>! Berikut adalah ringkasan sistem arsip hari ini.
             </p>
         </div>
-        <span class="bg-green-100 text-green-700 px-4 py-2 rounded-lg text-sm font-medium">
-            {{ now()->format('d M Y') }}
-        </span>
-    </div>
 
-    {{-- Statistik Cards --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-            <div class="flex justify-between items-start">
-                <div>
-                    <p class="text-sm text-gray-500">Surat Masuk</p>
-                    <p class="text-3xl font-bold text-gray-800 mt-1">120</p>
-                </div>
-                <span class="text-blue-500">
-                    <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 3.75H6.912a2.25 2.25 0 00-2.15 1.588L2.35 13.177a2.25 2.25 0 00-.1.661V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 00-2.15-1.588H15M2.25 13.5h3.86a2.25 2.25 0 012.012 1.244l.256.512a2.25 2.25 0 002.013 1.244h3.218a2.25 2.25 0 002.013-1.244l.256-.512a2.25 2.25 0 012.013-1.244h3.859" />
-                    </svg>
-                </span>
-            </div>
-        </div>
-
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-            <div class="flex justify-between items-start">
-                <div>
-                    <p class="text-sm text-gray-500">Surat Keluar</p>
-                    <p class="text-3xl font-bold text-gray-800 mt-1">80</p>
-                </div>
-                <span class="text-green-500">
-                    <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
-                    </svg>
-                </span>
-            </div>
-        </div>
-
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-            <div class="flex justify-between items-start">
-                <div>
-                    <p class="text-sm text-gray-500">Arsip Surat</p>
-                    <p class="text-3xl font-bold text-gray-800 mt-1">230</p>
-                </div>
-                <span class="text-yellow-500">
-                    <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
-                    </svg>
-                </span>
-            </div>
-        </div>
-
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-            <div class="flex justify-between items-start">
-                <div>
-                    <p class="text-sm text-gray-500">Pengguna</p>
-                    <p class="text-3xl font-bold text-gray-800 mt-1">5</p>
-                </div>
-                <span class="text-red-500">
-                    <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
-                    </svg>
-                </span>
+        <div class="flex items-center gap-3 relative z-10">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-950/80 border border-slate-800 text-slate-300 text-sm font-medium shadow-inner">
+                <i class="fa-regular fa-calendar-days text-indigo-400"></i>
+                <span>{{ now()->format('d M Y') }}</span>
             </div>
         </div>
     </div>
 
-    {{-- Grafik & Aktivitas --}}
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-        {{-- Chart --}}
-        <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-            <h5 class="font-semibold text-gray-800 mb-4">Grafik Surat</h5>
-            <canvas id="suratChart" height="100"></canvas>
+    <!-- Statistik Cards Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        
+        <!-- Card 1: Surat Masuk -->
+        <div class="group relative p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl hover:border-indigo-500/50 transition-all duration-300 shadow-lg hover:shadow-indigo-500/10">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Surat Masuk</p>
+                    <h3 class="text-3xl font-extrabold text-white mt-2 group-hover:text-indigo-400 transition-colors">120</h3>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-inbox text-xl"></i>
+                </div>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-800/60 flex items-center text-xs text-slate-500">
+                <span class="text-emerald-400 font-medium flex items-center gap-1">
+                    <i class="fa-solid fa-arrow-up text-[10px]"></i> +12%
+                </span>
+                <span class="ml-1.5">dibanding bulan lalu</span>
+            </div>
         </div>
 
-        {{-- Aktivitas --}}
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-            <h5 class="font-semibold text-gray-800 mb-4">Aktivitas Hari Ini</h5>
-            <ul class="space-y-3">
-                <li class="flex items-center gap-3 text-sm text-gray-600">
-                    <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
-                    Surat masuk ditambahkan
-                </li>
-                <li class="flex items-center gap-3 text-sm text-gray-600">
-                    <span class="w-2 h-2 bg-green-500 rounded-full"></span>
-                    Surat keluar dibuat
-                </li>
-                <li class="flex items-center gap-3 text-sm text-gray-600">
-                    <span class="w-2 h-2 bg-yellow-500 rounded-full"></span>
-                    Arsip diperbarui
-                </li>
-            </ul>
+        <!-- Card 2: Surat Keluar -->
+        <div class="group relative p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl hover:border-purple-500/50 transition-all duration-300 shadow-lg hover:shadow-purple-500/10">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Surat Keluar</p>
+                    <h3 class="text-3xl font-extrabold text-white mt-2 group-hover:text-purple-400 transition-colors">80</h3>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-paper-plane text-xl"></i>
+                </div>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-800/60 flex items-center text-xs text-slate-500">
+                <span class="text-emerald-400 font-medium flex items-center gap-1">
+                    <i class="fa-solid fa-arrow-up text-[10px]"></i> +5%
+                </span>
+                <span class="ml-1.5">dibanding bulan lalu</span>
+            </div>
         </div>
+
+        <!-- Card 3: Arsip Surat -->
+        <div class="group relative p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl hover:border-amber-500/50 transition-all duration-300 shadow-lg hover:shadow-amber-500/10">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Arsip Surat</p>
+                    <h3 class="text-3xl font-extrabold text-white mt-2 group-hover:text-amber-400 transition-colors">230</h3>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-box-archive text-xl"></i>
+                </div>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-800/60 flex items-center text-xs text-slate-500">
+                <span class="text-slate-400 font-medium">Total tersimpan di server</span>
+            </div>
+        </div>
+
+        <!-- Card 4: Pengguna -->
+        <div class="group relative p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl hover:border-rose-500/50 transition-all duration-300 shadow-lg hover:shadow-rose-500/10">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Pengguna</p>
+                    <h3 class="text-3xl font-extrabold text-white mt-2 group-hover:text-rose-400 transition-colors">5</h3>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-users text-xl"></i>
+                </div>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-800/60 flex items-center text-xs text-slate-500">
+                <span class="text-emerald-400 font-medium flex items-center gap-1">
+                    <i class="fa-solid fa-circle text-[8px]"></i> Active
+                </span>
+                <span class="ml-1.5">Semua pengguna aktif</span>
+            </div>
+        </div>
+
     </div>
 
-    {{-- Surat Terbaru --}}
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-        <h5 class="font-semibold text-gray-800 mb-4">Surat Terbaru</h5>
+    <!-- Grafik & Aktivitas Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- Chart (8 cols) -->
+        <div class="lg:col-span-8 p-6 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl">
+            <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-800/80">
+                <div>
+                    <h2 class="text-lg font-bold text-white tracking-tight">Grafik Statistik Surat</h2>
+                    <p class="text-xs text-slate-400">Aktivitas lalu lintas surat dalam 6 bulan terakhir</p>
+                </div>
+                <span class="text-xs bg-slate-800/80 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700/50 font-medium">
+                    Tahun {{ now()->year }}
+                </span>
+            </div>
+            <div class="relative w-full h-[280px]">
+                <canvas id="suratChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Activity Timeline (4 cols) -->
+        <div class="lg:col-span-4 p-6 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-800/80">
+                    <h2 class="text-lg font-bold text-white tracking-tight">Aktivitas Hari Ini</h2>
+                    <span class="relative flex h-2.5 w-2.5">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                    </span>
+                </div>
+
+                <div class="space-y-4">
+                    <!-- Item 1 -->
+                    <div class="flex items-start gap-3.5">
+                        <div class="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 shrink-0 mt-0.5">
+                            <i class="fa-solid fa-arrow-down text-xs"></i>
+                        </div>
+                        <div class="space-y-0.5">
+                            <p class="text-sm font-medium text-slate-200">Surat masuk ditambahkan</p>
+                            <p class="text-xs text-slate-500">Baru saja &bull; Undangan Rapat</p>
+                        </div>
+                    </div>
+
+                    <!-- Item 2 -->
+                    <div class="flex items-start gap-3.5">
+                        <div class="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 shrink-0 mt-0.5">
+                            <i class="fa-solid fa-arrow-up text-xs"></i>
+                        </div>
+                        <div class="space-y-0.5">
+                            <p class="text-sm font-medium text-slate-200">Surat keluar dibuat</p>
+                            <p class="text-xs text-slate-500">2 jam yang lalu &bull; Penawaran Kerjasama</p>
+                        </div>
+                    </div>
+
+                    <!-- Item 3 -->
+                    <div class="flex items-start gap-3.5">
+                        <div class="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shrink-0 mt-0.5">
+                            <i class="fa-solid fa-folder-open text-xs"></i>
+                        </div>
+                        <div class="space-y-0.5">
+                            <p class="text-sm font-medium text-slate-200">Arsip diperbarui</p>
+                            <p class="text-xs text-slate-500">5 jam yang lalu &bull; Kategori Keuangan</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <a href="#" class="mt-6 block w-full text-center py-2.5 px-4 rounded-xl bg-slate-800/50 hover:bg-slate-800 border border-slate-700/50 text-xs font-semibold text-slate-300 hover:text-white transition duration-200">
+                Lihat Semua Aktivitas
+            </a>
+        </div>
+
+    </div>
+
+    <!-- Tabel Surat Terbaru -->
+    <div class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl space-y-4">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-800/80">
+            <div>
+                <h2 class="text-lg font-bold text-white tracking-tight">Surat Terbaru</h2>
+                <p class="text-xs text-slate-400">Daftar dokumen surat yang terakhir kali ditambahkan</p>
+            </div>
+            <a href="#" class="text-xs font-semibold text-indigo-400 hover:text-indigo-300 flex items-center gap-1 transition">
+                <span>Selengkapnya</span>
+                <i class="fa-solid fa-chevron-right text-[10px]"></i>
+            </a>
+        </div>
+
         <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-                <thead>
-                    <tr class="border-b border-gray-200 text-left text-gray-500">
-                        <th class="pb-3 font-medium">No</th>
-                        <th class="pb-3 font-medium">Nomor Surat</th>
-                        <th class="pb-3 font-medium">Perihal</th>
-                        <th class="pb-3 font-medium">Tanggal</th>
-                        <th class="pb-3 font-medium">Status</th>
+            <table class="w-full text-left text-sm text-slate-300">
+                <thead class="text-xs uppercase bg-slate-950/60 text-slate-400 border-b border-slate-800">
+                    <tr>
+                        <th scope="col" class="px-4 py-3.5 font-semibold rounded-l-xl">No</th>
+                        <th scope="col" class="px-4 py-3.5 font-semibold">Nomor Surat</th>
+                        <th scope="col" class="px-4 py-3.5 font-semibold">Perihal</th>
+                        <th scope="col" class="px-4 py-3.5 font-semibold">Tanggal</th>
+                        <th scope="col" class="px-4 py-3.5 font-semibold rounded-r-xl">Status</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr class="border-b border-gray-100">
-                        <td class="py-3 text-gray-500">1</td>
-                        <td class="py-3 text-gray-800">001/MI/VII/2026</td>
-                        <td class="py-3 text-gray-600">Surat Undangan</td>
-                        <td class="py-3 text-gray-600">24 Juli 2026</td>
-                        <td class="py-3">
-                            <span class="bg-green-100 text-green-700 px-2.5 py-1 rounded-full text-xs font-medium">Selesai</span>
+                <tbody class="divide-y divide-slate-800/60">
+                    <tr class="hover:bg-slate-800/30 transition-colors">
+                        <td class="px-4 py-4 font-medium text-slate-400">1</td>
+                        <td class="px-4 py-4 font-semibold text-indigo-400">001/MI/VII/2026</td>
+                        <td class="px-4 py-4 text-slate-200">Surat Undangan Evaluasi Bulanan</td>
+                        <td class="px-4 py-4 text-slate-400">24 Juli 2026</td>
+                        <td class="px-4 py-4">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                                Selesai
+                            </span>
                         </td>
                     </tr>
                 </tbody>
@@ -142,7 +234,16 @@
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    const ctx = document.getElementById('suratChart');
+document.addEventListener("DOMContentLoaded", function () {
+    const canvas = document.getElementById('suratChart');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    
+    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+    gradient.addColorStop(0, 'rgba(99, 102, 241, 0.8)'); 
+    gradient.addColorStop(1, 'rgba(168, 85, 247, 0.1)'); 
+
     new Chart(ctx, {
         type: 'bar',
         data: {
@@ -150,17 +251,42 @@
             datasets: [{
                 label: 'Jumlah Surat',
                 data: [12, 19, 10, 17, 20, 15],
-                backgroundColor: '#3b82f6',
-                borderRadius: 6,
+                backgroundColor: gradient,
+                borderColor: '#6366f1',
+                borderWidth: 1.5,
+                borderRadius: 8,
+                borderSkipped: false,
             }]
         },
         options: {
             responsive: true,
-            plugins: { legend: { display: false } },
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#0f172a',
+                    titleColor: '#f8fafc',
+                    bodyColor: '#cbd5e1',
+                    borderColor: '#334155',
+                    borderWidth: 1,
+                    padding: 12,
+                    displayColors: false,
+                    cornerRadius: 8
+                }
+            },
             scales: {
-                y: { beginAtZero: true },
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans, sans-serif' } }
+                },
+                y: {
+                    grid: { color: 'rgba(51, 65, 85, 0.4)', borderDash: [4, 4] },
+                    ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans, sans-serif' } },
+                    beginAtZero: true
+                }
             }
         }
     });
+});
 </script>
 @endpush

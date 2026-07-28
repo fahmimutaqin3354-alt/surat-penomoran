@@ -1,60 +1,315 @@
 @extends('layouts.app')
 
-@section('title','Detail Surat Keluar')
+@section('title', 'Detail Surat Keluar')
 
 @section('content')
 
-<div class="px-4">
+<div class="max-w-7xl mx-auto">
 
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+    {{-- Header --}}
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
 
-        <div class="bg-green-600 text-white rounded-t-xl px-5 py-4">
-            <h4 class="text-lg font-semibold">Detail Surat Keluar</h4>
+        <div>
+
+            <h1 class="text-3xl font-bold text-white">
+                Detail Surat Keluar
+            </h1>
+
+            <p class="text-slate-400 mt-1">
+                Informasi lengkap surat keluar.
+            </p>
+
         </div>
 
-        <div class="p-5">
+        <div class="flex gap-3">
 
-            <table class="w-full text-sm">
-                <tbody>
-                    <tr class="border-b border-gray-100">
-                        <th class="py-3 pr-4 text-left text-gray-500 font-medium w-48">Nomor Surat</th>
-                        <td class="py-3 text-gray-800">002/MI/VII/2026</td>
-                    </tr>
-                    <tr class="border-b border-gray-100">
-                        <th class="py-3 pr-4 text-left text-gray-500 font-medium">Perihal</th>
-                        <td class="py-3 text-gray-800">Undangan Rapat</td>
-                    </tr>
-                    <tr class="border-b border-gray-100">
-                        <th class="py-3 pr-4 text-left text-gray-500 font-medium">Tujuan</th>
-                        <td class="py-3 text-gray-800">PT ABC</td>
-                    </tr>
-                    <tr class="border-b border-gray-100">
-                        <th class="py-3 pr-4 text-left text-gray-500 font-medium">Tanggal</th>
-                        <td class="py-3 text-gray-800">24 Juli 2026</td>
-                    </tr>
-                    <tr>
-                        <th class="py-3 pr-4 text-left text-gray-500 font-medium">File</th>
-                        <td class="py-3">
-                            <a href="#" class="inline-flex items-center gap-2 bg-blue-600 text-white px-3 py-1.5 rounded-lg text-sm hover:bg-blue-700 transition">
-                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                                </svg>
-                                Download PDF
-                            </a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <a href="{{ route('surat_keluar.edit', $surat->id) }}"
+               class="inline-flex items-center gap-2 bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-3 rounded-xl font-semibold transition">
 
-            <div class="mt-6">
-                <a href="{{ route('surat_keluar.index') }}" class="inline-flex items-center gap-2 bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition text-sm font-medium">
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
-                    </svg>
-                    Kembali
-                </a>
-            </div>
+                <i class="fa-solid fa-pen"></i>
+
+                Edit
+
+            </a>
+
+            <a href="{{ route('surat_keluar.index') }}"
+               class="inline-flex items-center gap-2 bg-slate-700 hover:bg-slate-600 text-white px-5 py-3 rounded-xl font-semibold transition">
+
+                <i class="fa-solid fa-arrow-left"></i>
+
+                Kembali
+
+            </a>
+
+        </div>
 
     </div>
+
+    {{-- Card --}}
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-lg">
+
+        <div class="border-b border-slate-800 px-6 py-5">
+
+            <h2 class="text-xl font-bold text-white flex items-center gap-2">
+
+                <i class="fa-solid fa-file-lines text-indigo-400"></i>
+
+                Data Surat Keluar
+
+            </h2>
+
+        </div>
+
+        <div class="p-6">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+ {{-- Nomor Surat --}}
+<div>
+
+    <label class="block text-sm font-medium text-slate-400 mb-2">
+        Nomor Surat
+    </label>
+
+    <div class="bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white">
+
+        {{ $surat->nomor_surat }}
+
+    </div>
+
+</div>
+
+{{-- Jenis Surat --}}
+<div>
+
+    <label class="block text-sm font-medium text-slate-400 mb-2">
+        Jenis Surat
+    </label>
+
+    <div class="bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white">
+
+        {{ $surat->jenis_surat }}
+
+    </div>
+
+</div>
+
+{{-- Tanggal Surat --}}
+<div>
+
+    <label class="block text-sm font-medium text-slate-400 mb-2">
+        Tanggal Surat
+    </label>
+
+    <div class="bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white">
+
+        {{ \Carbon\Carbon::parse($surat->tanggal_surat)->format('d-m-Y') }}
+
+    </div>
+
+</div>
+
+{{-- Tujuan --}}
+<div>
+
+    <label class="block text-sm font-medium text-slate-400 mb-2">
+        Tujuan
+    </label>
+
+    <div class="bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white">
+
+        {{ $surat->tujuan }}
+
+    </div>
+
+</div>
+
+{{-- Perihal --}}
+<div class="md:col-span-2">
+
+    <label class="block text-sm font-medium text-slate-400 mb-2">
+        Perihal
+    </label>
+
+    <div class="bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white">
+
+        {{ $surat->perihal }}
+
+    </div>
+
+</div>
+
+{{-- Isi Surat --}}
+<div class="md:col-span-2">
+
+    <label class="block text-sm font-medium text-slate-400 mb-2">
+        Isi Surat
+    </label>
+
+    <div class="bg-slate-950 border border-slate-700 rounded-xl px-4 py-4 text-white whitespace-pre-line">
+
+        {{ $surat->isi_surat }}
+
+    </div>
+
+</div>
+
+{{-- Lampiran --}}
+<div>
+
+    <label class="block text-sm font-medium text-slate-400 mb-2">
+        Lampiran
+    </label>
+
+    <div class="bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white">
+
+        {{ $surat->lampiran ?: '-' }}
+
+    </div>
+
+</div>
+
+{{-- Status --}}
+<div>
+
+    <label class="block text-sm font-medium text-slate-400 mb-2">
+        Status
+    </label>
+
+    <div>
+
+        @if($surat->status == 'Draft')
+
+            <span class="px-3 py-1 rounded-full bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">
+
+                Draft
+
+            </span>
+
+        @elseif($surat->status == 'Dikirim')
+
+            <span class="px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">
+
+                Dikirim
+
+            </span>
+
+        @else
+
+            <span class="px-3 py-1 rounded-full bg-green-500/20 text-green-400 border border-green-500/30">
+
+                Selesai
+
+            </span>
+
+        @endif
+
+    </div>
+
+</div>
+
+{{-- Penandatangan --}}
+<div>
+
+    <label class="block text-sm font-medium text-slate-400 mb-2">
+        Penandatangan
+    </label>
+
+    <div class="bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white">
+
+        {{ $surat->penandatangan }}
+
+    </div>
+
+</div>
+
+{{-- Jabatan Penandatangan --}}
+<div>
+
+    <label class="block text-sm font-medium text-slate-400 mb-2">
+        Jabatan Penandatangan
+    </label>
+
+    <div class="bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white">
+
+        {{ $surat->jabatan_penandatangan }}
+
+    </div>
+
+</div>
+
+{{-- File PDF --}}
+<div class="md:col-span-2">
+
+    <label class="block text-sm font-medium text-slate-400 mb-2">
+        File Surat
+    </label>
+
+    @if($surat->file_surat)
+
+        <a
+            href="{{ asset('storage/'.$surat->file_surat) }}"
+            target="_blank"
+            class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-5 py-3 rounded-xl transition">
+
+            <i class="fa-solid fa-file-pdf"></i>
+
+            Lihat File PDF
+
+        </a>
+
+    @else
+
+        <div class="bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-slate-400">
+
+            Tidak ada file yang diupload.
+
+        </div>
+
+    @endif
+
+</div>
+            </div>
+
+            {{-- Tombol --}}
+            <div class="mt-8 flex flex-col sm:flex-row gap-3">
+
+                <a
+                    href="{{ route('surat_keluar.preview', $surat->id) }}"
+                    class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 rounded-xl text-white font-semibold transition duration-200 shadow">
+
+                    <i class="fa-solid fa-file-lines"></i>
+
+                    Preview Surat
+
+                </a>
+
+                <a
+                    href="{{ route('surat_keluar.edit', $surat->id) }}"
+                    class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-yellow-500 hover:bg-yellow-600 rounded-xl text-white font-semibold transition duration-200 shadow">
+
+                    <i class="fa-solid fa-pen-to-square"></i>
+
+                    Edit Surat
+
+                </a>
+
+                <a
+                    href="{{ route('surat_keluar.index') }}"
+                    class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-slate-700 hover:bg-slate-600 rounded-xl text-white font-semibold transition duration-200">
+
+                    <i class="fa-solid fa-arrow-left"></i>
+
+                    Kembali
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 
 @endsection
