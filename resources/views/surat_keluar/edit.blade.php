@@ -3,97 +3,109 @@
 @section('title','Tambah Surat Keluar')
 
 @section('content')
-<h4>Edit Surat Keluar</h4>
 
-<div class="container-fluid">
+<h4 class="text-xl font-semibold text-gray-800 mb-4">Edit Surat Keluar</h4>
 
-<div class="card shadow-sm border-0">
+<div class="w-full px-4 py-6">
 
-<div class="card-header bg-primary text-white">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200">
 
-<h4 class="mb-0">
+        <div class="bg-blue-600 text-white rounded-t-xl px-6 py-4">
 
-Tambah Surat Keluar
+            <h4 class="text-lg font-semibold mb-0">
 
-</h4>
+                Tambah Surat Keluar
 
-</div>
+            </h4>
 
-<div class="card-body">
+        </div>
 
-<form>
+        <div class="p-6">
 
-<div class="row">
+            <form>
 
-<div class="col-md-6 mb-3">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
 
-<label>Nomor Surat</label>
+                    <div class="md:col-span-6">
 
-<input type="text" class="form-control">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Nomor Surat</label>
 
-</div>
+                        <input type="text"
+                               class="w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
 
-<div class="col-md-6 mb-3">
+                    </div>
 
-<label>Tanggal Surat</label>
+                    <div class="md:col-span-6">
 
-<input type="date" class="form-control">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Surat</label>
 
-</div>
+                        <input type="date"
+                               class="w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
 
-<div class="col-md-6 mb-3">
+                    </div>
 
-<label>Tujuan</label>
+                    <div class="md:col-span-6">
 
-<input type="text" class="form-control">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Tujuan</label>
 
-</div>
+                        <input type="text"
+                               class="w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
 
-<div class="col-md-6 mb-3">
+                    </div>
 
-<label>Perihal</label>
+                    <div class="md:col-span-6">
 
-<input type="text" class="form-control">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Perihal</label>
 
-</div>
+                        <input type="text"
+                               class="w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
 
-<div class="col-md-12 mb-3">
+                    </div>
 
-<label>Isi Surat</label>
+                    <div class="md:col-span-12">
 
-<textarea class="form-control" rows="5"></textarea>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Isi Surat</label>
 
-</div>
+                        <textarea rows="5"
+                                  class="w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
 
-<div class="col-md-12 mb-3">
+                    </div>
 
-<label>Upload File PDF</label>
+                    <div class="md:col-span-12">
 
-<input type="file" class="form-control">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Upload File PDF</label>
 
-</div>
+                        <input type="file"
+                               class="w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
 
-</div>
+                    </div>
 
-<button class="btn btn-primary">
+                </div>
 
-<i class="bi bi-save"></i>
+                <div class="mt-6 flex items-center gap-3">
 
-Simpan
+                    <button class="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
 
-</button>
+                        <i class="bi bi-save"></i>
 
-<a href="{{ route('surat_keluar.index') }}" class="btn btn-secondary">
+                        Simpan
 
-Kembali
+                    </button>
 
-</a>
+                    <a href="{{ route('surat_keluar.index') }}"
+                       class="inline-flex items-center gap-2 rounded-lg bg-gray-200 px-4 py-2 text-gray-700 font-medium hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition-colors">
 
-</form>
+                        Kembali
 
-</div>
+                    </a>
 
-</div>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
 
 </div>
 

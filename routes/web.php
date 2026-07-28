@@ -3,17 +3,29 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SuratKeluarController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\ArsipController;
+use App\Http\Controllers\LaporanController;
 
 
 Route::middleware(['auth'])->group(function () {
 
-    Route::get('/dashboard', function () {
-        return view('dashboard.index');
-    })->name('dashboard');
+    // Route::get('/dashboard', function () {
+    //     return view('dashboard.index');
+    // })->name('dashboard');
 
     Route::resource('surat_keluar', SuratKeluarController::class);
+    Route::resource('arsip', ArsipController::class);
+   Route::get('/laporan', [App\Http\Controllers\LaporanController::class, 'index'])->name('laporan.index');
+  
+Route::middleware('auth')->group(function () {
+    Route::get('/akun', [AccountController::class, 'edit'])->name('account.edit');
+    Route::put('/akun', [AccountController::class, 'update'])->name('account.update');
+    Route::put('/akun/password', [AccountController::class, 'updatePassword'])->name('account.password');
+});
+ Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+Route::get('/laporan/export-pdf', [LaporanController::class, 'exportPdf'])->name('laporan.export.pdf');
+Route::get('/laporan/export-excel', [LaporanController::class, 'exportExcel'])->name('laporan.export.excel');
 
 });
 
@@ -31,40 +43,5 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-
-Route::middleware(['auth'])->group(function () {
-
-    Route::get('/arsip', [ArsipController::class, 'index'])->name('arsip.index');
-    Route::get('/arsip/create', [ArsipController::class, 'create'])->name('arsip.create');
-    Route::post('/arsip', [ArsipController::class, 'store'])->name('arsip.store');
-    Route::get('/arsip/{id}', [ArsipController::class, 'show'])->name('arsip.show');
-    Route::get('/arsip/{id}/edit', [ArsipController::class, 'edit'])->name('arsip.edit');
-    Route::put('/arsip/{id}', [ArsipController::class, 'update'])->name('arsip.update');
-    Route::delete('/arsip/{id}', [ArsipController::class, 'destroy'])->name('arsip.destroy');
-
-    // Ekspor arsip surat (dipakai tombol "Ekspor" di halaman)
-    Route::get('/arsip/ekspor', [ArsipController::class, 'ekspor'])->name('arsip.ekspor');
-
-
-
-Route::middleware(['auth'])->prefix('pengaturan')->name('pengaturan.')->group(function () {
-
-    Route::get('/users', [UserController::class, 'index'])->name('users');
-    Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
-    Route::post('/users', [UserController::class, 'store'])->name('users.store');
-    Route::get('/users/{id}', [UserController::class, 'show'])->name('users.show');
-    Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
-    Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
-    Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
-
-    // Aktifkan / nonaktifkan user (tombol toggle status di dropdown aksi)
-    Route::patch('/users/{id}/toggle', [UserController::class, 'toggle'])->name('users.toggle');
-});
-
-
-
-
-
-});
 
 require __DIR__.'/auth.php';

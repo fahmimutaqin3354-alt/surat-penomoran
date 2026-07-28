@@ -1,51 +1,32 @@
 <?php
 
-namespace App\Models;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-
-class User extends Authenticatable
+return new class extends Migration
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
-
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
+     * Jalankan migration.
+     * Menambahkan kolom yang dibutuhkan halaman Kelola Users
+     * ke tabel users bawaan (Breeze/Fortify).
      */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'role',
-        'unit_kerja',
-        'status',
-    ];
-
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
-
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
+    public function up(): void
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('role')->default('Viewer')->after('email');
+            $table->string('unit_kerja')->nullable()->after('role');
+            $table->enum('status', ['Aktif', 'Nonaktif'])->default('Aktif')->after('unit_kerja');
+        });
     }
-}
+
+    /**
+     * Batalkan migration.
+     */
+    public function down(): void
+    {
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn(['role', 'unit_kerja', 'status']);
+        });
+    }
+};
