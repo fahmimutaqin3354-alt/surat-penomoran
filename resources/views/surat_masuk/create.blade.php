@@ -4,6 +4,15 @@
 
 @section('content')
 
+{{-- Trik khusus agar ikon kalender menjadi putih cerah di semua browser --}}
+<style>
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(1) brightness(2) !important;
+        cursor: pointer !important;
+        opacity: 0.9 !important;
+    }
+</style>
+
 <div class="max-w-7xl mx-auto">
 
     {{-- Header --}}
@@ -128,7 +137,7 @@
                             name="tanggal_surat"
                             value="{{ old('tanggal_surat') }}"
                             required
-                            class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white">
+                            class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500">
 
                     </div>
 
@@ -144,7 +153,7 @@
                             name="tanggal_terima"
                             value="{{ old('tanggal_terima') }}"
                             required
-                            class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white">
+                            class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500">
 
                     </div>
 
@@ -161,7 +170,7 @@
                             value="{{ old('asal_surat') }}"
                             required
                             placeholder="Masukkan asal surat"
-                            class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white">
+                            class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500">
 
                     </div>
 
@@ -175,7 +184,7 @@
                         <select
                             name="jenis_surat"
                             required
-                            class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white">
+                            class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500">
 
                             <option value="">-- Pilih Jenis Surat --</option>
 
@@ -200,7 +209,7 @@
                             name="perihal"
                             value="{{ old('perihal') }}"
                             required
-                            class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white">
+                            class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500">
 
                     </div>
 
@@ -214,7 +223,7 @@
                         <textarea
                             name="isi_ringkas"
                             rows="6"
-                            class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white">{{ old('isi_ringkas') }}</textarea>
+                            class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500">{{ old('isi_ringkas') }}</textarea>
 
                     </div>
 
@@ -230,7 +239,7 @@
                             name="lampiran"
                             value="{{ old('lampiran') }}"
                             placeholder="Contoh : 1 Berkas"
-                            class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white">
+                            class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500">
 
                     </div>
 
@@ -244,7 +253,7 @@
                         <select
                             name="status"
                             required
-                            class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white">
+                            class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500">
 
                             <option value="Baru">Baru</option>
                             <option value="Diproses">Diproses</option>
@@ -264,7 +273,7 @@
                         <textarea
                             name="keterangan"
                             rows="4"
-                            class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white">{{ old('keterangan') }}</textarea>
+                            class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500">{{ old('keterangan') }}</textarea>
 
                     </div>
 
@@ -290,7 +299,7 @@
 
                     <button
                         type="submit"
-                        class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 rounded-xl text-white font-semibold">
+                        class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 rounded-xl text-white font-semibold transition">
 
                         <i class="fa-solid fa-floppy-disk"></i>
 
@@ -300,7 +309,7 @@
 
                     <a
                         href="{{ route('surat_masuk.index') }}"
-                        class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-slate-700 hover:bg-slate-600 rounded-xl text-white font-semibold">
+                        class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-slate-700 hover:bg-slate-600 rounded-xl text-white font-semibold transition">
 
                         <i class="fa-solid fa-arrow-left"></i>
 
@@ -310,7 +319,7 @@
 
                     <button
                         type="reset"
-                        class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700 rounded-xl text-white font-semibold">
+                        class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700 rounded-xl text-white font-semibold transition">
 
                         <i class="fa-solid fa-rotate-left"></i>
 

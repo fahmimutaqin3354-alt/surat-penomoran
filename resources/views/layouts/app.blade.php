@@ -82,18 +82,11 @@
     <aside id="sidebar" class="fixed top-16 left-0 bottom-0 w-64 bg-slate-900/90 backdrop-blur-xl border-r border-slate-800/80 z-30 transition-transform -translate-x-full md:translate-x-0 overflow-y-auto">
         <div class="p-4 space-y-6">
 
-            <!-- Brand Logo Inside Sidebar (Sama seperti halaman Login/Register) -->
-            <div class="p-3 rounded-2xl bg-slate-950/80 border border-slate-800/80 backdrop-blur-xl flex items-center gap-3 shadow-md">
-                <!-- Logo Box 'M' -->
-                <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-black text-xl shadow-lg shadow-indigo-600/30 shrink-0">
-                    M
-                </div>
-
-                <!-- Text Branding -->
-                <div class="flex flex-col">
-                    <span class="text-sm font-black tracking-wider text-white uppercase leading-none">MICRODATA</span>
-                    <span class="text-[10px] font-medium text-slate-400 leading-none mt-1">Indonesia</span>
-                </div>
+            <!-- Brand Logo Inside Sidebar (Gantikan Logo 'M' Teks ke Gambar Logo Microdata) -->
+            <div class="p-3.5 rounded-2xl bg-slate-950/80 border border-slate-800/80 backdrop-blur-xl flex items-center justify-center shadow-md">
+                <img src="{{ asset('images/microdata-logo.webp') }}" 
+                     alt="Microdata Indonesia" 
+                     class="h-9 w-auto object-contain">
             </div>
 
             <!-- Navigation Links -->
