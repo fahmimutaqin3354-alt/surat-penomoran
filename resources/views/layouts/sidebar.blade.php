@@ -61,21 +61,21 @@
             </a>
 
             <!-- Arsip Surat -->
-            <a href="#" 
+            <a href="{{ route('arsip.index') }}" 
                class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900/80 font-medium text-sm transition">
                 <i class="fa-solid fa-box-archive text-base w-5 text-center"></i>
                 <span>Arsip Surat</span>
             </a>
 
-            <!-- Kelola User -->
-            <a href="#" 
+            <!-- Pengaturan Akun -->
+            <a href="{{ route('akun.index') }}" 
                class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900/80 font-medium text-sm transition">
                 <i class="fa-solid fa-users text-base w-5 text-center"></i>
-                <span>Kelola User</span>
+                <span>Pengaturan Akun</span>
             </a>
 
             <!-- Laporan -->
-            <a href="#" 
+            <a href="{{ route('laporan.index') }}" 
                class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900/80 font-medium text-sm transition">
                 <i class="fa-solid fa-file-lines text-base w-5 text-center"></i>
                 <span>Laporan</span>
