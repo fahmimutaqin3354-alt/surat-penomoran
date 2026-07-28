@@ -6,6 +6,7 @@ use App\Models\SuratKeluar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Models\SuratMasuk;
 
 class SuratKeluarController extends Controller
 {
@@ -22,10 +23,16 @@ class SuratKeluarController extends Controller
     /**
      * Menampilkan form tambah surat
      */
-    public function create()
-    {
-        return view('surat_keluar.create');
+    public function create(Request $request)
+{
+    $suratMasuk = null;
+
+    if ($request->filled('surat_masuk')) {
+        $suratMasuk = SuratMasuk::findOrFail($request->surat_masuk);
     }
+
+    return view('surat_keluar.create', compact('suratMasuk'));
+}
 
     /**
      * Generate Nomor Surat Otomatis
@@ -115,6 +122,7 @@ class SuratKeluarController extends Controller
             'status' => $request->status,
 
             'file_surat' => $namaFile,
+            'surat_masuk_id' => $request->surat_masuk_id,
 
             'user_id' => Auth::id(),
 

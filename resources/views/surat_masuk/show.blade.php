@@ -321,6 +321,15 @@
 
                 </a>
 
+                <a href="{{ route('surat_keluar.create', ['surat_masuk' => $surat->id]) }}"
+   class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 rounded-xl text-white font-semibold">
+
+    <i class="fa-solid fa-reply"></i>
+
+    Buat Surat Balasan
+
+</a>
+
             </div>
 
         </div>

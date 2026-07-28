@@ -82,6 +82,12 @@
                 enctype="multipart/form-data">
 
                 @csrf
+            @if($suratMasuk)
+    <input
+        type="hidden"
+        name="surat_masuk_id"
+        value="{{ $suratMasuk->id }}">
+@endif
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
@@ -147,7 +153,7 @@
     <input
         type="text"
         name="tujuan"
-        value="{{ old('tujuan') }}"
+        value="{{ old('tujuan', $suratMasuk?->asal_surat) }}"
         required
         placeholder="Masukkan tujuan surat"
         class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
@@ -164,7 +170,7 @@
     <input
         type="text"
         name="perihal"
-        value="{{ old('perihal') }}"
+        value="{{ old('perihal', $suratMasuk ? 'Re: '.$suratMasuk->perihal : '') }}"
         required
         placeholder="Masukkan perihal"
         class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
