@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    
+
     <title>@yield('title', 'Dashboard') - Sistem Arsip Surat</title>
 
     <!-- Tailwind CSS CDN -->
@@ -51,7 +51,7 @@
             <button id="toggleSidebar" aria-label="Toggle Navigation" class="md:hidden text-slate-400 hover:text-white p-2 rounded-lg hover:bg-slate-800/60 transition">
                 <i class="fa-solid fa-bars text-lg"></i>
             </button>
-            
+
             <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5">
                 <i class="fa-solid fa-box-archive text-indigo-500 text-xl"></i>
                 <span class="font-bold text-lg tracking-tight text-white hidden sm:inline">Sistem Arsip Surat</span>
@@ -64,7 +64,7 @@
                 <div class="w-7 h-7 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center font-bold text-xs uppercase">
                     {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}
                 </div>
-                <span class="text-sm font-medium text-slate-200 hidden sm:inline">{{ Auth::user()->name ?? 'User' }}</span>
+                <span class="text-sm font-medium text-slate-200 hidden xs:inline">{{ Auth::user()->name ?? 'User' }}</span>
                 <form method="POST" action="{{ route('logout') }}" class="inline">
                     @csrf
                     <button type="submit" title="Logout" class="text-slate-400 hover:text-rose-400 transition-colors ml-1 p-1">
@@ -81,9 +81,9 @@
     <!-- Sidebar Navigation -->
     <aside id="sidebar" class="fixed top-16 left-0 bottom-0 w-64 bg-slate-900/90 backdrop-blur-xl border-r border-slate-800/80 z-30 transition-transform -translate-x-full md:translate-x-0 overflow-y-auto">
         <div class="p-4 space-y-6">
-            
-            <!-- Brand Logo -->
-            <div class="p-3 rounded-2xl bg-slate-950/80 border border-slate-800/80 backdrop-blur-xl flex items-center justify-center shadow-md">
+
+            <!-- Brand Logo Inside Sidebar (Gantikan Logo 'M' Teks ke Gambar Logo Microdata) -->
+            <div class="p-3.5 rounded-2xl bg-slate-950/80 border border-slate-800/80 backdrop-blur-xl flex items-center justify-center shadow-md">
                 <img src="{{ asset('images/microdata-logo.webp') }}" 
                      alt="Microdata Indonesia" 
                      class="h-9 w-auto object-contain">
@@ -93,44 +93,44 @@
             <nav class="space-y-1">
 
                 <!-- Dashboard -->
-                <a href="{{ route('dashboard') }}" 
+                <a href="{{ route('dashboard') }}"
                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->routeIs('dashboard') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50' }}">
                     <i class="fa-solid fa-chart-pie w-5 text-center"></i>
                     <span>Dashboard</span>
                 </a>
 
                 <!-- Surat Masuk -->
-                <a href="{{ route('surat_masuk.index') }}" 
+                <a href="{{ route('surat_masuk.index') }}"
                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->routeIs('surat_masuk.*') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50' }}">
                     <i class="fa-solid fa-inbox w-5 text-center"></i>
                     <span>Surat Masuk</span>
                 </a>
 
                 <!-- Surat Keluar -->
-                <a href="{{ route('surat_keluar.index') }}" 
+                <a href="{{ route('surat_keluar.index') }}"
                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->routeIs('surat_keluar.*') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50' }}">
                     <i class="fa-solid fa-paper-plane w-5 text-center"></i>
                     <span>Surat Keluar</span>
                 </a>
 
                 <!-- Arsip Surat -->
-                <a href="#" 
+                <a href="#"
                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 transition-all">
                     <i class="fa-solid fa-box-archive w-5 text-center"></i>
                     <span>Arsip Surat</span>
                 </a>
 
                 <!-- Kelola User -->
-                <a href="#" 
+                <a href="#"
                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 transition-all">
                     <i class="fa-solid fa-users w-5 text-center"></i>
                     <span>Kelola User</span>
                 </a>
 
                 <!-- Laporan -->
-                <a href="#" 
+                <a href="#"
                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 transition-all">
-                    <i class="fa-solid fa-file-lines w-5 text-center"></i>
+                    <i class="fa-solid fa-file-chart-column w-5 text-center"></i>
                     <span>Laporan</span>
                 </a>
 
@@ -145,23 +145,26 @@
         </div>
     </main>
 
-    <!-- Mobile Sidebar Toggle Script -->
+    <!-- Mobile Sidebar Backdrop & Toggle Script -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const toggleBtn = document.getElementById('toggleSidebar');
-            const sidebar = document.getElementById('sidebar');
-            const backdrop = document.getElementById('sidebarBackdrop');
+        const toggleBtn = document.getElementById('toggleSidebar');
+        const sidebar = document.getElementById('sidebar');
+        const backdrop = document.getElementById('sidebarBackdrop');
 
-            function toggleMenu() {
-                if (sidebar && backdrop) {
-                    sidebar.classList.toggle('-translate-x-full');
-                    backdrop.classList.toggle('hidden');
-                }
+        function toggleMenu() {
+            if (sidebar && backdrop) {
+                sidebar.classList.toggle('-translate-x-full');
+                backdrop.classList.toggle('hidden');
             }
+        }
 
-            if (toggleBtn) toggleBtn.addEventListener('click', toggleMenu);
-            if (backdrop) backdrop.addEventListener('click', toggleMenu);
-        });
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', toggleMenu);
+        }
+
+        if (backdrop) {
+            backdrop.addEventListener('click', toggleMenu);
+        }
     </script>
 
     <!-- Flash Alert Handler (SweetAlert2) -->
@@ -170,7 +173,7 @@
             Swal.fire({
                 icon: 'success',
                 title: 'Berhasil!',
-                text: @json(session('success')),
+                text: "{{ session('success') }}",
                 background: '#0f172a',
                 color: '#f8fafc',
                 confirmButtonColor: '#6366f1'
@@ -181,7 +184,7 @@
             Swal.fire({
                 icon: 'error',
                 title: 'Gagal!',
-                text: @json(session('error')),
+                text: "{{ session('error') }}",
                 background: '#0f172a',
                 color: '#f8fafc',
                 confirmButtonColor: '#6366f1'

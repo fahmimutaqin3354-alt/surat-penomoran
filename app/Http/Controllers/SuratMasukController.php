@@ -12,13 +12,21 @@ class SuratMasukController extends Controller
     /**
      * Menampilkan daftar surat masuk
      */
-    public function index()
-    {
-        $surat = SuratMasuk::latest()->paginate(10);
+    public function index(Request $request)
+{
+    $query = SuratMasuk::query();
 
-        return view('surat_masuk.index', compact('surat'));
+    if ($request->filled('search')) {
+        $query->where('nomor_agenda', 'like', '%' . $request->search . '%')
+              ->orWhere('nomor_surat', 'like', '%' . $request->search . '%')
+              ->orWhere('asal_surat', 'like', '%' . $request->search . '%')
+              ->orWhere('perihal', 'like', '%' . $request->search . '%');
     }
 
+    $surat = $query->latest()->paginate(10)->withQueryString();
+
+    return view('surat_masuk.index', compact('surat'));
+}
     /**
      * Form tambah surat
      */
@@ -41,49 +49,56 @@ class SuratMasukController extends Controller
      * Simpan surat baru
      */
     public function store(Request $request)
-    {
-        $request->validate([
-            'nomor_agenda'   => 'required|unique:surat_masuks',
-            'nomor_surat'    => 'required',
-            'tanggal_surat'  => 'required|date',
-            'tanggal_terima' => 'required|date',
-            'pengirim'       => 'required',
-            'perihal'        => 'required',
-            'isi_ringkas'    => 'nullable',
-            'status'         => 'required',
-            'file_surat'     => 'nullable|mimes:pdf|max:2048',
-        ]);
+{
+    $request->validate([
+        'nomor_agenda'   => 'required|unique:surat_masuks',
+        'nomor_surat'    => 'required|string|max:255',
+        'tanggal_surat'  => 'required|date',
+        'tanggal_terima' => 'required|date',
+        'asal_surat'     => 'required|string|max:255',
+        'jenis_surat'    => 'required|string|max:255',
+        'perihal'        => 'required|string|max:255',
+        'isi_ringkas'    => 'nullable|string',
+        'lampiran'       => 'nullable|string|max:255',
+        'keterangan'     => 'nullable|string',
+        'status'         => 'required|in:Baru,Diproses,Selesai',
+        'file_surat'     => 'nullable|mimes:pdf|max:2048',
+    ]);
 
-        $namaFile = null;
+    $namaFile = null;
 
-        if ($request->hasFile('file_surat')) {
+    if ($request->hasFile('file_surat')) {
 
-            $namaFile = time().'_'.$request->file('file_surat')->getClientOriginalName();
+        $namaFile = time() . '_' .
+            $request->file('file_surat')->getClientOriginalName();
 
-            $request->file('file_surat')->storeAs(
-                'surat_masuk',
-                $namaFile,
-                'public'
-            );
-        }
-
-        SuratMasuk::create([
-            'nomor_agenda'   => $request->nomor_agenda,
-            'nomor_surat'    => $request->nomor_surat,
-            'tanggal_surat'  => $request->tanggal_surat,
-            'tanggal_terima' => $request->tanggal_terima,
-            'pengirim'       => $request->pengirim,
-            'perihal'        => $request->perihal,
-            'isi_ringkas'    => $request->isi_ringkas,
-            'status'         => $request->status,
-            'file_surat'     => $namaFile,
-            'user_id'        => Auth::id(),
-        ]);
-
-        return redirect()
-            ->route('surat_masuk.index')
-            ->with('success', 'Surat masuk berhasil ditambahkan.');
+        $request->file('file_surat')->storeAs(
+            'surat_masuk',
+            $namaFile,
+            'public'
+        );
     }
+
+    SuratMasuk::create([
+        'nomor_agenda'   => $request->nomor_agenda,
+        'nomor_surat'    => $request->nomor_surat,
+        'tanggal_surat'  => $request->tanggal_surat,
+        'tanggal_terima' => $request->tanggal_terima,
+        'asal_surat'     => $request->asal_surat,
+        'jenis_surat'    => $request->jenis_surat,
+        'perihal'        => $request->perihal,
+        'isi_ringkas'    => $request->isi_ringkas,
+        'lampiran'       => $request->lampiran,
+        'keterangan'     => $request->keterangan,
+        'status'         => $request->status,
+        'file_surat'     => $namaFile,
+        'user_id'        => Auth::id(),
+    ]);
+
+    return redirect()
+        ->route('surat_masuk.index')
+        ->with('success', 'Surat masuk berhasil ditambahkan.');
+}
 
     /**
      * Detail surat
@@ -108,59 +123,65 @@ class SuratMasukController extends Controller
     /**
      * Update surat
      */
-    public function update(Request $request, string $id)
-    {
-        $surat = SuratMasuk::findOrFail($id);
+   public function update(Request $request, string $id)
+{
+    $surat = SuratMasuk::findOrFail($id);
 
-        $request->validate([
-            'nomor_agenda'   => 'required|unique:surat_masuks,nomor_agenda,'.$surat->id,
-            'nomor_surat'    => 'required',
-            'tanggal_surat'  => 'required|date',
-            'tanggal_terima' => 'required|date',
-            'pengirim'       => 'required',
-            'perihal'        => 'required',
-            'isi_ringkas'    => 'nullable',
-            'status'         => 'required',
-            'file_surat'     => 'nullable|mimes:pdf|max:2048',
-        ]);
+    $request->validate([
+        'nomor_agenda'   => 'required|unique:surat_masuks,nomor_agenda,' . $surat->id,
+        'nomor_surat'    => 'required|string|max:255',
+        'tanggal_surat'  => 'required|date',
+        'tanggal_terima' => 'required|date',
+        'asal_surat'     => 'required|string|max:255',
+        'jenis_surat'    => 'required|string|max:255',
+        'perihal'        => 'required|string|max:255',
+        'isi_ringkas'    => 'nullable|string',
+        'lampiran'       => 'nullable|string|max:255',
+        'keterangan'     => 'nullable|string',
+        'status'         => 'required|in:Baru,Diproses,Selesai',
+        'file_surat'     => 'nullable|mimes:pdf|max:2048',
+    ]);
 
-        $namaFile = $surat->file_surat;
+    $namaFile = $surat->file_surat;
 
-        if ($request->hasFile('file_surat')) {
+    if ($request->hasFile('file_surat')) {
 
-            if ($surat->file_surat &&
-                Storage::disk('public')->exists('surat_masuk/'.$surat->file_surat)) {
-
-                Storage::disk('public')->delete('surat_masuk/'.$surat->file_surat);
-
-            }
-
-            $namaFile = time().'_'.$request->file('file_surat')->getClientOriginalName();
-
-            $request->file('file_surat')->storeAs(
-                'surat_masuk',
-                $namaFile,
-                'public'
-            );
+        if (
+            $surat->file_surat &&
+            Storage::disk('public')->exists('surat_masuk/' . $surat->file_surat)
+        ) {
+            Storage::disk('public')->delete('surat_masuk/' . $surat->file_surat);
         }
 
-        $surat->update([
-            'nomor_agenda'   => $request->nomor_agenda,
-            'nomor_surat'    => $request->nomor_surat,
-            'tanggal_surat'  => $request->tanggal_surat,
-            'tanggal_terima' => $request->tanggal_terima,
-            'pengirim'       => $request->pengirim,
-            'perihal'        => $request->perihal,
-            'isi_ringkas'    => $request->isi_ringkas,
-            'status'         => $request->status,
-            'file_surat'     => $namaFile,
-        ]);
+        $namaFile = time() . '_' .
+            $request->file('file_surat')->getClientOriginalName();
 
-        return redirect()
-            ->route('surat_masuk.index')
-            ->with('success', 'Surat masuk berhasil diperbarui.');
+        $request->file('file_surat')->storeAs(
+            'surat_masuk',
+            $namaFile,
+            'public'
+        );
     }
 
+    $surat->update([
+        'nomor_agenda'   => $request->nomor_agenda,
+        'nomor_surat'    => $request->nomor_surat,
+        'tanggal_surat'  => $request->tanggal_surat,
+        'tanggal_terima' => $request->tanggal_terima,
+        'asal_surat'     => $request->asal_surat,
+        'jenis_surat'    => $request->jenis_surat,
+        'perihal'        => $request->perihal,
+        'isi_ringkas'    => $request->isi_ringkas,
+        'lampiran'       => $request->lampiran,
+        'keterangan'     => $request->keterangan,
+        'status'         => $request->status,
+        'file_surat'     => $namaFile,
+    ]);
+
+    return redirect()
+        ->route('surat_masuk.index')
+        ->with('success', 'Surat masuk berhasil diperbarui.');
+}
     /**
      * Hapus surat
      */
