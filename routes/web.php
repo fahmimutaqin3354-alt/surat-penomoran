@@ -6,6 +6,9 @@ use App\Http\Controllers\SuratKeluarController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\ArsipController;
 use App\Http\Controllers\LaporanController;
+use App\Models\SuratMasuk;
+use App\Models\SuratKeluar;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -14,8 +17,42 @@ Route::get('/', function () {
 
 Route::middleware(['auth'])->group(function () {
 
+    // Route Dashboard yang sudah diperbaiki (Menghitung data secara dinamis)
     Route::get('/dashboard', function () {
-        return view('dashboard');
+        // 1. Hitung total data
+        $totalSuratMasuk  = SuratMasuk::count();
+        $totalSuratKeluar = class_exists(SuratKeluar::class) ? SuratKeluar::count() : 0;
+        $totalArsip       = $totalSuratMasuk + $totalSuratKeluar;
+        $totalPengguna    = class_exists(User::class) ? User::count() : 0;
+
+        // 2. Ambil 5 data surat masuk terbaru untuk tabel dashboard
+        $suratTerbaru = SuratMasuk::latest()->take(5)->get();
+
+        // 3. Olah data grafik 6 bulan terakhir
+        $chartLabels = [];
+        $chartData   = [];
+
+        for ($i = 5; $i >= 0; $i--) {
+            $date = now()->subMonths($i);
+            $chartLabels[] = $date->translatedFormat('M Y');
+
+            $count = SuratMasuk::whereYear('created_at', $date->year)
+                ->whereMonth('created_at', $date->month)
+                ->count();
+
+            $chartData[] = $count;
+        }
+
+        // 4. Kirim data ke view dashboard
+        return view('dashboard', compact(
+            'totalSuratMasuk',
+            'totalSuratKeluar',
+            'totalArsip',
+            'totalPengguna',
+            'suratTerbaru',
+            'chartLabels',
+            'chartData'
+        ));
     })->name('dashboard');
 
     // Surat Masuk
