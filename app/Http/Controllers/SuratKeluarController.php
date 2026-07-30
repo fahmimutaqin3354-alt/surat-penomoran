@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\SuratKeluar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Models\SuratMasuk;
+
 
 class SuratKeluarController extends Controller
 {
@@ -250,5 +252,20 @@ public function preview($id)
     $surat = SuratKeluar::findOrFail($id);
 
     return view('surat_keluar.preview', compact('surat'));
+}
+
+public function downloadPdf($id)
+{
+    $surat = SuratKeluar::findOrFail($id);
+
+    $pdf = Pdf::loadView('surat_keluar.pdf', compact('surat'));
+
+    $namaFile = 'Surat-' . str_replace(
+        ['/', '\\'],
+        '-',
+        $surat->nomor_surat
+    ) . '.pdf';
+
+    return $pdf->download($namaFile);
 }
 }

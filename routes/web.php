@@ -27,6 +27,10 @@ Route::middleware(['auth'])->group(function () {
     // Preview Surat Keluar
     Route::get('/surat_keluar/{id}/preview', [SuratKeluarController::class, 'preview'])
         ->name('surat_keluar.preview');
+    Route::get(
+    '/surat_keluar/{id}/pdf',
+    [SuratKeluarController::class, 'downloadPdf']
+)->name('surat_keluar.pdf');
 
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
