@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Arsip;
 use App\Models\SuratKeluar;
 use App\Exports\LaporanExport;
+use App\Mail\LaporanMail;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -74,6 +76,44 @@ class LaporanController extends Controller
             new LaporanExport($daftarSurat),
             'laporan-surat-' . now()->format('Y-m-d') . '.xlsx'
         );
+    }
+
+     public function exportPdfPublic(Request $request)
+    {
+        return $this->exportPdf($request);
+    }
+ 
+   public function sendEmail(Request $request)
+    {
+        $request->validate([
+            'email'       => 'required|email',
+            'lampiran'    => 'required|array|min:1',
+            'lampiran.*'  => 'file|mimes:pdf,xlsx,xls|max:10240', // maks 10MB per file
+        ]);
+ 
+        // Data ringkasan tetap dihitung untuk ISI email (bukan lampirannya),
+        // supaya body email tetap menampilkan angka Total Surat, dst.
+        [$dari, $sampai] = $this->rentangTanggal($request);
+        $ringkasan        = $this->hitungRingkasan($dari, $sampai);
+ 
+        // Baca isi setiap file yang diupload admin ke memory,
+        // supaya bisa dilampirkan ke email.
+        $lampiran = [];
+        foreach ($request->file('lampiran') as $file) {
+            $lampiran[] = [
+                'nama' => $file->getClientOriginalName(),
+                'mime' => $file->getMimeType(),
+                'isi'  => file_get_contents($file->getRealPath()),
+            ];
+        }
+ 
+        Mail::to($request->email)->send(
+            new LaporanMail($ringkasan, $dari, $sampai, $lampiran)
+        );
+ 
+        $namaFile = collect($lampiran)->pluck('nama')->implode(', ');
+ 
+        return back()->with('success', "Laporan ({$namaFile}) berhasil dikirim ke {$request->email}");
     }
 
     // ===================== HELPER: FILTER TANGGAL =====================
