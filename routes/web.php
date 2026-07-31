@@ -56,3 +56,4 @@ Route::get('/arsip/export', [ArsipController::class, 'ekspor'])->name('arsip.exp
 });
 
 require __DIR__.'/auth.php';
+

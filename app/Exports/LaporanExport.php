@@ -2,25 +2,24 @@
 
 namespace App\Exports;
 
-use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
-use Maatwebsite\Excel\Concerns\WithStyles;
-use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Carbon\Carbon;
 
-class LaporanExport implements FromCollection, WithHeadings, WithMapping, WithStyles
+class LaporanExport implements FromCollection, WithHeadings, WithMapping, ShouldAutoSize
 {
-    protected Collection $data;
+    protected $data;
 
-    public function __construct(Collection $data)
+    public function __construct($data)
     {
         $this->data = $data;
     }
 
     public function collection()
     {
-        return $this->data;
+        return collect($this->data);
     }
 
     public function headings(): array
@@ -30,7 +29,7 @@ class LaporanExport implements FromCollection, WithHeadings, WithMapping, WithSt
             'Nomor Surat',
             'Jenis',
             'Perihal / Keterangan',
-            'Tanggal Surat',
+            'Tanggal',
             'Status',
         ];
     }
@@ -42,18 +41,11 @@ class LaporanExport implements FromCollection, WithHeadings, WithMapping, WithSt
 
         return [
             $no,
-            $surat['nomor_surat'],
-            $surat['jenis'],
-            $surat['keterangan'],
-            \Carbon\Carbon::parse($surat['tanggal'])->translatedFormat('d M Y'),
-            $surat['status'],
-        ];
-    }
-
-    public function styles(Worksheet $sheet)
-    {
-        return [
-            1 => ['font' => ['bold' => true]],
+            $surat['nomor_surat'] ?? '-',
+            ucfirst($surat['jenis'] ?? '-'),
+            $surat['keterangan'] ?? '-',
+            isset($surat['tanggal']) ? Carbon::parse($surat['tanggal'])->translatedFormat('d M Y') : '-',
+            ucfirst($surat['status'] ?? '-'),
         ];
     }
 }
