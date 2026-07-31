@@ -37,8 +37,11 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Arsip Surat
-    Route::resource('arsip', ArsipController::class);
+  // Arsip Surat
+Route::get('/arsip', [ArsipController::class, 'index'])->name('arsip.index');
+Route::get('/arsip/{id}', [ArsipController::class, 'show'])->name('arsip.show');
+Route::delete('/arsip/{id}', [ArsipController::class, 'destroy'])->name('arsip.destroy');
+Route::get('/arsip/export', [ArsipController::class, 'ekspor'])->name('arsip.export');
 
     // Pengaturan Akun
     Route::get('/akun', [AccountController::class, 'edit'])->name('akun.index');
