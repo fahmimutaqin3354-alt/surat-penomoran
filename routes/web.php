@@ -6,9 +6,6 @@ use App\Http\Controllers\SuratKeluarController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\ArsipController;
 use App\Http\Controllers\LaporanController;
-use App\Models\SuratMasuk;
-use App\Models\SuratKeluar;
-use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -17,70 +14,51 @@ Route::get('/', function () {
 
 Route::middleware(['auth'])->group(function () {
 
-    // ======================= DASHBOARD =======================
     Route::get('/dashboard', function () {
-        // 1. Hitung total data
-        $totalSuratMasuk  = SuratMasuk::count();
-        $totalSuratKeluar = class_exists(SuratKeluar::class) ? SuratKeluar::count() : 0;
-        $totalArsip       = $totalSuratMasuk + $totalSuratKeluar;
-        $totalPengguna    = class_exists(User::class) ? User::count() : 0;
-
-        // 2. Ambil 5 data surat masuk terbaru untuk tabel dashboard
-        $suratTerbaru = SuratMasuk::latest()->take(5)->get();
-
-        // 3. Olah data grafik 6 bulan terakhir
-        $chartLabels = [];
-        $chartData   = [];
-
-        for ($i = 5; $i >= 0; $i--) {
-            $date = now()->subMonths($i);
-            $chartLabels[] = $date->translatedFormat('M Y');
-
-            $count = SuratMasuk::whereYear('created_at', $date->year)
-                ->whereMonth('created_at', $date->month)
-                ->count();
-
-            $chartData[] = $count;
-        }
-
-        // 4. Kirim data ke view dashboard
-        return view('dashboard', compact(
-            'totalSuratMasuk',
-            'totalSuratKeluar',
-            'totalArsip',
-            'totalPengguna',
-            'suratTerbaru',
-            'chartLabels',
-            'chartData'
-        ));
+        return view('dashboard');
     })->name('dashboard');
 
-    // ======================= SURAT MASUK =======================
+    Route::post('/laporan/kirim-email', [LaporanController::class, 'sendEmail'])
+    ->name('laporan.send.email');
+
+    // Surat Masuk
     Route::resource('surat_masuk', SuratMasukController::class);
 
-    // ======================= SURAT KELUAR =======================
+    // Surat Keluar
     Route::resource('surat_keluar', SuratKeluarController::class);
+
+    // Preview Surat Keluar
     Route::get('/surat_keluar/{id}/preview', [SuratKeluarController::class, 'preview'])
         ->name('surat_keluar.preview');
+    Route::get(
+    '/surat_keluar/{id}/pdf',
+    [SuratKeluarController::class, 'downloadPdf']
+)->name('surat_keluar.pdf');
 
-    // ======================= PROFILE =======================
+    // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // ======================= ARSIP SURAT =======================
-    Route::resource('arsip', ArsipController::class);
+  // Arsip Surat
+Route::get('/arsip', [ArsipController::class, 'index'])->name('arsip.index');
+Route::get('/arsip/{id}', [ArsipController::class, 'show'])->name('arsip.show');
+Route::delete('/arsip/{id}', [ArsipController::class, 'destroy'])->name('arsip.destroy');
+Route::get('/arsip/export', [ArsipController::class, 'ekspor'])->name('arsip.export');
 
-    // ======================= PENGATURAN AKUN =======================
+    // Pengaturan Akun
     Route::get('/akun', [AccountController::class, 'edit'])->name('akun.index');
     Route::put('/akun', [AccountController::class, 'update'])->name('akun.update');
     Route::put('/akun/password', [AccountController::class, 'updatePassword'])->name('akun.password');
 
-    // ======================= LAPORAN =======================
+    // Laporan
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
-    Route::get('/laporan/export/pdf', [LaporanController::class, 'exportPdf'])->name('laporan.export.pdf');
-    Route::get('/laporan/export/excel', [LaporanController::class, 'exportExcel'])->name('laporan.export.excel');
+    Route::get('/laporan/export-pdf', [LaporanController::class, 'exportPdf'])->name('laporan.export.pdf');
+    Route::get('/laporan/export-excel', [LaporanController::class, 'exportExcel'])->name('laporan.export.excel');
+    Route::get('/laporan/unduh-publik', [LaporanController::class, 'exportPdfPublic'])
+    ->name('laporan.export.pdf.public')
+    ->middleware('signed');
 
-}); // <-- Penutup middleware group 'auth'
+});
 
 require __DIR__.'/auth.php';

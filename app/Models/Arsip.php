@@ -9,19 +9,57 @@ class Arsip extends Model
     protected $table = 'arsips';
 
     protected $fillable = [
-        'no_surat',
+
+        'surat_masuk_id',
+
+        'surat_keluar_id',
+
+        'nomor_surat',
+
         'jenis',
-        'judul',
+
+        'jenis_surat',
+
+        'perihal',
+
         'pengirim_penerima',
+
         'tanggal_surat',
-        'tahun',
-        'kategori',
-        'status',
-        'arsip_oleh',
+
         'lampiran',
+
+        'file_surat',
+
+        'status',
+
+        'user_id',
+
     ];
 
     protected $casts = [
+
         'tanggal_surat' => 'date',
+
     ];
+
+    /*
+    |--------------------------------------------------------------------------
+    | Relasi
+    |--------------------------------------------------------------------------
+    */
+
+    public function suratMasuk()
+    {
+        return $this->belongsTo(SuratMasuk::class);
+    }
+
+    public function suratKeluar()
+    {
+        return $this->belongsTo(SuratKeluar::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
