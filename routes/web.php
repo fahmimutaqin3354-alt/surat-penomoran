@@ -17,7 +17,7 @@ Route::get('/', function () {
 
 Route::middleware(['auth'])->group(function () {
 
-    // Route Dashboard yang sudah diperbaiki (Menghitung data secara dinamis)
+    // ======================= DASHBOARD =======================
     Route::get('/dashboard', function () {
         // 1. Hitung total data
         $totalSuratMasuk  = SuratMasuk::count();
@@ -55,34 +55,32 @@ Route::middleware(['auth'])->group(function () {
         ));
     })->name('dashboard');
 
-    // Surat Masuk
+    // ======================= SURAT MASUK =======================
     Route::resource('surat_masuk', SuratMasukController::class);
 
-    // Surat Keluar
+    // ======================= SURAT KELUAR =======================
     Route::resource('surat_keluar', SuratKeluarController::class);
-
-    // Preview Surat Keluar
     Route::get('/surat_keluar/{id}/preview', [SuratKeluarController::class, 'preview'])
         ->name('surat_keluar.preview');
 
-    // Profile
+    // ======================= PROFILE =======================
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Arsip Surat
+    // ======================= ARSIP SURAT =======================
     Route::resource('arsip', ArsipController::class);
 
-    // Pengaturan Akun
+    // ======================= PENGATURAN AKUN =======================
     Route::get('/akun', [AccountController::class, 'edit'])->name('akun.index');
     Route::put('/akun', [AccountController::class, 'update'])->name('akun.update');
     Route::put('/akun/password', [AccountController::class, 'updatePassword'])->name('akun.password');
 
-    // Laporan
+    // ======================= LAPORAN =======================
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
-    Route::get('/laporan/export-pdf', [LaporanController::class, 'exportPdf'])->name('laporan.export.pdf');
-    Route::get('/laporan/export-excel', [LaporanController::class, 'exportExcel'])->name('laporan.export.excel');
+    Route::get('/laporan/export/pdf', [LaporanController::class, 'exportPdf'])->name('laporan.export.pdf');
+    Route::get('/laporan/export/excel', [LaporanController::class, 'exportExcel'])->name('laporan.export.excel');
 
-});
+}); // <-- Penutup middleware group 'auth'
 
 require __DIR__.'/auth.php';
