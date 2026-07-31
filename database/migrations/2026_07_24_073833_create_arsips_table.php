@@ -12,21 +12,56 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('arsips', function (Blueprint $table) {
+
             $table->id();
-            $table->string('no_surat')->unique();
-            $table->enum('jenis', ['masuk', 'keluar']);
-            $table->string('judul');
+
+            // Relasi ke surat masuk (opsional)
+            $table->foreignId('surat_masuk_id')
+                ->nullable()
+                ->constrained('surat_masuks')
+                ->cascadeOnDelete();
+
+            // Relasi ke surat keluar (opsional)
+            $table->foreignId('surat_keluar_id')
+                ->nullable()
+                ->constrained('surat_keluars')
+                ->cascadeOnDelete();
+
+            // Informasi surat
+            $table->string('nomor_surat')->unique();
+
+            $table->enum('jenis', [
+                'Surat Masuk',
+                'Surat Keluar'
+            ]);
+
+            $table->string('jenis_surat');
+
+            $table->string('perihal');
+
+            // Asal surat (Surat Masuk) atau Tujuan (Surat Keluar)
             $table->string('pengirim_penerima');
+
             $table->date('tanggal_surat');
-            $table->year('tahun');
-            $table->string('kategori')->nullable();
-            $table->string('status')->default('Arsip');
-            $table->string('arsip_oleh')->nullable();
+
             $table->string('lampiran')->nullable();
+
+            $table->string('file_surat')->nullable();
+
+            $table->enum('status', [
+                'Baru',
+                'Diproses',
+                'Draft',
+                'Dikirim',
+                'Selesai'
+            ]);
+
+            $table->foreignId('user_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
             $table->timestamps();
 
-            $table->index(['jenis', 'tahun']);
-            $table->index('status');
         });
     }
 
