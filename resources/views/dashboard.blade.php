@@ -11,7 +11,6 @@
         <div class="absolute -right-10 -bottom-10 w-60 h-60 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
         <div class="space-y-3 relative z-10">
-            <!-- Tag Section (Logo Microdata dihapus dari sini) -->
             <div class="flex items-center gap-3 flex-wrap">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold uppercase tracking-wider">
                     <i class="fa-solid fa-chart-pie"></i>
@@ -30,7 +29,7 @@
         <div class="flex items-center gap-3 relative z-10">
             <div class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-950/80 border border-slate-800 text-slate-300 text-sm font-medium shadow-inner">
                 <i class="fa-regular fa-calendar-days text-indigo-400"></i>
-                <span>{{ now()->format('d M Y') }}</span>
+                <span>{{ now()->translatedFormat('d M Y') }}</span>
             </div>
         </div>
     </div>
@@ -43,17 +42,16 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Surat Masuk</p>
-                    <h3 class="text-3xl font-extrabold text-white mt-2 group-hover:text-indigo-400 transition-colors">120</h3>
+                    <h3 class="text-3xl font-extrabold text-white mt-2 group-hover:text-indigo-400 transition-colors">
+                        {{ number_format($totalSuratMasuk ?? 0) }}
+                    </h3>
                 </div>
                 <div class="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 group-hover:scale-110 transition-transform">
                     <i class="fa-solid fa-inbox text-xl"></i>
                 </div>
             </div>
             <div class="mt-4 pt-3 border-t border-slate-800/60 flex items-center text-xs text-slate-500">
-                <span class="text-emerald-400 font-medium flex items-center gap-1">
-                    <i class="fa-solid fa-arrow-up text-[10px]"></i> +12%
-                </span>
-                <span class="ml-1.5">dibanding bulan lalu</span>
+                <span class="text-indigo-400 font-medium">Total Terdata</span>
             </div>
         </div>
 
@@ -62,17 +60,16 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Surat Keluar</p>
-                    <h3 class="text-3xl font-extrabold text-white mt-2 group-hover:text-purple-400 transition-colors">80</h3>
+                    <h3 class="text-3xl font-extrabold text-white mt-2 group-hover:text-purple-400 transition-colors">
+                        {{ number_format($totalSuratKeluar ?? 0) }}
+                    </h3>
                 </div>
                 <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 group-hover:scale-110 transition-transform">
                     <i class="fa-solid fa-paper-plane text-xl"></i>
                 </div>
             </div>
             <div class="mt-4 pt-3 border-t border-slate-800/60 flex items-center text-xs text-slate-500">
-                <span class="text-emerald-400 font-medium flex items-center gap-1">
-                    <i class="fa-solid fa-arrow-up text-[10px]"></i> +5%
-                </span>
-                <span class="ml-1.5">dibanding bulan lalu</span>
+                <span class="text-purple-400 font-medium">Total Terkirim</span>
             </div>
         </div>
 
@@ -81,7 +78,9 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Arsip Surat</p>
-                    <h3 class="text-3xl font-extrabold text-white mt-2 group-hover:text-amber-400 transition-colors">230</h3>
+                    <h3 class="text-3xl font-extrabold text-white mt-2 group-hover:text-amber-400 transition-colors">
+                        {{ number_format($totalArsip ?? 0) }}
+                    </h3>
                 </div>
                 <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 group-hover:scale-110 transition-transform">
                     <i class="fa-solid fa-box-archive text-xl"></i>
@@ -97,7 +96,9 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Pengguna</p>
-                    <h3 class="text-3xl font-extrabold text-white mt-2 group-hover:text-rose-400 transition-colors">5</h3>
+                    <h3 class="text-3xl font-extrabold text-white mt-2 group-hover:text-rose-400 transition-colors">
+                        {{ number_format($totalPengguna ?? 0) }}
+                    </h3>
                 </div>
                 <div class="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 group-hover:scale-110 transition-transform">
                     <i class="fa-solid fa-users text-xl"></i>
@@ -144,56 +145,33 @@
                 </div>
 
                 <div class="space-y-4">
-                    <!-- Item 1 -->
                     <div class="flex items-start gap-3.5">
                         <div class="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 shrink-0 mt-0.5">
-                            <i class="fa-solid fa-arrow-down text-xs"></i>
+                            <i class="fa-solid fa-server text-xs"></i>
                         </div>
                         <div class="space-y-0.5">
-                            <p class="text-sm font-medium text-slate-200">Surat masuk ditambahkan</p>
-                            <p class="text-xs text-slate-500">Baru saja &bull; Undangan Rapat</p>
-                        </div>
-                    </div>
-
-                    <!-- Item 2 -->
-                    <div class="flex items-start gap-3.5">
-                        <div class="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 shrink-0 mt-0.5">
-                            <i class="fa-solid fa-arrow-up text-xs"></i>
-                        </div>
-                        <div class="space-y-0.5">
-                            <p class="text-sm font-medium text-slate-200">Surat keluar dibuat</p>
-                            <p class="text-xs text-slate-500">2 jam yang lalu &bull; Penawaran Kerjasama</p>
-                        </div>
-                    </div>
-
-                    <!-- Item 3 -->
-                    <div class="flex items-start gap-3.5">
-                        <div class="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shrink-0 mt-0.5">
-                            <i class="fa-solid fa-folder-open text-xs"></i>
-                        </div>
-                        <div class="space-y-0.5">
-                            <p class="text-sm font-medium text-slate-200">Arsip diperbarui</p>
-                            <p class="text-xs text-slate-500">5 jam yang lalu &bull; Kategori Keuangan</p>
+                            <p class="text-sm font-medium text-slate-200">Sistem Berjalan</p>
+                            <p class="text-xs text-slate-500">Koneksi database aktif</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <a href="#" class="mt-6 block w-full text-center py-2.5 px-4 rounded-xl bg-slate-800/50 hover:bg-slate-800 border border-slate-700/50 text-xs font-semibold text-slate-300 hover:text-white transition duration-200">
-                Lihat Semua Aktivitas
+            <a href="{{ route('laporan.index') }}" class="mt-6 block w-full text-center py-2.5 px-4 rounded-xl bg-slate-800/50 hover:bg-slate-800 border border-slate-700/50 text-xs font-semibold text-slate-300 hover:text-white transition duration-200">
+                Lihat Laporan Aktivitas
             </a>
         </div>
 
     </div>
 
-    <!-- Tabel Surat Terbaru -->
+    <!-- Tabel Surat Masuk Terbaru -->
     <div class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl space-y-4">
         <div class="flex items-center justify-between pb-4 border-b border-slate-800/80">
             <div>
-                <h2 class="text-lg font-bold text-white tracking-tight">Surat Terbaru</h2>
+                <h2 class="text-lg font-bold text-white tracking-tight">Surat Masuk Terbaru</h2>
                 <p class="text-xs text-slate-400">Daftar dokumen surat yang terakhir kali ditambahkan</p>
             </div>
-            <a href="#" class="text-xs font-semibold text-indigo-400 hover:text-indigo-300 flex items-center gap-1 transition">
+            <a href="{{ route('surat_masuk.index') }}" class="text-xs font-semibold text-indigo-400 hover:text-indigo-300 flex items-center gap-1 transition">
                 <span>Selengkapnya</span>
                 <i class="fa-solid fa-chevron-right text-[10px]"></i>
             </a>
@@ -206,23 +184,42 @@
                         <th scope="col" class="px-4 py-3.5 font-semibold rounded-l-xl">No</th>
                         <th scope="col" class="px-4 py-3.5 font-semibold">Nomor Surat</th>
                         <th scope="col" class="px-4 py-3.5 font-semibold">Perihal</th>
-                        <th scope="col" class="px-4 py-3.5 font-semibold">Tanggal</th>
+                        <th scope="col" class="px-4 py-3.5 font-semibold">Tanggal Surat</th>
                         <th scope="col" class="px-4 py-3.5 font-semibold rounded-r-xl">Status</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-800/60">
-                    <tr class="hover:bg-slate-800/30 transition-colors">
-                        <td class="px-4 py-4 font-medium text-slate-400">1</td>
-                        <td class="px-4 py-4 font-semibold text-indigo-400">001/MI/VII/2026</td>
-                        <td class="px-4 py-4 text-slate-200">Surat Undangan Evaluasi Bulanan</td>
-                        <td class="px-4 py-4 text-slate-400">24 Juli 2026</td>
-                        <td class="px-4 py-4">
-                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                                Selesai
-                            </span>
-                        </td>
-                    </tr>
+                    @forelse($suratTerbaru ?? [] as $index => $surat)
+                        <tr class="hover:bg-slate-800/30 transition-colors">
+                            <td class="px-4 py-4 font-medium text-slate-400">{{ $index + 1 }}</td>
+                            <td class="px-4 py-4 font-semibold text-indigo-400">
+                                {{ $surat->nomor_surat ?? $surat->no_surat ?? '-' }}
+                            </td>
+                            <td class="px-4 py-4 text-slate-200">
+                                {{ $surat->perihal ?? '-' }}
+                            </td>
+                            <td class="px-4 py-4 text-slate-400">
+                                @if(isset($surat->tanggal_surat))
+                                    {{ \Carbon\Carbon::parse($surat->tanggal_surat)->translatedFormat('d F Y') }}
+                                @else
+                                    {{ $surat->created_at ? $surat->created_at->translatedFormat('d F Y') : '-' }}
+                                @endif
+                            </td>
+                            <td class="px-4 py-4">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                                    Tersimpan
+                                </span>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="px-4 py-8 text-center text-slate-500">
+                                <i class="fa-regular fa-folder-open text-2xl mb-2 block"></i>
+                                Belum ada data surat masuk terbaru.
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
@@ -244,13 +241,15 @@ document.addEventListener("DOMContentLoaded", function () {
     gradient.addColorStop(0, 'rgba(99, 102, 241, 0.8)'); 
     gradient.addColorStop(1, 'rgba(168, 85, 247, 0.1)'); 
 
+   const chartLabels = {{ Illuminate\Support\Js::from($chartLabels ?? ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun']) }};
+const chartData = {{ Illuminate\Support\Js::from($chartData ?? [0, 0, 0, 0, 0, 0]) }};
     new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'],
+            labels: chartLabels,
             datasets: [{
                 label: 'Jumlah Surat',
-                data: [12, 19, 10, 17, 20, 15],
+                data: chartData,
                 backgroundColor: gradient,
                 borderColor: '#6366f1',
                 borderWidth: 1.5,
@@ -281,7 +280,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 },
                 y: {
                     grid: { color: 'rgba(51, 65, 85, 0.4)', borderDash: [4, 4] },
-                    ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans, sans-serif' } },
+                    ticks: { 
+                        color: '#94a3b8', 
+                        font: { family: 'Plus Jakarta Sans, sans-serif' },
+                        precision: 0 
+                    },
                     beginAtZero: true
                 }
             }

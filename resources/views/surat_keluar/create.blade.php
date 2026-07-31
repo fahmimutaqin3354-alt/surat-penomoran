@@ -4,6 +4,15 @@
 
 @section('content')
 
+{{-- Style khusus untuk mengubah warna ikon kalender menjadi putih cerah --}}
+<style>
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(1) brightness(2) !important;
+        cursor: pointer !important;
+        opacity: 0.9 !important;
+    }
+</style>
+
 <div class="max-w-7xl mx-auto">
 
     {{-- Header --}}
@@ -82,212 +91,206 @@
                 enctype="multipart/form-data">
 
                 @csrf
-            @if($suratMasuk)
-    <input
-        type="hidden"
-        name="surat_masuk_id"
-        value="{{ $suratMasuk->id }}">
-@endif
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-{{-- Jenis Surat --}}
-<div>
-    <label class="block text-sm font-medium text-slate-300 mb-2">
-        Jenis Surat
-    </label>
+                    {{-- Jenis Surat --}}
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-2">
+                            Jenis Surat
+                        </label>
 
-    <select
-        name="jenis_surat"
-        required
-        class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                        <select
+                            name="jenis_surat"
+                            required
+                            class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
 
-        <option value="">-- Pilih Jenis Surat --</option>
+                            <option value="">-- Pilih Jenis Surat --</option>
 
-        <option value="Surat Tugas"
-            {{ old('jenis_surat') == 'Surat Tugas' ? 'selected' : '' }}>
-            Surat Tugas
-        </option>
+                            <option value="Surat Tugas"
+                                {{ old('jenis_surat') == 'Surat Tugas' ? 'selected' : '' }}>
+                                Surat Tugas
+                            </option>
 
-        <option value="Surat Undangan"
-            {{ old('jenis_surat') == 'Surat Undangan' ? 'selected' : '' }}>
-            Surat Undangan
-        </option>
+                            <option value="Surat Undangan"
+                                {{ old('jenis_surat') == 'Surat Undangan' ? 'selected' : '' }}>
+                                Surat Undangan
+                            </option>
 
-        <option value="Surat Pemberitahuan"
-            {{ old('jenis_surat') == 'Surat Pemberitahuan' ? 'selected' : '' }}>
-            Surat Pemberitahuan
-        </option>
+                            <option value="Surat Pemberitahuan"
+                                {{ old('jenis_surat') == 'Surat Pemberitahuan' ? 'selected' : '' }}>
+                                Surat Pemberitahuan
+                            </option>
 
-        <option value="Surat Permohonan"
-            {{ old('jenis_surat') == 'Surat Permohonan' ? 'selected' : '' }}>
-            Surat Permohonan
-        </option>
+                            <option value="Surat Permohonan"
+                                {{ old('jenis_surat') == 'Surat Permohonan' ? 'selected' : '' }}>
+                                Surat Permohonan
+                            </option>
 
-    </select>
-</div>
+                        </select>
+                    </div>
 
-{{-- Tanggal Surat --}}
-<div>
+                    {{-- Tanggal Surat --}}
+                    <div>
 
-    <label class="block text-sm font-medium text-slate-300 mb-2">
-        Tanggal Surat
-    </label>
+                        <label class="block text-sm font-medium text-slate-300 mb-2">
+                            Tanggal Surat
+                        </label>
 
-    <input
-        type="date"
-        name="tanggal_surat"
-        value="{{ old('tanggal_surat') }}"
-        required
-        class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                        <input
+                            type="date"
+                            name="tanggal_surat"
+                            value="{{ old('tanggal_surat') }}"
+                            required
+                            class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
 
-</div>
+                    </div>
 
-{{-- Tujuan --}}
-<div>
+                    {{-- Tujuan --}}
+                    <div>
 
-    <label class="block text-sm font-medium text-slate-300 mb-2">
-        Tujuan
-    </label>
+                        <label class="block text-sm font-medium text-slate-300 mb-2">
+                            Tujuan
+                        </label>
 
-    <input
-        type="text"
-        name="tujuan"
-        value="{{ old('tujuan', $suratMasuk?->asal_surat) }}"
-        required
-        placeholder="Masukkan tujuan surat"
-        class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                        <input
+                            type="text"
+                            name="tujuan"
+                            value="{{ old('tujuan') }}"
+                            required
+                            placeholder="Masukkan tujuan surat"
+                            class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
 
-</div>
+                    </div>
 
-{{-- Perihal --}}
-<div>
+                    {{-- Perihal --}}
+                    <div>
 
-    <label class="block text-sm font-medium text-slate-300 mb-2">
-        Perihal
-    </label>
+                        <label class="block text-sm font-medium text-slate-300 mb-2">
+                            Perihal
+                        </label>
 
-    <input
-        type="text"
-        name="perihal"
-        value="{{ old('perihal', $suratMasuk ? 'Re: '.$suratMasuk->perihal : '') }}"
-        required
-        placeholder="Masukkan perihal"
-        class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                        <input
+                            type="text"
+                            name="perihal"
+                            value="{{ old('perihal') }}"
+                            required
+                            placeholder="Masukkan perihal"
+                            class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
 
-</div>
+                    </div>
 
-{{-- Isi Surat --}}
-<div class="md:col-span-2">
+                    {{-- Isi Surat --}}
+                    <div class="md:col-span-2">
 
-    <label class="block text-sm font-medium text-slate-300 mb-2">
-        Isi Surat
-    </label>
+                        <label class="block text-sm font-medium text-slate-300 mb-2">
+                            Isi Surat
+                        </label>
 
-    <textarea
-        name="isi_surat"
-        rows="6"
-        required
-        placeholder="Tulis isi surat..."
-        class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">{{ old('isi_surat') }}</textarea>
+                        <textarea
+                            name="isi_surat"
+                            rows="6"
+                            required
+                            placeholder="Tulis isi surat..."
+                            class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">{{ old('isi_surat') }}</textarea>
 
-</div>
+                    </div>
 
-{{-- Lampiran --}}
-<div>
+                    {{-- Lampiran --}}
+                    <div>
 
-    <label class="block text-sm font-medium text-slate-300 mb-2">
-        Lampiran
-    </label>
+                        <label class="block text-sm font-medium text-slate-300 mb-2">
+                            Lampiran
+                        </label>
 
-    <input
-        type="text"
-        name="lampiran"
-        value="{{ old('lampiran') }}"
-        placeholder="Contoh : 1 Berkas"
-        class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                        <input
+                            type="text"
+                            name="lampiran"
+                            value="{{ old('lampiran') }}"
+                            placeholder="Contoh : 1 Berkas"
+                            class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
 
-</div>
+                    </div>
 
-{{-- Status --}}
-<div>
+                    {{-- Status --}}
+                    <div>
 
-    <label class="block text-sm font-medium text-slate-300 mb-2">
-        Status
-    </label>
+                        <label class="block text-sm font-medium text-slate-300 mb-2">
+                            Status
+                        </label>
 
-    <select
-        name="status"
-        required
-        class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                        <select
+                            name="status"
+                            required
+                            class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
 
-        <option value="">-- Pilih Status --</option>
+                            <option value="">-- Pilih Status --</option>
 
-        <option value="Draft"
-            {{ old('status') == 'Draft' ? 'selected' : '' }}>
-            Draft
-        </option>
+                            <option value="Draft"
+                                {{ old('status') == 'Draft' ? 'selected' : '' }}>
+                                Draft
+                            </option>
 
-        <option value="Dikirim"
-            {{ old('status') == 'Dikirim' ? 'selected' : '' }}>
-            Dikirim
-        </option>
+                            <option value="Dikirim"
+                                {{ old('status') == 'Dikirim' ? 'selected' : '' }}>
+                                Dikirim
+                            </option>
 
-        <option value="Selesai"
-            {{ old('status') == 'Selesai' ? 'selected' : '' }}>
-            Selesai
-        </option>
+                            <option value="Selesai"
+                                {{ old('status') == 'Selesai' ? 'selected' : '' }}>
+                                Selesai
+                            </option>
 
-    </select>
+                        </select>
 
-</div>
+                    </div>
 
-{{-- Penandatangan --}}
-<div>
+                    {{-- Penandatangan --}}
+                    <div>
 
-    <label class="block text-sm font-medium text-slate-300 mb-2">
-        Penandatangan
-    </label>
+                        <label class="block text-sm font-medium text-slate-300 mb-2">
+                            Penandatangan
+                        </label>
 
-    <input
-        type="text"
-        name="penandatangan"
-        value="{{ old('penandatangan') }}"
-        required
-        class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                        <input
+                            type="text"
+                            name="penandatangan"
+                            value="{{ old('penandatangan') }}"
+                            required
+                            class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
 
-</div>
+                    </div>
 
-{{-- Jabatan --}}
-<div>
+                    {{-- Jabatan --}}
+                    <div>
 
-    <label class="block text-sm font-medium text-slate-300 mb-2">
-        Jabatan Penandatangan
-    </label>
+                        <label class="block text-sm font-medium text-slate-300 mb-2">
+                            Jabatan Penandatangan
+                        </label>
 
-    <input
-        type="text"
-        name="jabatan_penandatangan"
-        value="{{ old('jabatan_penandatangan') }}"
-        required
-        class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                        <input
+                            type="text"
+                            name="jabatan_penandatangan"
+                            value="{{ old('jabatan_penandatangan') }}"
+                            required
+                            class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
 
-</div>
+                    </div>
 
-{{-- Upload PDF --}}
-<div class="md:col-span-2">
+                    {{-- Upload PDF --}}
+                    <div class="md:col-span-2">
 
-    <label class="block text-sm font-medium text-slate-300 mb-2">
-        Upload File Surat (PDF)
-    </label>
+                        <label class="block text-sm font-medium text-slate-300 mb-2">
+                            Upload File Surat (PDF)
+                        </label>
 
-    <input
-        type="file"
-        name="file_surat"
-        accept=".pdf"
-        class="block w-full text-sm text-slate-300 file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-600 file:px-4 file:py-2 file:text-white hover:file:bg-indigo-700">
+                        <input
+                            type="file"
+                            name="file_surat"
+                            accept=".pdf"
+                            class="block w-full text-sm text-slate-300 file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-600 file:px-4 file:py-2 file:text-white hover:file:bg-indigo-700">
 
-</div>
+                    </div>
 
                 </div>
 

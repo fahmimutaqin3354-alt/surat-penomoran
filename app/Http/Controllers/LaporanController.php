@@ -8,9 +8,9 @@ use App\Exports\LaporanExport;
 use App\Mail\LaporanMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
+use Carbon\Carbon;
 
 class LaporanController extends Controller
 {
@@ -26,7 +26,7 @@ class LaporanController extends Controller
             ->pluck('jumlah', 'tanggal');
 
         $trenMasuk = collect();
-        if (file_exists(app_path('Models/SuratMasuk.php'))) {
+        if (class_exists(\App\Models\SuratMasuk::class)) {
             $trenMasuk = \App\Models\SuratMasuk::whereBetween('tanggal_surat', [$dari, $sampai])
                 ->selectRaw('DATE(tanggal_surat) as tanggal, COUNT(*) as jumlah')
                 ->groupBy('tanggal')
@@ -52,11 +52,12 @@ class LaporanController extends Controller
         ]));
     }
 
+    // Direct Download PDF
     public function exportPdf(Request $request)
     {
         [$dari, $sampai] = $this->rentangTanggal($request);
-        $ringkasan        = $this->hitungRingkasan($dari, $sampai);
-        $daftarSurat       = $this->daftarSuratGabungan($dari, $sampai);
+        $ringkasan       = $this->hitungRingkasan($dari, $sampai);
+        $daftarSurat     = $this->daftarSuratGabungan($dari, $sampai);
 
         $pdf = Pdf::loadView('laporan.pdf', [
             'ringkasan' => $ringkasan,
@@ -64,18 +65,20 @@ class LaporanController extends Controller
             'periode'   => ['mulai' => $dari, 'akhir' => $sampai],
         ])->setPaper('a4', 'portrait');
 
-        return $pdf->download('laporan-surat-' . now()->format('Y-m-d') . '.pdf');
+        $filename = 'laporan-surat-' . now()->format('Ymd_His') . '.pdf';
+
+        return $pdf->download($filename);
     }
 
+    // Direct Download Excel
     public function exportExcel(Request $request)
     {
         [$dari, $sampai] = $this->rentangTanggal($request);
-        $daftarSurat       = $this->daftarSuratGabungan($dari, $sampai);
+        $daftarSurat     = $this->daftarSuratGabungan($dari, $sampai);
 
-        return Excel::download(
-            new LaporanExport($daftarSurat),
-            'laporan-surat-' . now()->format('Y-m-d') . '.xlsx'
-        );
+        $filename = 'laporan-surat-' . now()->format('Ymd_His') . '.xlsx';
+
+        return Excel::download(new LaporanExport($daftarSurat), $filename);
     }
 
      public function exportPdfPublic(Request $request)
@@ -117,7 +120,6 @@ class LaporanController extends Controller
     }
 
     // ===================== HELPER: FILTER TANGGAL =====================
-    // Sama seperti logic aslimu di index(), dipakai ulang oleh export.
     private function rentangTanggal(Request $request): array
     {
         $dari = $request->filled('dari')
@@ -132,7 +134,6 @@ class LaporanController extends Controller
     }
 
     // ===================== HELPER: RINGKASAN ANGKA =====================
-    // Persis logic aslimu di index(), dipisah supaya dipakai ulang oleh exportPdf().
     private function hitungRingkasan(Carbon $dari, Carbon $sampai): array
     {
         $suratKeluarQuery = SuratKeluar::whereBetween('tanggal_surat', [$dari, $sampai]);
@@ -143,12 +144,11 @@ class LaporanController extends Controller
         $menunggu    = (clone $suratKeluarQuery)->where('status', 'Draft')->count();
 
         $suratMasuk = 0;
-        if (file_exists(app_path('Models/SuratMasuk.php'))) {
+        if (class_exists(\App\Models\SuratMasuk::class)) {
             $suratMasuk = \App\Models\SuratMasuk::whereBetween('tanggal_surat', [$dari, $sampai])->count();
         }
 
         $arsip = Arsip::whereBetween('tanggal_surat', [$dari, $sampai])->count();
-
         $disposisi = 0;
 
         $totalSurat = $suratMasuk + $suratKeluar;
@@ -166,8 +166,6 @@ class LaporanController extends Controller
     }
 
     // ===================== HELPER: DAFTAR SURAT UNTUK EXPORT =====================
-    // Gabungkan surat keluar (+ surat masuk kalau modelnya sudah ada) jadi
-    // satu koleksi dengan struktur kolom yang sama, siap dipakai PDF & Excel.
     private function daftarSuratGabungan(Carbon $dari, Carbon $sampai)
     {
         $keluar = SuratKeluar::whereBetween('tanggal_surat', [$dari, $sampai])
@@ -181,7 +179,7 @@ class LaporanController extends Controller
             ]);
 
         $masuk = collect();
-        if (file_exists(app_path('Models/SuratMasuk.php'))) {
+        if (class_exists(\App\Models\SuratMasuk::class)) {
             $masuk = \App\Models\SuratMasuk::whereBetween('tanggal_surat', [$dari, $sampai])
                 ->get()
                 ->map(fn ($s) => [
