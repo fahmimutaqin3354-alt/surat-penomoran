@@ -18,6 +18,9 @@ Route::middleware(['auth'])->group(function () {
         return view('dashboard');
     })->name('dashboard');
 
+    Route::post('/laporan/kirim-email', [LaporanController::class, 'sendEmail'])
+    ->name('laporan.send.email');
+
     // Surat Masuk
     Route::resource('surat_masuk', SuratMasukController::class);
 
@@ -52,8 +55,10 @@ Route::get('/arsip/export', [ArsipController::class, 'ekspor'])->name('arsip.exp
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
     Route::get('/laporan/export-pdf', [LaporanController::class, 'exportPdf'])->name('laporan.export.pdf');
     Route::get('/laporan/export-excel', [LaporanController::class, 'exportExcel'])->name('laporan.export.excel');
+    Route::get('/laporan/unduh-publik', [LaporanController::class, 'exportPdfPublic'])
+    ->name('laporan.export.pdf.public')
+    ->middleware('signed');
 
 });
 
 require __DIR__.'/auth.php';
-
