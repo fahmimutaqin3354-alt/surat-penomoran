@@ -6,7 +6,7 @@
 <div class="space-y-8">
 
     <!-- Header & Welcome Banner -->
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 p-6 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl relative overflow-hidden">
+    <div class="relative overflow-hidden flex flex-col md:flex-row md:items-center md:justify-between gap-4 p-6 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl">
         <!-- Subtle Glow Background -->
         <div class="absolute -right-10 -bottom-10 w-60 h-60 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
@@ -191,7 +191,7 @@
                 <tbody class="divide-y divide-slate-800/60">
                     @forelse($suratTerbaru ?? [] as $index => $surat)
                         <tr class="hover:bg-slate-800/30 transition-colors">
-                            <td class="px-4 py-4 font-medium text-slate-400">{{ $index + 1 }}</td>
+                            <td class="px-4 py-4 font-medium text-slate-400">{{ $loop->iteration }}</td>
                             <td class="px-4 py-4 font-semibold text-indigo-400">
                                 {{ $surat->nomor_surat ?? $surat->no_surat ?? '-' }}
                             </td>
@@ -241,8 +241,9 @@ document.addEventListener("DOMContentLoaded", function () {
     gradient.addColorStop(0, 'rgba(99, 102, 241, 0.8)'); 
     gradient.addColorStop(1, 'rgba(168, 85, 247, 0.1)'); 
 
-   const chartLabels = {{ Illuminate\Support\Js::from($chartLabels ?? ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun']) }};
-const chartData = {{ Illuminate\Support\Js::from($chartData ?? [0, 0, 0, 0, 0, 0]) }};
+    const chartLabels = {{ Illuminate\Support\Js::from($chartLabels ?? ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun']) }};
+    const chartData = {{ Illuminate\Support\Js::from($chartData ?? [0, 0, 0, 0, 0, 0]) }};
+
     new Chart(ctx, {
         type: 'bar',
         data: {
