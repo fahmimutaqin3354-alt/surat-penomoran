@@ -82,7 +82,7 @@
     <aside id="sidebar" class="fixed top-16 left-0 bottom-0 w-64 bg-slate-900/90 backdrop-blur-xl border-r border-slate-800/80 z-30 transition-transform -translate-x-full md:translate-x-0 overflow-y-auto">
         <div class="p-4 space-y-6">
 
-            <!-- Brand Logo Inside Sidebar (Gantikan Logo 'M' Teks ke Gambar Logo Microdata) -->
+            <!-- Brand Logo Inside Sidebar -->
             <div class="p-3.5 rounded-2xl bg-slate-950/80 border border-slate-800/80 backdrop-blur-xl flex items-center justify-center shadow-md">
                 <img src="{{ asset('images/microdata-logo.webp') }}" 
                      alt="Microdata Indonesia" 
@@ -97,6 +97,13 @@
                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->routeIs('dashboard') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50' }}">
                     <i class="fa-solid fa-chart-pie w-5 text-center"></i>
                     <span>Dashboard</span>
+                </a>
+
+                <!-- Data Instansi (MENU BARU) -->
+                <a href="{{ route('instansi.index') }}"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->routeIs('instansi.*') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50' }}">
+                    <i class="fa-solid fa-building w-5 text-center"></i>
+                    <span>Data Instansi</span>
                 </a>
 
                 <!-- Surat Masuk -->
@@ -115,21 +122,21 @@
 
                 <!-- Arsip Surat -->
                 <a href="{{ route('arsip.index') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 transition-all">
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->routeIs('arsip.*') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50' }}">
                     <i class="fa-solid fa-box-archive w-5 text-center"></i>
                     <span>Arsip Surat</span>
                 </a>
 
                 <!-- Pengaturan Akun -->
                 <a href="{{ route('akun.index') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 transition-all">
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->routeIs('akun.*') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50' }}">
                     <i class="fa-solid fa-users w-5 text-center"></i>
                     <span>Pengaturan Akun</span>
                 </a>
 
                 <!-- Laporan -->
                 <a href="{{ route('laporan.index') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 transition-all">
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->routeIs('laporan.*') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50' }}">
                     <i class="fa-solid fa-file-chart-column w-5 text-center"></i>
                     <span>Laporan</span>
                 </a>
@@ -191,7 +198,8 @@
             });
         @endif
     </script>
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     @stack('scripts')
 </body>
 </html>
