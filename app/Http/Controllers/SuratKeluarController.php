@@ -17,7 +17,7 @@ class SuratKeluarController extends Controller
      */
     public function index()
     {
-        $surat = SuratKeluar::latest()->paginate(10);
+$surat = SuratKeluar::latest()->get();
 
         return view('surat_keluar.index', compact('surat'));
     }

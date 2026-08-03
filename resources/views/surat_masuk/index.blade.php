@@ -30,45 +30,14 @@
 
     </div>
 
-    {{-- Search --}}
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
-
-        <form method="GET">
-
-            <div class="flex flex-col md:flex-row gap-3">
-
-                <div class="relative flex-1">
-
-                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-4 text-slate-500"></i>
-
-                    <input
-                        type="text"
-                        name="search"
-                        value="{{ request('search') }}"
-                        placeholder="Cari nomor agenda, nomor surat atau perihal..."
-                        class="w-full bg-slate-950 border border-slate-700 rounded-xl pl-11 pr-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
-
-                </div>
-
-                <button
-                    class="bg-indigo-600 hover:bg-indigo-700 px-6 rounded-xl font-semibold">
-
-                    Cari
-
-                </button>
-
-            </div>
-
-        </form>
-
-    </div>
 
     {{-- Table --}}
     <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
 
         <div class="overflow-x-auto">
 
-            <table class="w-full">
+           <table id="tableSuratMasuk"
+       class="w-full text-sm border-collapse">
 
                 <thead class="bg-slate-800">
 
@@ -95,7 +64,7 @@
                     <tr class="border-t border-slate-800 hover:bg-slate-800/40 transition">
 
                         <td class="px-6 py-4 text-slate-300">
-                            {{ $loop->iteration + ($surat->currentPage()-1) * $surat->perPage() }}
+                            {{ $loop->iteration }}
                         </td>
 
                         <td class="px-6 py-4 font-semibold text-white">
@@ -218,12 +187,7 @@
 
     </div>
 
-    {{-- Pagination --}}
-    <div>
 
-        {{ $surat->links() }}
-
-    </div>
 
 </div>
 
@@ -233,9 +197,9 @@
 
 <script>
 
-document.querySelectorAll('.deleteForm').forEach(form=>{
+document.querySelectorAll('.deleteForm').forEach(form => {
 
-    form.addEventListener('submit',function(e){
+    form.addEventListener('submit', function(e){
 
         e.preventDefault();
 
@@ -269,6 +233,40 @@ document.querySelectorAll('.deleteForm').forEach(form=>{
 
 });
 
+// DataTables
+$(document).ready(function(){
+
+    $('#tableSuratMasuk').DataTable({
+
+        pageLength:10,
+
+        responsive:true,
+
+        autoWidth:false,
+
+        language:{
+
+            search:"🔍 Cari :",
+
+            lengthMenu:"Tampilkan _MENU_ data",
+
+            info:"Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+
+            zeroRecords:"Data tidak ditemukan",
+
+            paginate:{
+
+                previous:"❮",
+
+                next:"❯"
+
+            }
+
+        }
+
+    });
+
+});
 </script>
 
 @endpush
