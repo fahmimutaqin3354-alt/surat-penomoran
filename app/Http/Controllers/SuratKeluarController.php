@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+
 
 class SuratKeluarController extends Controller
 {
@@ -34,7 +36,10 @@ class SuratKeluarController extends Controller
             });
         }
 
-        $surat = $query->paginate(10);
+        $surat = $query
+    ->with('instansi')
+    ->latest()
+    ->get();
 
         return view('surat_keluar.index', compact('surat'));
     }
@@ -74,8 +79,8 @@ class SuratKeluarController extends Controller
         $nomor = sprintf('%03d', $jumlah);
 
         $romawi = [
-            1 => 'I', 2 => 'II', 3 => 'III', 4 => 'IV', 
-            5 => 'V', 6 => 'VI', 7 => 'VII', 8 => 'VIII', 
+            1 => 'I', 2 => 'II', 3 => 'III', 4 => 'IV',
+            5 => 'V', 6 => 'VI', 7 => 'VII', 8 => 'VIII',
             9 => 'IX', 10 => 'X', 11 => 'XI', 12 => 'XII',
         ];
 
@@ -268,12 +273,47 @@ class SuratKeluarController extends Controller
      * Download PDF
      */
     public function downloadPdf(SuratKeluar $suratKeluar)
-    {
-        $suratKeluar->load('instansi');
-        $pdf = Pdf::loadView('surat_keluar.pdf', ['surat' => $suratKeluar]);
+{
+    // Jika PDF sudah pernah dibuat
+    if (
+    $suratKeluar->file_surat &&
+    Storage::disk('public')->exists($suratKeluar->file_surat)
+) {
 
-        $namaFile = 'Surat-' . str_replace(['/', '\\'], '-', $suratKeluar->nomor_surat) . '.pdf';
+    return response()->download(
+        storage_path('app/public/'.$suratKeluar->file_surat),
+        basename($suratKeluar->file_surat)
+    );
+}
 
-        return $pdf->download($namaFile);
+    // Generate PDF
+    $pdf = Pdf::loadView('surat_keluar.pdf', [
+        'surat' => $suratKeluar
+    ]);
+
+    // Pastikan folder pdf ada
+    if (!Storage::disk('public')->exists('pdf')) {
+        Storage::disk('public')->makeDirectory('pdf');
     }
+
+    // Nama file PDF
+    $namaFile = str_replace('/', '-', $suratKeluar->nomor_surat) . '.pdf';
+
+    // Lokasi penyimpanan
+    $path = 'pdf/' . $namaFile;
+
+    // Simpan PDF ke storage
+    Storage::disk('public')->put($path, $pdf->output());
+
+    // Simpan lokasi file ke database
+    $suratKeluar->update([
+        'file_surat' => $path
+    ]);
+
+    // Download file
+    return response()->download(
+    storage_path('app/public/'.$path),
+    $namaFile
+);
+}
 }

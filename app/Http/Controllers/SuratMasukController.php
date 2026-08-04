@@ -34,15 +34,14 @@ class SuratMasukController extends Controller
         }
 
         $surat = $query
-            ->with('instansi') // Eager load relasi instansi
-            ->latest()
-            ->paginate(10)
-            ->withQueryString();
+    ->with('instansi')
+    ->latest()
+    ->get();
 
         return view('surat_masuk.index', compact('surat'));
     }
 
-    /**
+    /**  
      * Form tambah surat masuk
      */
     public function create()
@@ -57,7 +56,7 @@ class SuratMasukController extends Controller
         }
 
         $nomorAgenda = 'AGD-' . str_pad($angka, 4, '0', STR_PAD_LEFT);
-        
+
         // Ambil data instansi untuk dropdown
         $instansis = Instansi::orderBy('nama_instansi', 'asc')->get();
 
@@ -95,7 +94,7 @@ class SuratMasukController extends Controller
 
         // Menggunakan Database Transaction demi keamanan data
         DB::transaction(function () use ($request, $instansi, $namaFile) {
-            
+
             // 1. Simpan Surat Masuk
             $surat = SuratMasuk::create([
                 'instansi_id'    => $request->instansi_id,

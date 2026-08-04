@@ -204,6 +204,13 @@ table.dataTable tbody tr:hover{
                     <span>Dashboard</span>
                 </a>
 
+                <!-- Data Instansi (MENU BARU) -->
+                <a href="{{ route('instansi.index') }}"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->routeIs('instansi.*') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50' }}">
+                    <i class="fa-solid fa-building w-5 text-center"></i>
+                    <span>Data Instansi</span>
+                </a>
+
                 <!-- Surat Masuk -->
                 <a href="{{ route('surat_masuk.index') }}"
                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->routeIs('surat_masuk.*') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50' }}">

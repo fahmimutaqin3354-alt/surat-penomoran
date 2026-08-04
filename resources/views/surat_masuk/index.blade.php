@@ -47,7 +47,7 @@
                         <th class="px-6 py-4">No Agenda</th>
                         <th class="px-6 py-4">Nomor Surat</th>
                         <th class="px-6 py-4">Tanggal</th>
-                        <th class="px-6 py-4">Asal Surat</th>
+                        <th class="px-6 py-4">Instansi</th>
                         <th class="px-6 py-4">Jenis Surat</th>
                         <th class="px-6 py-4">Perihal</th>
                         <th class="px-6 py-4">Status</th>
@@ -80,15 +80,15 @@
                         </td>
 
                         <td class="px-6 py-4 text-slate-300">
-                            {{ Str::limit($item->asal_surat,30) }}
-                        </td>
+    {{ Str::limit($item->instansi->nama_instansi ?? '-',30) }}
+</td>
 
                         <td class="px-6 py-4 text-slate-300">
                             {{ $item->jenis_surat }}
                         </td>
 
                         <td class="px-6 py-4 text-slate-300">
-                            {{ Str::limit($item->perihal,35) }}
+                             {{ $item->perihal }}
                         </td>
 
                         <td class="px-6 py-4">
@@ -233,40 +233,42 @@ document.querySelectorAll('.deleteForm').forEach(form => {
 
 });
 
-// DataTables
-$(document).ready(function(){
+new DataTable('#tableSuratMasuk',{
 
-    $('#tableSuratMasuk').DataTable({
+    pageLength:10,
 
-        pageLength:10,
+    responsive:true,
 
-        responsive:true,
+    autoWidth:false,
 
-        autoWidth:false,
+    ordering:true,
 
-        language:{
+    searching:true,
 
-            search:"🔍 Cari :",
+    info:true,
 
-            lengthMenu:"Tampilkan _MENU_ data",
+    language:{
 
-            info:"Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+        search:"🔍 Cari :",
 
-            zeroRecords:"Data tidak ditemukan",
+        lengthMenu:"Tampilkan _MENU_ data",
 
-            paginate:{
+        info:"Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
 
-                previous:"❮",
+        zeroRecords:"Data tidak ditemukan",
 
-                next:"❯"
+        paginate:{
 
-            }
+            previous:"❮",
+
+            next:"❯"
 
         }
 
-    });
+    }
 
 });
+
 </script>
 
 @endpush

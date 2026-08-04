@@ -194,14 +194,6 @@
                                class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
                     </div>
 
-                    {{-- Upload PDF --}}
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-slate-300 mb-2">
-                            Upload File Surat (PDF)
-                        </label>
-                        <input type="file" name="file_surat" accept=".pdf"
-                               class="block w-full text-sm text-slate-300 file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-600 file:px-4 file:py-2 file:text-white hover:file:bg-indigo-700 transition cursor-pointer">
-                    </div>
 
                 </div>
 

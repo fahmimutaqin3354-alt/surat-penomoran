@@ -27,41 +27,14 @@
 
     </div>
 
-    {{-- Search --}}
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
-
-        <form method="GET" action="{{ route('surat_keluar.index') }}">
-
-            <div class="flex flex-col md:flex-row gap-3">
-
-                <div class="relative flex-1">
-                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-4 text-slate-500"></i>
-
-                    <input
-                        type="text"
-                        name="search"
-                        value="{{ request('search') }}"
-                        placeholder="Cari nomor surat, instansi, tujuan, atau perihal..."
-                        class="w-full bg-slate-950 border border-slate-700 rounded-xl pl-11 pr-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                </div>
-
-                <button type="submit"
-                    class="bg-indigo-600 hover:bg-indigo-700 px-6 py-3 text-white rounded-xl font-semibold transition">
-                    Cari
-                </button>
-
-            </div>
-
-        </form>
-
-    </div>
 
     {{-- Tabel --}}
     <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
 
         <div class="overflow-x-auto">
 
-            <table class="w-full">
+            <table id="tableSuratKeluar"
+       class="w-full text-sm border-collapse">
 
                 <thead class="bg-slate-800">
                     <tr class="text-left text-slate-300">
@@ -85,7 +58,7 @@
 
                         {{-- 1. No --}}
                         <td class="px-6 py-4 text-slate-300">
-                            {{ $loop->iteration + ($surat->currentPage()-1) * $surat->perPage() }}
+                            {{ $loop->iteration }}
                         </td>
 
                         {{-- 2. Nomor Surat --}}
@@ -99,10 +72,9 @@
                         </td>
 
                         {{-- 4. Instansi (Mencoba ambil dari relasi instansi, jika tidak ada fallback ke kolom instansi biasa) --}}
-                        <td class="px-6 py-4 text-slate-300 font-medium">
-                            {{ $item->instansi->nama_instansi ?? $item->nama_instansi ?? '-' }}
-                        </td>
-
+                        <td class="px-6 py-4 text-slate-300">
+    {{ Str::limit($item->instansi->nama_instansi ?? '-',30) }}
+</td>
                         {{-- 5. Jenis Surat --}}
                         <td class="px-6 py-4 text-slate-300">
                             {{ $item->jenis_surat }}
@@ -110,12 +82,12 @@
 
                         {{-- 6. Tujuan --}}
                         <td class="px-6 py-4 text-slate-300">
-                            {{ Str::limit($item->tujuan, 30) }}
+                            {{ $item->tujuan }}
                         </td>
 
                         {{-- 7. Perihal --}}
                         <td class="px-6 py-4 text-slate-300">
-                            {{ Str::limit($item->perihal, 35) }}
+                            {{ $item->perihal }}
                         </td>
 
                         {{-- 8. Status --}}
@@ -140,7 +112,7 @@
                         {{-- 9. Aksi --}}
                         <td class="px-6 py-4">
 
-                            <div class="flex justify-center gap-2">
+                            <div class="flex justify-center items-center gap-2">
 
                                 <a href="{{ route('surat_keluar.show', $item->id) }}"
                                    title="Detail"
@@ -200,10 +172,7 @@
 
     </div>
 
-    {{-- Pagination --}}
-    <div>
-        {{ $surat->links() }}
-    </div>
+
 
 </div>
 
@@ -212,26 +181,65 @@
 @push('scripts')
 
 <script>
+
 document.querySelectorAll('.deleteForm').forEach(form => {
-    form.addEventListener('submit', function(e) {
+
+    form.addEventListener('submit', function(e){
+
         e.preventDefault();
 
         Swal.fire({
-            title: 'Hapus surat?',
-            text: 'Data tidak dapat dikembalikan.',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#6366f1',
-            cancelButtonColor: '#ef4444',
-            confirmButtonText: 'Ya, Hapus',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
-            if (result.isConfirmed) {
+
+            title:'Hapus surat?',
+
+            text:'Data tidak dapat dikembalikan.',
+
+            icon:'warning',
+
+            showCancelButton:true,
+
+            confirmButtonColor:'#6366f1',
+
+            cancelButtonColor:'#ef4444',
+
+            confirmButtonText:'Ya, Hapus'
+
+        }).then((result)=>{
+
+            if(result.isConfirmed){
+
                 form.submit();
+
             }
+
         });
+
     });
+
 });
+
+new DataTable('#tableSuratKeluar',{
+
+    pageLength:10,
+    responsive:true,
+    autoWidth:false,
+    ordering:true,
+    searching:true,
+    info:true,
+
+    language:{
+        search:"🔍 Cari :",
+        lengthMenu:"Tampilkan _MENU_ data",
+        info:"Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+        zeroRecords:"Data tidak ditemukan",
+        paginate:{
+            previous:"❮",
+            next:"❯"
+        }
+    }
+
+});
+
 </script>
 
 @endpush

@@ -191,7 +191,7 @@
         </button>
 
         <a
-            href="{{ route('surat_keluar.pdf',$surat->id) }}"
+            href="{{ route('surat_keluar.pdf', $surat) }}"
             class="btn btn-pdf">
 
             <i class="fa-solid fa-file-pdf"></i>
@@ -201,7 +201,7 @@
         </a>
 
         <a
-            href="{{ route('surat_keluar.show',$surat->id) }}"
+            href="{{ route('surat_keluar.show', $surat) }}"
             class="btn btn-back">
 
             <i class="fa-solid fa-arrow-left"></i>

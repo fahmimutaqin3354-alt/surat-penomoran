@@ -23,8 +23,12 @@ Route::middleware(['auth'])->group(function () {
     // Surat Masuk & Keluar
     Route::resource('surat_masuk', SuratMasukController::class);
     Route::resource('surat_keluar', SuratKeluarController::class);
-    Route::get('/surat_keluar/{id}/preview', [SuratKeluarController::class, 'preview'])->name('surat_keluar.preview');
-    Route::get('/surat_keluar/{id}/pdf', [SuratKeluarController::class, 'downloadPdf'])->name('surat_keluar.pdf');
+
+Route::get('/surat_keluar/{suratKeluar}/preview', [SuratKeluarController::class, 'preview'])
+    ->name('surat_keluar.preview');
+
+Route::get('/surat_keluar/{suratKeluar}/pdf', [SuratKeluarController::class, 'downloadPdf'])
+    ->name('surat_keluar.pdf');
 
     // CRUD Instansi
     Route::resource('instansi', InstansiController::class);
