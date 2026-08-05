@@ -120,23 +120,33 @@
                     <span>Arsip Surat</span>
                 </a>
 
-                <!-- Pengaturan Akun -->
-                <a href="{{ route('akun.index') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 transition-all">
-                    <i class="fa-solid fa-users w-5 text-center"></i>
-                    <span>Pengaturan Akun</span>
-                </a>
-
+                
                 <!-- Laporan -->
                 <a href="{{ route('laporan.index') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 transition-all">
-                    <i class="fa-solid fa-file-chart-column w-5 text-center"></i>
-                    <span>Laporan</span>
+                class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 transition-all">
+                <i class="fa-solid fa-chart-column w-5 text-center"></i>
+                <span>Laporan</span>
+            </a>
+            
+            <!-- Pengaturan Akun -->
+            <a href="{{ route('akun.index') }}"
+               class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 transition-all">
+                <i class="fa-solid fa-users w-5 text-center"></i>
+                <span>Pengaturan Akun</span>
+            </a>
+
+             <!-- Recycle Bin -->
+                <a href="{{ route('recycle-bin.index') }}"
+                class="flex items-center gap-4 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 transition-all">
+                     <i class="fa-solid fa-trash-can"></i>
+                  Tempat Sampah
                 </a>
 
             </nav>
         </div>
     </aside>
+
+
 
     <!-- Main Content Container -->
     <main class="pt-20 pb-10 md:pl-64 transition-all">

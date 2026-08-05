@@ -3,14 +3,18 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\User;
 
 class SuratKeluar extends Model
 {
+    use SoftDeletes; 
+    
     protected $fillable = [
         'nomor_surat',
         'tanggal_surat',
         'jenis_surat',
+        'kode_divisi',
         'tujuan',
         'perihal',
         'isi_surat',

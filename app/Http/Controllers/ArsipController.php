@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Arsip;
+use App\Models\SuratKeluar;  
+use App\Models\SuratMasuk;   
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -64,23 +66,24 @@ class ArsipController extends Controller
     /**
      * Hapus Arsip
      */
-    public function destroy($id)
-    {
-        $surat = Arsip::findOrFail($id);
+  public function destroy($id)
+{
+    $arsip = Arsip::findOrFail($id);
 
-        // Hapus file jika ada
-        if ($surat->file_surat) {
-
-            Storage::disk('public')->delete($surat->file_surat);
-
-        }
-
-        $surat->delete();
-
-        return redirect()
-            ->route('arsip.index')
-            ->with('success', 'Arsip berhasil dihapus.');
+    // Soft delete surat aslinya juga (Surat Keluar atau Surat Masuk)
+    if ($arsip->surat_keluar_id) {
+        SuratKeluar::find($arsip->surat_keluar_id)?->delete();
     }
+
+    if ($arsip->surat_masuk_id) {
+        SuratMasuk::find($arsip->surat_masuk_id)?->delete();
+    }
+
+    // Soft delete arsipnya sendiri (JANGAN hapus file di sini)
+    $arsip->delete();
+
+    return redirect()->route('arsip.index')->with('success', 'Arsip berhasil dihapus.');
+}
     /**
      * Ekspor Arsip ke CSV
      */

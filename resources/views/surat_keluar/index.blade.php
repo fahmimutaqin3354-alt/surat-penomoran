@@ -63,6 +63,23 @@
 
     </div>
 
+
+     {{-- Peringatan surat di tempat sampah --}}
+    @if($jumlahDihapus > 0)
+    <div class="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+            <i class="fa-solid fa-trash-can text-amber-400"></i>
+            <p class="text-sm text-amber-300">
+                Ada <span class="font-semibold">{{ $jumlahDihapus }} surat keluar</span> yang sudah dihapus dan menunggu di tempat sampah.
+            </p>
+        </div>
+        <a href="{{ route('recycle-bin.index') }}"
+           class="text-sm font-semibold text-amber-400 hover:text-amber-300 whitespace-nowrap">
+            Lihat Tempat Sampah →
+        </a>
+    </div>
+    @endif
+    
     {{-- Tabel --}}
     <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
 
@@ -177,19 +194,36 @@
 
                                 </a>
 
-                                <a href="{{ route('surat_keluar.edit',$item->id) }}"
-                                   class="w-9 h-9 rounded-lg bg-amber-500 hover:bg-amber-600 flex items-center justify-center">
-
-                                    <i class="fa-solid fa-pen text-white text-sm"></i>
-
-                                </a>
-
+                              
                                 <a href="{{ route('surat_keluar.preview',$item->id) }}"
                                    class="w-9 h-9 rounded-lg bg-indigo-600 hover:bg-indigo-700 flex items-center justify-center">
 
                                     <i class="fa-solid fa-file-lines text-white text-sm"></i>
 
                                 </a>
+
+                                 {{-- Tombol Ekspor (baru) --}}
+                                  <div class="relative" x-data="{ open: false }" @click.outside="open = false">
+                                  <button type="button" @click="open = !open"
+                                   class="w-9 h-9 rounded-lg bg-violet-600 hover:bg-violet-700 flex items-center justify-center">
+                                  <i class="fa-solid fa-share-nodes text-white text-sm"></i>
+                                  </button>
+
+                                   <div x-show="open" x-cloak
+                                     class="absolute right-0 mt-2 w-48 bg-slate-900 border border-slate-800 rounded-xl shadow-lg z-20 overflow-hidden py-1">
+
+                                   <button type="button" @click="$dispatch('open-modal-email-surat-{{ $item->id }}'); open = false"
+                                   class="flex items-center gap-2 w-full text-left px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-800">
+                                    <i class="fa-solid fa-envelope text-slate-500 w-4"></i>
+                                    Kirim ke Email
+                                    </button>
+                                  <button type="button" @click="$dispatch('open-modal-wa-surat-{{ $item->id }}'); open = false"
+                                    class="flex items-center gap-2 w-full text-left px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-800">
+                                    <i class="fa-brands fa-whatsapp text-slate-500 w-4"></i>
+                                    Kirim ke WhatsApp
+                                 </button>
+                          </div>
+                     </div>
 
                                 <form
                                     action="{{ route('surat_keluar.destroy',$item->id) }}"
@@ -213,6 +247,85 @@
                         </td>
 
                     </tr>
+
+                     {{-- Modal Ekspor untuk surat ini --}}
+                    <div x-data="{ show: false }"
+                        @open-modal-email-surat-{{ $item->id }}.window="show = true"
+                        x-show="show" x-cloak
+                        class="fixed inset-0 z-50 flex items-center justify-center p-4">
+
+                        <div class="absolute inset-0 bg-black/60" @click="show = false"></div>
+
+                        <div class="relative bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm p-6">
+                            <h3 class="text-base font-semibold text-white mb-1">Kirim Surat via Email</h3>
+                            <p class="text-sm text-slate-400 mb-4">
+                                Masukkan alamat email tujuan, surat ini akan langsung dikirim beserta lampiran PDF-nya.
+                            </p>
+
+                            <form action="{{ route('surat_keluar.send.email', $item->id) }}" method="POST">
+                                @csrf
+
+                                <label class="block text-sm font-medium text-slate-300 mb-1">Alamat Email</label>
+                                <input type="email" name="email" required placeholder="nama@contoh.com"
+                                    class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4">
+
+                                <p class="text-xs text-slate-500 mb-4">
+                                    <i class="fa-solid fa-paperclip mr-1"></i>
+                                    File PDF surat ini akan otomatis dilampirkan.
+                                    <a href="{{ URL::temporarySignedRoute('surat_keluar.download.public', now()->addHours(24), ['id' => $item->id]) }}"
+                                       target="_blank"
+                                       class="text-indigo-400 hover:text-indigo-300 underline font-medium">
+                                        Lihat file PDF
+                                    </a>
+                                </p>
+
+                                <div class="flex justify-end gap-2 mt-2">
+                                    <button type="button" @click="show = false"
+                                        class="px-4 py-2 rounded-xl text-sm text-slate-400 hover:bg-slate-800 transition">
+                                        Batal
+                                    </button>
+                                    <button type="submit"
+                                        class="px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition">
+                                        Kirim
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                   <div x-data="{ show: false }"
+    @open-modal-wa-surat-{{ $item->id }}.window="show = true"
+    x-show="show" x-cloak
+    class="fixed inset-0 z-50 flex items-center justify-center p-4">
+
+    <div class="absolute inset-0 bg-black/60" @click="show = false"></div>
+
+    <div class="relative bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm p-6">
+        <h3 class="text-base font-semibold text-white mb-1">Kirim Surat ke WhatsApp</h3>
+        <p class="text-sm text-slate-400 mb-4">
+            Surat akan langsung dikirim otomatis beserta file PDF-nya.
+        </p>
+
+        <form action="{{ route('surat_keluar.send.whatsapp', $item->id) }}" method="POST">
+            @csrf
+
+            <label class="block text-sm font-medium text-slate-300 mb-1">Nomor WhatsApp</label>
+            <input type="text" name="nomor_wa" required placeholder="08xxxxxxxxxx"
+                class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4">
+
+            <div class="flex justify-end gap-2">
+                <button type="button" @click="show = false"
+                    class="px-4 py-2 rounded-xl text-sm text-slate-400 hover:bg-slate-800 transition">
+                    Batal
+                </button>
+                <button type="submit"
+                    class="px-4 py-2 rounded-xl bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition">
+                    Kirim
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 
                 @empty
 

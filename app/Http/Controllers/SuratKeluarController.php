@@ -5,11 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\SuratKeluar;
 use App\Models\SuratMasuk;
 use App\Models\Arsip;
+use App\Mail\SuratKeluarMail;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\URL;
 
+       
 class SuratKeluarController extends Controller
 {
     /**
@@ -18,8 +23,9 @@ class SuratKeluarController extends Controller
     public function index()
     {
         $surat = SuratKeluar::latest()->paginate(10);
+        $jumlahDihapus = SuratKeluar::onlyTrashed()->count();
 
-        return view('surat_keluar.index', compact('surat'));
+        return view('surat_keluar.index', compact('surat','jumlahDihapus'));
     }
 
     /**
@@ -41,40 +47,43 @@ class SuratKeluarController extends Controller
      * Format:
      * 001/PT-MDI/VII/2026
      */
-    private function generateNomorSurat()
+ private function generateNomorSurat($perihal, $kodeDivisi)
 {
     $bulan = now()->month;
     $tahun = now()->year;
 
-    // Hitung jumlah surat pada bulan dan tahun yang sama
-    $jumlah = SuratKeluar::whereMonth('created_at', $bulan)
-        ->whereYear('created_at', $tahun)
-        ->count() + 1;
-
-    // Jika masih di bawah 100 gunakan 2 digit,
-    // jika sudah 100 atau lebih gunakan angka biasa (3 digit atau lebih)
-    if ($jumlah < 100) {
-        $nomor = str_pad($jumlah, 2, '0', STR_PAD_LEFT);
-    } else {
-        $nomor = $jumlah;
-    }
-
     $romawi = [
-        1 => 'I',
-        2 => 'II',
-        3 => 'III',
-        4 => 'IV',
-        5 => 'V',
-        6 => 'VI',
-        7 => 'VII',
-        8 => 'VIII',
-        9 => 'IX',
-        10 => 'X',
-        11 => 'XI',
-        12 => 'XII',
+        1 => 'I', 2 => 'II', 3 => 'III', 4 => 'IV',
+        5 => 'V', 6 => 'VI', 7 => 'VII', 8 => 'VIII',
+        9 => 'IX', 10 => 'X', 11 => 'XI', 12 => 'XII',
     ];
 
-    return $nomor . '/PT-MDI/' . $romawi[$bulan] . '/' . $tahun;
+    $slugPerihal = \Illuminate\Support\Str::slug($perihal);
+
+    do {
+        $lastNomor = SuratKeluar::withTrashed()
+            ->whereMonth('created_at', $bulan)
+            ->whereYear('created_at', $tahun)
+            ->get()
+            ->map(function ($surat) {
+                return (int) explode('/', $surat->nomor_surat)[0];
+            })
+            ->max();
+
+        $jumlah = ($lastNomor ?? 0) + 1;
+
+        $nomorFormatted = $jumlah < 100
+            ? str_pad($jumlah, 2, '0', STR_PAD_LEFT)
+            : $jumlah;
+
+        $nomorSurat = $nomorFormatted . '/' . $slugPerihal . '/' . $kodeDivisi . '/PT-MDI/' . $romawi[$bulan] . '/' . $tahun;
+
+        $exists = SuratKeluar::where('nomor_surat', $nomorSurat)->exists();
+
+        $jumlah++;
+    } while ($exists);
+
+    return $nomorSurat;
 }
 /**
  * Menyimpan surat keluar
@@ -84,6 +93,7 @@ public function store(Request $request)
     $request->validate([
         'tanggal_surat' => 'required|date',
         'jenis_surat' => 'required|string|max:100',
+        'kode_divisi' => 'required|string|max:20',
         'tujuan' => 'required|string|max:255',
         'perihal' => 'required|string|max:255',
         'isi_surat' => 'required|string',
@@ -110,11 +120,13 @@ public function store(Request $request)
     // Simpan Surat Keluar
     $surat = SuratKeluar::create([
 
-        'nomor_surat' => $this->generateNomorSurat(),
+        'nomor_surat' => $this->generateNomorSurat($request->perihal, $request->kode_divisi),
 
         'tanggal_surat' => $request->tanggal_surat,
 
         'jenis_surat' => $request->jenis_surat,
+
+        'kode_divisi' => $request->kode_divisi,
 
         'tujuan' => $request->tujuan,
 
@@ -171,8 +183,9 @@ public function store(Request $request)
     ]);
 
     return redirect()
-        ->route('surat_keluar.index')
-        ->with('success', 'Surat keluar berhasil dibuat.');
+        ->route('surat_keluar.create', $surat->id)
+        ->with('success', 'Surat keluar berhasil dibuat.')
+        ->with('surat_tersimpan', $surat);
 }
 /**
  * Menampilkan detail surat
@@ -204,6 +217,7 @@ public function update(Request $request, $id)
     $request->validate([
         'tanggal_surat' => 'required|date',
         'jenis_surat' => 'required|string|max:100',
+        'kode_divisi' => 'required|string|max:20',
         'tujuan' => 'required|string|max:255',
         'perihal' => 'required|string|max:255',
         'isi_surat' => 'required|string',
@@ -239,6 +253,8 @@ public function update(Request $request, $id)
         'tanggal_surat' => $request->tanggal_surat,
 
         'jenis_surat' => $request->jenis_surat,
+
+        'kode_divisi' => $request->kode_divisi,
 
         'tujuan' => $request->tujuan,
 
@@ -298,25 +314,16 @@ public function destroy($id)
 {
     $surat = SuratKeluar::findOrFail($id);
 
-    // Hapus file PDF jika ada
-    if (
-        $surat->file_surat &&
-        Storage::disk('public')->exists('surat_keluar/' . $surat->file_surat)
-    ) {
-        Storage::disk('public')->delete('surat_keluar/' . $surat->file_surat);
-    }
-
-    // Hapus data arsip yang terkait
+    // Hapus data arsip yang terkait (soft delete otomatis)
     Arsip::where('surat_keluar_id', $surat->id)->delete();
 
-    // Hapus surat keluar
+    // Hapus surat keluar (soft delete otomatis)
     $surat->delete();
 
     return redirect()
         ->route('surat_keluar.index')
         ->with('success', 'Surat keluar berhasil dihapus.');
 }
-
 /**
  * Preview Surat
  */
@@ -330,19 +337,94 @@ public function preview($id)
 /**
  * Download PDF
  */
-public function downloadPdf($id)
+ public function downloadPublic($id)
+    {
+        $surat = SuratKeluar::findOrFail($id);
+ 
+        $pdf = Pdf::loadView('surat_keluar.pdf', compact('surat'));
+ 
+        $namaFile = 'Surat-' . str_replace(['/', '\\'], '-', $surat->nomor_surat) . '.pdf';
+ 
+        return $pdf->stream($namaFile);
+    }
+
+/**
+ * Kirim Email
+ */
+    public function sendEmail(Request $request, $id)
 {
     $surat = SuratKeluar::findOrFail($id);
 
-    $pdf = Pdf::loadView('surat_keluar.pdf', compact('surat'));
+    $request->validate([
+        'email' => 'required|email',
+    ]);
 
-    // Hindari karakter "/" pada nama file
-    $namaFile = 'Surat-' . str_replace(
-        ['/', '\\'],
-        '-',
-        $surat->nomor_surat
-    ) . '.pdf';
+    if (!$surat->file_surat) {
+        return back()->with('error', 'File surat belum tersedia. Silakan unduh/generate PDF terlebih dahulu.');
+    }
 
-    return $pdf->download($namaFile);
+    $path = 'surat_keluar/' . $surat->file_surat;
+
+    if (!Storage::disk('public')->exists($path)) {
+        return back()->with('error', 'File surat tidak ditemukan di server.');
+    }
+
+    $lampiran = [[
+        'nama' => 'Surat-' . str_replace(['/', '\\'], '-', $surat->nomor_surat) . '.pdf',
+        'mime' => 'application/pdf',
+        'isi'  => Storage::disk('public')->get($path),
+    ]];
+
+    Mail::to($request->email)->send(new SuratKeluarMail($surat, $lampiran));
+
+    return back()->with('success', 'Surat berhasil dikirim ke ' . $request->email);
 }
+
+/**
+ * Kirim WA
+ */
+
+   public function sendWhatsapp(Request $request, $id)
+{
+    $surat = SuratKeluar::findOrFail($id);
+
+    $request->validate([
+        'nomor_wa' => 'required|string',
+    ]);
+
+    $nomor = preg_replace('/\D/', '', $request->nomor_wa);
+    if (str_starts_with($nomor, '0')) {
+        $nomor = '62' . substr($nomor, 1);
+    } elseif (!str_starts_with($nomor, '62')) {
+        $nomor = '62' . $nomor;
+    }
+
+    if (!$surat->file_surat) {
+        return back()->with('error', 'File surat belum tersedia.');
+    }
+
+    $path = storage_path('app/public/surat_keluar/' . $surat->file_surat);
+
+    if (!file_exists($path)) {
+        return back()->with('error', 'File surat tidak ditemukan di server.');
+    }
+
+    $pesan = "Berikut surat keluar No. {$surat->nomor_surat}, perihal: {$surat->perihal}.";
+    $namaFilePdf = 'Surat-' . str_replace(['/', '\\'], '-', $surat->nomor_surat) . '.pdf';
+
+    $response = Http::post('http://localhost:3000/send-file', [
+        'nomor'    => $nomor,
+        'pesan'    => $pesan,
+        'filePath' => $path,
+        'fileName' => $namaFilePdf,
+    ]);
+
+    if ($response->successful() && $response->json('success') === true) {
+        return back()->with('success', 'Surat berhasil dikirim ke WhatsApp.');
+    }
+
+    return back()->with('error', 'Gagal mengirim ke WhatsApp. Coba lagi.');
 }
+
+}
+

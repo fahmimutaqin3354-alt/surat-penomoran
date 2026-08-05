@@ -6,6 +6,7 @@ use App\Http\Controllers\SuratKeluarController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\ArsipController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\RecycleBinController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -14,6 +15,8 @@ Route::get('/', function () {
 
 Route::middleware(['auth'])->group(function () {
 
+    
+
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
@@ -21,20 +24,27 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/laporan/kirim-email', [LaporanController::class, 'sendEmail'])
     ->name('laporan.send.email');
 
+   
+
     // Surat Masuk
     Route::resource('surat_masuk', SuratMasukController::class);
 
     // Surat Keluar
     Route::resource('surat_keluar', SuratKeluarController::class);
+     Route::post('/surat_keluar/{id}/kirim-email', [SuratKeluarController::class, 'sendEmail'])
+    ->name('surat_keluar.send.email');
+    Route::post('/surat_keluar/{id}/send-whatsapp', [SuratKeluarController::class, 'sendWhatsapp'])
+    ->name('surat_keluar.send.whatsapp');
 
     // Preview Surat Keluar
     Route::get('/surat_keluar/{id}/preview', [SuratKeluarController::class, 'preview'])
         ->name('surat_keluar.preview');
-    Route::get(
-    '/surat_keluar/{id}/pdf',
-    [SuratKeluarController::class, 'downloadPdf']
+    Route::get( '/surat_keluar/{id}/pdf', [SuratKeluarController::class, 'downloadPublic']
 )->name('surat_keluar.pdf');
 
+Route::get('/surat_keluar/{id}/unduh-publik', [SuratKeluarController::class, 'downloadPublic'])
+    ->name('surat_keluar.download.public')
+    ->middleware('signed');
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -58,6 +68,21 @@ Route::get('/arsip/export', [ArsipController::class, 'ekspor'])->name('arsip.exp
     Route::get('/laporan/unduh-publik', [LaporanController::class, 'exportPdfPublic'])
     ->name('laporan.export.pdf.public')
     ->middleware('signed');
+
+     // RecycleBin
+    Route::get('/recycle-bin', [RecycleBinController::class, 'index'])->name('recycle-bin.index');
+    
+    Route::post('/recycle-bin/surat-keluar/{id}/restore', [RecycleBinController::class, 'restoreSuratKeluar'])->name('recycle-bin.restore.keluar');
+    Route::post('/recycle-bin/surat-masuk/{id}/restore', [RecycleBinController::class, 'restoreSuratMasuk'])->name('recycle-bin.restore.masuk');
+    Route::post('/recycle-bin/arsip/{id}/restore', [RecycleBinController::class, 'restoreArsip'])->name('recycle-bin.restore.arsip');
+
+    Route::delete('/recycle-bin/surat-keluar/{id}/force', [RecycleBinController::class, 'forceDeleteSuratKeluar'])->name('recycle-bin.force.keluar');
+    Route::delete('/recycle-bin/surat-masuk/{id}/force', [RecycleBinController::class, 'forceDeleteSuratMasuk'])->name('recycle-bin.force.masuk');
+    Route::delete('/recycle-bin/arsip/{id}/force', [RecycleBinController::class, 'forceDeleteArsip'])->name('recycle-bin.force.arsip');
+
+
+
+
 
 });
 

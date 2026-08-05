@@ -35,30 +35,29 @@ class SuratMasukController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view('surat_masuk.index', compact('surat'));
+        $jumlahDihapus = SuratMasuk::onlyTrashed()->count();
+
+        return view('surat_masuk.index', compact('surat', 'jumlahDihapus'));
     }
 
     /**
      * Form tambah surat masuk
      */
-    public function create()
-    {
-        $last = SuratMasuk::latest()->first();
+ public function create()
+{
+    $lastAngka = SuratMasuk::withTrashed()
+        ->get()
+        ->map(function ($surat) {
+            return (int) substr($surat->nomor_agenda, 4);
+        })
+        ->max();
 
-        if ($last) {
+    $angka = ($lastAngka ?? 0) + 1;
 
-            $angka = (int) substr($last->nomor_agenda, 4) + 1;
+    $nomorAgenda = 'AGD-' . str_pad($angka, 4, '0', STR_PAD_LEFT);
 
-        } else {
-
-            $angka = 1;
-
-        }
-
-        $nomorAgenda = 'AGD-' . str_pad($angka, 4, '0', STR_PAD_LEFT);
-
-        return view('surat_masuk.create', compact('nomorAgenda'));
-    }
+    return view('surat_masuk.create', compact('nomorAgenda'));
+}
 /**
  * Simpan surat masuk
  */
@@ -295,24 +294,10 @@ public function destroy(string $id)
 {
     $surat = SuratMasuk::findOrFail($id);
 
-    // Hapus file PDF jika ada
-    if (
-        $surat->file_surat &&
-        Storage::disk('public')->exists('surat_masuk/' . $surat->file_surat)
-    ) {
-        Storage::disk('public')->delete('surat_masuk/' . $surat->file_surat);
-    }
-
-    // ==================================
-    // Hapus Arsip Otomatis
-    // ==================================
-
+    // Hapus Arsip Otomatis (soft delete)
     Arsip::where('surat_masuk_id', $surat->id)->delete();
 
-    // ==================================
-    // Hapus Surat Masuk
-    // ==================================
-
+    // Hapus Surat Masuk (soft delete)
     $surat->delete();
 
     return redirect()
