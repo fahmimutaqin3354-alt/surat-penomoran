@@ -39,7 +39,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet"
 href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.css">
+<link rel="stylesheet"
+href="https://cdn.datatables.net/searchbuilder/1.8.2/css/searchBuilder.dataTables.css">
 
+<link rel="stylesheet"
+href="https://cdn.datatables.net/searchpanes/2.3.2/css/searchPanes.dataTables.css">
 <style>
 
 /* ============================
@@ -232,23 +236,33 @@ table.dataTable tbody tr:hover{
                     <span>Arsip Surat</span>
                 </a>
 
-                <!-- Pengaturan Akun -->
-                <a href="{{ route('akun.index') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 transition-all">
-                    <i class="fa-solid fa-users w-5 text-center"></i>
-                    <span>Pengaturan Akun</span>
-                </a>
 
                 <!-- Laporan -->
                 <a href="{{ route('laporan.index') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 transition-all">
-                    <i class="fa-solid fa-file-chart-column w-5 text-center"></i>
-                    <span>Laporan</span>
+                class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 transition-all">
+                <i class="fa-solid fa-chart-column w-5 text-center"></i>
+                <span>Laporan</span>
+            </a>
+
+            <!-- Pengaturan Akun -->
+            <a href="{{ route('akun.index') }}"
+               class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 transition-all">
+                <i class="fa-solid fa-users w-5 text-center"></i>
+                <span>Pengaturan Akun</span>
+            </a>
+
+             <!-- Recycle Bin -->
+                <a href="{{ route('recycle-bin.index') }}"
+                class="flex items-center gap-4 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 transition-all">
+                     <i class="fa-solid fa-trash-can"></i>
+                  Tempat Sampah
                 </a>
 
             </nav>
         </div>
     </aside>
+
+
 
     <!-- Main Content Container -->
     <main class="pt-20 pb-10 md:pl-64 transition-all">
@@ -307,6 +321,9 @@ table.dataTable tbody tr:hover{
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
 <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/searchbuilder/1.8.2/js/dataTables.searchBuilder.js"></script>
+
+<script src="https://cdn.datatables.net/searchpanes/2.3.2/js/dataTables.searchPanes.js"></script>
     @stack('scripts')
 
 
