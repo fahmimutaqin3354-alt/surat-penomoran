@@ -24,8 +24,8 @@ class SuratKeluarController extends Controller
     public function index()
     {
         $surat = SuratKeluar::with('instansi')
-            ->latest()
-            ->paginate(10);
+    ->latest()
+    ->get();
         $jumlahDihapus = SuratKeluar::onlyTrashed()->count();
 
         return view('surat_keluar.index', compact('surat','jumlahDihapus'));

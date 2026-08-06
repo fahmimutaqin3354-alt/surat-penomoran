@@ -47,6 +47,22 @@
     </div>
     @endif
 
+    {{-- Peringatan surat di tempat sampah --}}
+    @if($jumlahDihapus > 0)
+    <div class="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+            <i class="fa-solid fa-trash-can text-amber-400"></i>
+            <p class="text-sm text-amber-300">
+                Ada <span class="font-semibold">{{ $jumlahDihapus }} surat masuk</span> yang sudah dihapus dan menunggu di tempat sampah.
+            </p>
+        </div>
+        <a href="{{ route('recycle-bin.index') }}"
+           class="text-sm font-semibold text-amber-400 hover:text-amber-300 whitespace-nowrap">
+            Lihat Tempat Sampah →
+        </a>
+    </div>
+    @endif
+
     {{-- Table --}}
     <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
 

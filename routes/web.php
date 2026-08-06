@@ -3,13 +3,12 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SuratMasukController;
 use App\Http\Controllers\SuratKeluarController;
-use App\Http\Controllers\InstansiController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\ArsipController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\RecycleBinController;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\InstansiController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -26,8 +25,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/laporan/kirim-email', [LaporanController::class, 'sendEmail'])
     ->name('laporan.send.email');
 
-    Route::resource('instansi', InstansiController::class);
-
+   Route::resource('instansi', InstansiController::class);
 
     // Surat Masuk
     Route::resource('surat_masuk', SuratMasukController::class);

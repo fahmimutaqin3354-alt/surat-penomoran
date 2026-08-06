@@ -253,7 +253,7 @@ table.dataTable tbody tr:hover{
 
              <!-- Recycle Bin -->
                 <a href="{{ route('recycle-bin.index') }}"
-                class="flex items-center gap-4 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 transition-all">
+                class="flex items-center gap-4 px-4 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 transition-all">
                      <i class="fa-solid fa-trash-can"></i>
                   Tempat Sampah
                 </a>

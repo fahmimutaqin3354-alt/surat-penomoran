@@ -22,3 +22,7 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# wa Baileys server
+/wa-baileys-server/node_modules
+/wa-baileys-server/auth_info
