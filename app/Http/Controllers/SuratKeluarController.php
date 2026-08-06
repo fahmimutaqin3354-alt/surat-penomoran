@@ -11,8 +11,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
-
 
 class SuratKeluarController extends Controller
 {
@@ -21,7 +19,7 @@ class SuratKeluarController extends Controller
      */
     public function index(Request $request)
     {
-        $query = SuratKeluar::with(['instansi'])->latest();
+        $query = SuratKeluar::with('instansi')->latest();
 
         // Fitur Pencarian berdasarkan nomor surat, perihal, tujuan, atau nama instansi
         if ($request->filled('search')) {
@@ -36,10 +34,7 @@ class SuratKeluarController extends Controller
             });
         }
 
-        $surat = $query
-    ->with('instansi')
-    ->latest()
-    ->get();
+        $surat = $query->get();
 
         return view('surat_keluar.index', compact('surat'));
     }
@@ -55,36 +50,9 @@ class SuratKeluarController extends Controller
             $suratMasuk = SuratMasuk::find($request->surat_masuk);
         }
 
-        // Ambil seluruh data instansi untuk dropdown pilihan di form create
         $instansi = Instansi::all();
 
         return view('surat_keluar.create', compact('suratMasuk', 'instansi'));
-    }
-
-    /**
-     * Generate Nomor Surat Otomatis
-     * Format: 001/PT-MDI/VIII/2026
-     */
-    private function generateNomorSurat()
-    {
-        $bulan = (int) now()->month;
-        $tahun = now()->year;
-
-        // Hitung jumlah surat pada bulan dan tahun yang sama
-        $jumlah = SuratKeluar::whereMonth('created_at', $bulan)
-            ->whereYear('created_at', $tahun)
-            ->count() + 1;
-
-        // Format 3 digit angka (001, 002, ..., 010, ..., 100)
-        $nomor = sprintf('%03d', $jumlah);
-
-        $romawi = [
-            1 => 'I', 2 => 'II', 3 => 'III', 4 => 'IV',
-            5 => 'V', 6 => 'VI', 7 => 'VII', 8 => 'VIII',
-            9 => 'IX', 10 => 'X', 11 => 'XI', 12 => 'XII',
-        ];
-
-        return $nomor . '/PT-MDI/' . ($romawi[$bulan] ?? 'I') . '/' . $tahun;
     }
 
     /**
@@ -92,7 +60,7 @@ class SuratKeluarController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'instansi_id'           => 'required|exists:instansis,id',
             'tanggal_surat'         => 'required|date',
             'jenis_surat'           => 'required|string|max:100',
@@ -114,23 +82,12 @@ class SuratKeluarController extends Controller
             $request->file('file_surat')->storeAs('surat_keluar', $namaFile, 'public');
         }
 
-        DB::transaction(function () use ($request, $namaFile) {
-            $surat = SuratKeluar::create([
-                'nomor_surat'           => $this->generateNomorSurat(),
-                'instansi_id'           => $request->instansi_id,
-                'tanggal_surat'         => $request->tanggal_surat,
-                'jenis_surat'           => $request->jenis_surat,
-                'tujuan'                => $request->tujuan,
-                'perihal'               => $request->perihal,
-                'isi_surat'             => $request->isi_surat,
-                'lampiran'              => $request->lampiran,
-                'penandatangan'         => $request->penandatangan,
-                'jabatan_penandatangan' => $request->jabatan_penandatangan,
-                'status'                => $request->status,
-                'file_surat'            => $namaFile,
-                'surat_masuk_id'        => $request->surat_masuk_id,
-                'user_id'               => Auth::id(),
-            ]);
+        DB::transaction(function () use ($validated, $namaFile) {
+            $surat = SuratKeluar::create(array_merge($validated, [
+                'nomor_surat' => $this->generateNomorSurat(),
+                'file_surat'  => $namaFile,
+                'user_id'     => Auth::id(),
+            ]));
 
             // Ambil nama instansi untuk arsip
             $namaInstansi = $surat->instansi ? $surat->instansi->nama_instansi : $surat->tujuan;
@@ -163,6 +120,7 @@ class SuratKeluarController extends Controller
     public function show(SuratKeluar $suratKeluar)
     {
         $suratKeluar->load('instansi');
+
         return view('surat_keluar.show', ['surat' => $suratKeluar]);
     }
 
@@ -172,6 +130,7 @@ class SuratKeluarController extends Controller
     public function edit(SuratKeluar $suratKeluar)
     {
         $instansi = Instansi::all();
+
         return view('surat_keluar.edit', ['surat' => $suratKeluar, 'instansi' => $instansi]);
     }
 
@@ -180,7 +139,7 @@ class SuratKeluarController extends Controller
      */
     public function update(Request $request, SuratKeluar $suratKeluar)
     {
-        $request->validate([
+        $validated = $request->validate([
             'instansi_id'           => 'required|exists:instansis,id',
             'tanggal_surat'         => 'required|date',
             'jenis_surat'           => 'required|string|max:100',
@@ -205,20 +164,10 @@ class SuratKeluarController extends Controller
             $request->file('file_surat')->storeAs('surat_keluar', $namaFile, 'public');
         }
 
-        DB::transaction(function () use ($request, $suratKeluar, $namaFile) {
-            $suratKeluar->update([
-                'instansi_id'           => $request->instansi_id,
-                'tanggal_surat'         => $request->tanggal_surat,
-                'jenis_surat'           => $request->jenis_surat,
-                'tujuan'                => $request->tujuan,
-                'perihal'               => $request->perihal,
-                'isi_surat'             => $request->isi_surat,
-                'lampiran'              => $request->lampiran,
-                'penandatangan'         => $request->penandatangan,
-                'jabatan_penandatangan' => $request->jabatan_penandatangan,
-                'status'                => $request->status,
-                'file_surat'            => $namaFile,
-            ]);
+        DB::transaction(function () use ($validated, $suratKeluar, $namaFile) {
+            $suratKeluar->update(array_merge($validated, [
+                'file_surat' => $namaFile,
+            ]));
 
             $namaInstansi = $suratKeluar->instansi ? $suratKeluar->instansi->nama_instansi : $suratKeluar->tujuan;
 
@@ -266,6 +215,7 @@ class SuratKeluarController extends Controller
     public function preview(SuratKeluar $suratKeluar)
     {
         $suratKeluar->load('instansi');
+
         return view('surat_keluar.preview', ['surat' => $suratKeluar]);
     }
 
@@ -273,47 +223,58 @@ class SuratKeluarController extends Controller
      * Download PDF
      */
     public function downloadPdf(SuratKeluar $suratKeluar)
-{
-    // Jika PDF sudah pernah dibuat
-    if (
-    $suratKeluar->file_surat &&
-    Storage::disk('public')->exists($suratKeluar->file_surat)
-) {
+    {
+        // Jika PDF sudah pernah dibuat dan tersimpan
+        if ($suratKeluar->file_surat && Storage::disk('public')->exists($suratKeluar->file_surat)) {
+            return response()->download(
+                storage_path('app/public/' . $suratKeluar->file_surat),
+                basename($suratKeluar->file_surat)
+            );
+        }
 
-    return response()->download(
-        storage_path('app/public/'.$suratKeluar->file_surat),
-        basename($suratKeluar->file_surat)
-    );
-}
+        // Generate PDF baru jika belum ada
+        $pdf = Pdf::loadView('surat_keluar.pdf', ['surat' => $suratKeluar]);
 
-    // Generate PDF
-    $pdf = Pdf::loadView('surat_keluar.pdf', [
-        'surat' => $suratKeluar
-    ]);
+        if (!Storage::disk('public')->exists('pdf')) {
+            Storage::disk('public')->makeDirectory('pdf');
+        }
 
-    // Pastikan folder pdf ada
-    if (!Storage::disk('public')->exists('pdf')) {
-        Storage::disk('public')->makeDirectory('pdf');
+        $namaFile = str_replace('/', '-', $suratKeluar->nomor_surat) . '.pdf';
+        $path = 'pdf/' . $namaFile;
+
+        Storage::disk('public')->put($path, $pdf->output());
+
+        $suratKeluar->update([
+            'file_surat' => $path,
+        ]);
+
+        return response()->download(
+            storage_path('app/public/' . $path),
+            $namaFile
+        );
     }
 
-    // Nama file PDF
-    $namaFile = str_replace('/', '-', $suratKeluar->nomor_surat) . '.pdf';
+    /**
+     * Generate Nomor Surat Otomatis
+     * Format: 001/PT-MDI/VIII/2026
+     */
+    private function generateNomorSurat()
+    {
+        $bulan = (int) now()->month;
+        $tahun = now()->year;
 
-    // Lokasi penyimpanan
-    $path = 'pdf/' . $namaFile;
+        $jumlah = SuratKeluar::whereMonth('created_at', $bulan)
+            ->whereYear('created_at', $tahun)
+            ->count() + 1;
 
-    // Simpan PDF ke storage
-    Storage::disk('public')->put($path, $pdf->output());
+        $nomor = sprintf('%03d', $jumlah);
 
-    // Simpan lokasi file ke database
-    $suratKeluar->update([
-        'file_surat' => $path
-    ]);
+        $romawi = [
+            1 => 'I', 2 => 'II', 3 => 'III', 4 => 'IV',
+            5 => 'V', 6 => 'VI', 7 => 'VII', 8 => 'VIII',
+            9 => 'IX', 10 => 'X', 11 => 'XI', 12 => 'XII',
+        ];
 
-    // Download file
-    return response()->download(
-    storage_path('app/public/'.$path),
-    $namaFile
-);
-}
+        return $nomor . '/PT-MDI/' . ($romawi[$bulan] ?? 'I') . '/' . $tahun;
+    }
 }

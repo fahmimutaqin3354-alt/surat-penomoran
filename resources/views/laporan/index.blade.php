@@ -1,115 +1,130 @@
 @extends('layouts.app')
- 
+
 @section('title', 'Laporan')
- 
+
 @section('content')
 <div class="p-6 bg-slate-950 min-h-screen">
- 
+
     {{-- ======================= BREADCRUMB ======================= --}}
     <nav class="flex items-center gap-2 text-sm text-slate-500 mb-4">
-        <a href="{{ route('laporan.index') }}" class="hover:text-slate-300">Laporan</a>
+        <a href="{{ route('laporan.index') }}" class="hover:text-slate-300 transition">Laporan</a>
         <span>/</span>
         <span class="text-slate-300 font-medium">Dashboard</span>
     </nav>
- 
+
     {{-- ======================= HEADER + AKSI ======================= --}}
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
             <h1 class="text-2xl font-semibold text-white">Laporan</h1>
             <p class="text-sm text-slate-400 mt-1">Ringkasan dan laporan aktivitas persuratan</p>
         </div>
- 
+
         <div class="flex items-center gap-3">
- 
             {{-- ============ DROPDOWN EKSPOR (Email / WhatsApp) ============ --}}
-         <div class="relative" x-data="{ open: false }" @click.outside="open = false">
-    <button type="button" @click="open = !open"
-        class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 focus:outline-none transition">
+            <div class="relative" x-data="{ open: false }" @click.outside="open = false">
+                <button type="button" @click="open = !open"
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 focus:outline-none transition">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3" />
+                    </svg>
+                    Ekspor Laporan
+                    <svg class="w-3.5 h-3.5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                    </svg>
+                </button>
+
+                <div x-show="open" x-cloak
+                    class="absolute right-0 mt-2 w-52 bg-slate-900 border border-slate-800 rounded-lg shadow-lg z-10 overflow-hidden py-1">
+
+                    <p class="px-4 pt-2 pb-1 text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Unduh</p>
+
+                    <a href="{{ route('laporan.export.pdf', request()->query()) }}"
+                        class="flex items-center gap-2 px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 transition">
+                        <svg class="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                        </svg>
+                        Unduh PDF
+                    </a>
+                    <a href="{{ route('laporan.export.excel', request()->query()) }}"
+                        class="flex items-center gap-2 px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 transition">
+                        <svg class="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                        </svg>
+                        Unduh Excel
+                    </a>
+
+                    <div class="my-1 border-t border-slate-800"></div>
+
+                    <p class="px-4 pt-2 pb-1 text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Kirim</p>
+
+                    <button type="button" @click="$dispatch('open-modal-email'); open = false"
+                        class="flex items-center gap-2 w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 transition">
+                        <svg class="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                        </svg>
+                        Kirim ke Email
+                    </button>
+                    <button type="button" @click="$dispatch('open-modal-wa'); open = false"
+                        class="flex items-center gap-2 w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 transition">
+                        <svg class="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
+                        </svg>
+                        Kirim ke WhatsApp
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- ======================= FILTER DENGAN IKON TANGGAL PUTIH ======================= --}}
+    <form method="GET" action="{{ route('laporan.index') }}" class="flex flex-wrap items-center gap-3 mb-6">
+        
+        {{-- Tanggal Dari --}}
+<div class="relative min-w-[160px]">
+    <input type="date" name="dari" value="{{ request('dari', now()->startOfMonth()->format('Y-m-d')) }}"
+        class="w-full pl-3 pr-10 py-2 bg-slate-900 border border-slate-800 rounded-lg text-sm text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:outline-none [color-scheme:light] [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer">
+    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-300">
         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 2v2M18 2v2M3 8h18M5 4h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z" />
         </svg>
-        Ekspor Laporan
-        <svg class="w-3.5 h-3.5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-        </svg>
-    </button>
- 
-    <div x-show="open" x-cloak
-        class="absolute right-0 mt-2 w-52 bg-slate-900 border border-slate-800 rounded-lg shadow-lg z-10 overflow-hidden py-1">
- 
-        <p class="px-4 pt-2 pb-1 text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Unduh</p>
- 
-        <a href="{{ route('laporan.export.pdf', request()->query()) }}"
-            class="flex items-center gap-2 px-4 py-2 text-sm text-slate-300 hover:bg-slate-800">
-            <svg class="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-            </svg>
-            Unduh PDF
-        </a>
-        <a href="{{ route('laporan.export.excel', request()->query()) }}"
-            class="flex items-center gap-2 px-4 py-2 text-sm text-slate-300 hover:bg-slate-800">
-            <svg class="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-            </svg>
-            Unduh Excel
-        </a>
- 
-        <div class="my-1 border-t border-slate-800"></div>
- 
-        <p class="px-4 pt-2 pb-1 text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Kirim</p>
- 
-        <button type="button" @click="$dispatch('open-modal-email'); open = false"
-            class="flex items-center gap-2 w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-slate-800">
-            <svg class="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-            </svg>
-            Kirim ke Email
-        </button>
-        <button type="button" @click="$dispatch('open-modal-wa'); open = false"
-            class="flex items-center gap-2 w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-slate-800">
-            <svg class="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
-            </svg>
-            Kirim ke WhatsApp
-        </button>
     </div>
 </div>
- </div>
+
+<span class="text-sm text-slate-500 font-medium">s/d</span>
+
+{{-- Tanggal Sampai --}}
+<div class="relative min-w-[160px]">
+    <input type="date" name="sampai" value="{{ request('sampai', now()->endOfMonth()->format('Y-m-d')) }}"
+        class="w-full pl-3 pr-10 py-2 bg-slate-900 border border-slate-800 rounded-lg text-sm text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:outline-none [color-scheme:light] [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer">
+    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-300">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 2v2M18 2v2M3 8h18M5 4h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z" />
+        </svg>
     </div>
-    {{-- ======================= FILTER ======================= --}}
-    <form method="GET" action="{{ route('laporan.index') }}"
-        class="flex flex-wrap items-center gap-3 mb-6">
- 
-        <input type="date" name="dari" value="{{ request('dari', now()->startOfMonth()->format('Y-m-d')) }}"
-            class="px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-sm text-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
- 
-        <span class="text-sm text-slate-500">s/d</span>
- 
-        <input type="date" name="sampai" value="{{ request('sampai', now()->endOfMonth()->format('Y-m-d')) }}"
-            class="px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-sm text-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
- 
-        <select name="jenis" class="px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-sm text-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+</div>
+        {{-- Select Jenis --}}
+        <select name="jenis" class="px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-sm text-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none cursor-pointer">
             <option value="">Semua Jenis</option>
             <option value="masuk" @selected(request('jenis') === 'masuk')>Surat Masuk</option>
             <option value="keluar" @selected(request('jenis') === 'keluar')>Surat Keluar</option>
         </select>
- 
-        <select name="status" class="px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-sm text-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+
+        {{-- Select Status --}}
+        <select name="status" class="px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-sm text-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none cursor-pointer">
             <option value="">Semua Status</option>
             <option value="selesai" @selected(request('status') === 'selesai')>Selesai</option>
             <option value="proses" @selected(request('status') === 'proses')>Dalam Proses</option>
             <option value="menunggu" @selected(request('status') === 'menunggu')>Menunggu</option>
         </select>
- 
-        <button type="submit"
-            class="px-4 py-2 rounded-lg bg-slate-800 text-white text-sm font-medium hover:bg-slate-700 transition">
+
+        {{-- Tombol Filter --}}
+        <button type="submit" class="px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition shadow-sm">
             Filter
         </button>
     </form>
- 
+
     {{-- ======================= STAT CARDS ======================= --}}
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
- 
         @php
             $stats = [
                 ['label' => 'Total Surat', 'value' => $totalSurat, 'color' => 'text-indigo-400'],
@@ -119,7 +134,7 @@
                 ['label' => 'Disposisi', 'value' => $disposisi, 'color' => 'text-amber-400'],
             ];
         @endphp
- 
+
         @foreach ($stats as $stat)
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
                 <p class="text-sm text-slate-400 mb-2">{{ $stat['label'] }}</p>
@@ -127,76 +142,75 @@
             </div>
         @endforeach
     </div>
- 
+
     {{-- ======================= CHARTS ======================= --}}
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
- 
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
         <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 lg:col-span-1">
             <p class="text-sm font-medium text-slate-300 mb-3">Tren Surat</p>
             <canvas id="chartTren" height="180"></canvas>
         </div>
- 
+
         <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
             <p class="text-sm font-medium text-slate-300 mb-3">Surat Berdasarkan Jenis</p>
             <canvas id="chartJenis" height="180"></canvas>
         </div>
- 
+
         <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
             <p class="text-sm font-medium text-slate-300 mb-3">Surat Berdasarkan Status</p>
             <canvas id="chartStatus" height="180"></canvas>
         </div>
     </div>
- 
+
     {{-- ======================= FOOTER INFO ======================= --}}
-    <p class="text-xs text-slate-500 flex items-center gap-1">
+    <p class="text-xs text-slate-500 flex items-center gap-1 mb-4">
         <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
         </svg>
         Data diperbarui pada {{ $updatedAt }}
     </p>
- 
+
     {{-- ======================= MODAL: KIRIM KE EMAIL ======================= --}}
-   <div x-data="{ show: false }"
-    @open-modal-email.window="show = true"
-    x-show="show" x-cloak
-    class="fixed inset-0 z-50 flex items-center justify-center p-4">
- 
-    <div class="absolute inset-0 bg-black/60" @click="show = false"></div>
- 
-    <div class="relative bg-slate-900 border border-slate-800 rounded-xl w-full max-w-sm p-6">
-        <h3 class="text-base font-semibold text-white mb-1">Kirim Laporan ke Email</h3>
-        <p class="text-sm text-slate-400 mb-4">
-            Pilih file laporan yang sudah kamu unduh (PDF/Excel) untuk dilampirkan.
-        </p>
- 
-        <form action="{{ route('laporan.send.email') }}" method="POST" enctype="multipart/form-data">
-            @csrf
- 
-            <label class="block text-sm font-medium text-slate-300 mb-1">Alamat Email</label>
-            <input type="email" name="email" required placeholder="nama@contoh.com"
-                class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4">
- 
-            <label class="block text-sm font-medium text-slate-300 mb-1">File Lampiran</label>
-            <input type="file" name="lampiran[]" multiple required accept=".pdf,.xlsx,.xls"
-                class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-100 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:bg-indigo-500/10 file:text-indigo-400 hover:file:bg-indigo-500/20 focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-1">
-            <p class="text-xs text-slate-500 mb-4">
-                Bisa pilih lebih dari 1 file sekaligus (tahan Ctrl saat memilih di jendela file explorer).
+    <div x-data="{ show: false }"
+        @open-modal-email.window="show = true"
+        x-show="show" x-cloak
+        class="fixed inset-0 z-50 flex items-center justify-center p-4">
+
+        <div class="absolute inset-0 bg-black/60" @click="show = false"></div>
+
+        <div class="relative bg-slate-900 border border-slate-800 rounded-xl w-full max-w-sm p-6">
+            <h3 class="text-base font-semibold text-white mb-1">Kirim Laporan ke Email</h3>
+            <p class="text-sm text-slate-400 mb-4">
+                Pilih file laporan yang sudah kamu unduh (PDF/Excel) untuk dilampirkan.
             </p>
- 
-            <div class="flex justify-end gap-2 mt-4">
-                <button type="button" @click="show = false"
-                    class="px-4 py-2 rounded-lg text-sm text-slate-400 hover:bg-slate-800 transition">
-                    Batal
-                </button>
-                <button type="submit"
-                    class="px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition">
-                    Kirim
-                </button>
-            </div>
-        </form>
+
+            <form action="{{ route('laporan.send.email') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+
+                <label class="block text-sm font-medium text-slate-300 mb-1">Alamat Email</label>
+                <input type="email" name="email" required placeholder="nama@contoh.com"
+                    class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4">
+
+                <label class="block text-sm font-medium text-slate-300 mb-1">File Lampiran</label>
+                <input type="file" name="lampiran[]" multiple required accept=".pdf,.xlsx,.xls"
+                    class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-100 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:bg-indigo-500/10 file:text-indigo-400 hover:file:bg-indigo-500/20 focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-1">
+                <p class="text-xs text-slate-500 mb-4">
+                    Bisa pilih lebih dari 1 file sekaligus (tahan Ctrl saat memilih di jendela file explorer).
+                </p>
+
+                <div class="flex justify-end gap-2 mt-4">
+                    <button type="button" @click="show = false"
+                        class="px-4 py-2 rounded-lg text-sm text-slate-400 hover:bg-slate-800 transition">
+                        Batal
+                    </button>
+                    <button type="submit"
+                        class="px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition">
+                        Kirim
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
- 
+
     {{-- ======================= MODAL: KIRIM KE WHATSAPP ======================= --}}
     <div x-data="{
             show: false,
@@ -214,19 +228,19 @@
         @open-modal-wa.window="show = true"
         x-show="show" x-cloak
         class="fixed inset-0 z-50 flex items-center justify-center p-4">
- 
+
         <div class="absolute inset-0 bg-black/60" @click="show = false"></div>
- 
+
         <div class="relative bg-slate-900 border border-slate-800 rounded-xl w-full max-w-sm p-6">
             <h3 class="text-base font-semibold text-white mb-1">Kirim Laporan ke WhatsApp</h3>
             <p class="text-sm text-slate-400 mb-4">
                 WhatsApp akan terbuka dengan pesan berisi link download laporan (berlaku 24 jam).
             </p>
- 
+
             <label class="block text-sm font-medium text-slate-300 mb-1">Nomor WhatsApp</label>
             <input type="text" x-model="nomor" placeholder="08xxxxxxxxxx"
                 class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4">
- 
+
             <div class="flex justify-end gap-2">
                 <button type="button" @click="show = false"
                     class="px-4 py-2 rounded-lg text-sm text-slate-400 hover:bg-slate-800 transition">
@@ -239,18 +253,19 @@
             </div>
         </div>
     </div>
- 
+
 </div>
 @endsection
- 
+
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
- 
+
         Chart.defaults.color = '#94a3b8';
         Chart.defaults.borderColor = '#1e293b';
- 
+
+        // Chart Tren Surat
         new Chart(document.getElementById('chartTren'), {
             type: 'line',
             data: {
@@ -280,7 +295,8 @@
                 scales: { y: { beginAtZero: true } },
             },
         });
- 
+
+        // Chart Jenis Surat
         new Chart(document.getElementById('chartJenis'), {
             type: 'doughnut',
             data: {
@@ -297,7 +313,8 @@
                 plugins: { legend: { position: 'right', labels: { boxWidth: 8, usePointStyle: true } } },
             },
         });
- 
+
+        // Chart Status Surat
         new Chart(document.getElementById('chartStatus'), {
             type: 'doughnut',
             data: {
