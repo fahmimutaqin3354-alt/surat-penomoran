@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\SuratMasuk;
 use App\Models\SuratKeluar;
+use App\Models\Arsip;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -12,47 +13,92 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // 1. Hitung total statistik
+        // 1. Hitung total statistik utama
         $totalSuratMasuk  = SuratMasuk::count();
-        
-        // Pengecekan aman untuk model SuratKeluar & User
-        $totalSuratKeluar = class_exists(SuratKeluar::class) ? SuratKeluar::count() : 0;
-        $totalArsip       = $totalSuratMasuk + $totalSuratKeluar;
-        $totalPengguna    = class_exists(User::class) ? User::count() : 0;
+        $totalSuratKeluar = SuratKeluar::count();
+        $totalArsip       = Arsip::count();
+        $totalPengguna    = User::count();
 
-        // 2. Ambil 5 surat masuk terbaru (urutkan berdasarkan id/created_at)
-        $suratTerbaru = SuratMasuk::latest('id')->take(5)->get();
+        // 2. Rincian status masing-masing modul
+        $statusSuratMasuk = [
+            'Baru'     => SuratMasuk::where('status', 'Baru')->count(),
+            'Diproses' => SuratMasuk::where('status', 'Diproses')->count(),
+            'Selesai'  => SuratMasuk::where('status', 'Selesai')->count(),
+        ];
 
-        // 3. Olah data statistik 6 bulan terakhir untuk grafik Chart.js
-        $chartLabels = [];
-        $chartData   = [];
+        $statusSuratKeluar = [
+            'Draft'   => SuratKeluar::where('status', 'Draft')->count(),
+            'Dikirim' => SuratKeluar::where('status', 'Dikirim')->count(),
+            'Selesai' => SuratKeluar::where('status', 'Selesai')->count(),
+        ];
+
+        $statusArsip = [
+            'Surat Masuk'  => Arsip::where('jenis', 'Surat Masuk')->count(),
+            'Surat Keluar' => Arsip::where('jenis', 'Surat Keluar')->count(),
+        ];
+
+        // 3. Olah data statistik 6 bulan terakhir untuk grafik komparasi
+        $chartLabels     = [];
+        $dataSuratMasuk  = [];
+        $dataSuratKeluar = [];
+        $dataArsip       = [];
 
         for ($i = 5; $i >= 0; $i--) {
-            // Menggunakan subMonthsNoOverflow agar aman dieksekusi di akhir bulan (misal tgl 31)
             $date = now()->subMonthsNoOverflow($i);
             $chartLabels[] = $date->translatedFormat('M Y');
 
-            // Hitung data per bulan dengan toleransi jika created_at bernilai NULL (fallback ke tanggal_surat jika ada)
-            $count = SuratMasuk::where(function ($query) use ($date) {
-                $query->whereYear('created_at', $date->year)
-                      ->whereMonth('created_at', $date->month);
-            })->orWhere(function ($query) use ($date) {
+            // Hitung Surat Masuk per bulan
+            $countMasuk = SuratMasuk::where(function ($query) use ($date) {
                 $query->whereYear('tanggal_surat', $date->year)
                       ->whereMonth('tanggal_surat', $date->month);
+            })->orWhere(function ($query) use ($date) {
+                $query->whereYear('created_at', $date->year)
+                      ->whereMonth('created_at', $date->month);
             })->count();
 
-            $chartData[] = $count;
+            // Hitung Surat Keluar per bulan
+            $countKeluar = SuratKeluar::where(function ($query) use ($date) {
+                $query->whereYear('tanggal_surat', $date->year)
+                      ->whereMonth('tanggal_surat', $date->month);
+            })->orWhere(function ($query) use ($date) {
+                $query->whereYear('created_at', $date->year)
+                      ->whereMonth('created_at', $date->month);
+            })->count();
+
+            // Hitung Arsip per bulan
+            $countArsip = Arsip::where(function ($query) use ($date) {
+                $query->whereYear('tanggal_surat', $date->year)
+                      ->whereMonth('tanggal_surat', $date->month);
+            })->orWhere(function ($query) use ($date) {
+                $query->whereYear('created_at', $date->year)
+                      ->whereMonth('created_at', $date->month);
+            })->count();
+
+            $dataSuratMasuk[]  = $countMasuk;
+            $dataSuratKeluar[] = $countKeluar;
+            $dataArsip[]       = $countArsip;
         }
 
-        // 4. Kirim data ke view dashboard (Pastikan nama view 'dashboard' sesuai dengan file blade Anda)
+        // 4. Data terbaru untuk masing-masing modul
+        $suratMasukTerbaru  = SuratMasuk::with('instansi')->latest()->take(5)->get();
+        $suratKeluarTerbaru = SuratKeluar::with('instansi')->latest()->take(5)->get();
+        $arsipTerbaru       = Arsip::latest('tanggal_surat')->take(5)->get();
+
         return view('dashboard', compact(
             'totalSuratMasuk',
             'totalSuratKeluar',
             'totalArsip',
             'totalPengguna',
-            'suratTerbaru',
+            'statusSuratMasuk',
+            'statusSuratKeluar',
+            'statusArsip',
             'chartLabels',
-            'chartData'
+            'dataSuratMasuk',
+            'dataSuratKeluar',
+            'dataArsip',
+            'suratMasukTerbaru',
+            'suratKeluarTerbaru',
+            'arsipTerbaru'
         ));
     }
 }
