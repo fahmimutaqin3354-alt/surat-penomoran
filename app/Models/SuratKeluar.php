@@ -14,16 +14,22 @@ class SuratKeluar extends Model
         'nomor_surat',
         'tanggal_surat',
         'jenis_surat',
+        'kode_surat',
         'kode_divisi',
         'tujuan',
         'perihal',
         'isi_surat',
+        'data_khusus',
         'lampiran',
         'penandatangan',
         'jabatan_penandatangan',
         'file_surat',
         'status',
         'user_id',
+    ];
+
+    protected $casts = [
+        'data_khusus' => 'array',
     ];
 
     /**
@@ -33,4 +39,13 @@ class SuratKeluar extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Relasi ke JenisSurat
+     */
+    public function jenisSurat()
+    {
+        return $this->belongsTo(JenisSurat::class, 'jenis_surat', 'nama');
+    }
 }
+

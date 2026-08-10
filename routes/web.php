@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SuratMasukController;
 use App\Http\Controllers\SuratKeluarController;
+use App\Http\Controllers\JenisSuratController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\ArsipController;
 use App\Http\Controllers\LaporanController;
@@ -31,6 +32,8 @@ Route::middleware(['auth'])->group(function () {
 
     // Surat Keluar
     Route::resource('surat_keluar', SuratKeluarController::class);
+    Route::post('/jenis_surat/store', [JenisSuratController::class, 'store'])
+    ->name('jenis_surat.store');
      Route::post('/surat_keluar/{id}/kirim-email', [SuratKeluarController::class, 'sendEmail'])
     ->name('surat_keluar.send.email');
     Route::post('/surat_keluar/{id}/send-whatsapp', [SuratKeluarController::class, 'sendWhatsapp'])

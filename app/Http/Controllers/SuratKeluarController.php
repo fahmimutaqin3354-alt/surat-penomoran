@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\SuratKeluar;
 use App\Models\SuratMasuk;
 use App\Models\Arsip;
+use App\Models\JenisSurat;
 use App\Mail\SuratKeluarMail;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -39,72 +40,125 @@ class SuratKeluarController extends Controller
             $suratMasuk = SuratMasuk::findOrFail($request->surat_masuk);
         }
 
-        return view('surat_keluar.create', compact('suratMasuk'));
+        $jenisSuratList = JenisSurat::orderBy('nama')->get();
+
+        return view('surat_keluar.create', compact('suratMasuk', 'jenisSuratList'));
+    }
+
+    /**
+     * Bangun payload untuk jenis surat khusus (misal Surat Kuasa).
+     * Untuk Surat Kuasa, perihal & isi_surat dibangun otomatis dari data_khusus.
+     */
+    private function buildKuasaData(Request $request)
+    {
+        $isKuasa = JenisSurat::where('nama', $request->jenis_surat)
+            ->where('form_type', 'kuasa')
+            ->exists();
+
+        if (!$isKuasa) {
+            return [
+                'perihal' => $request->perihal,
+                'tujuan' => $request->tujuan,
+                'isi_surat' => $request->isi_surat,
+                'data_khusus' => $request->input('data_khusus'),
+            ];
+        }
+
+        $dk = $request->input('data_khusus', []);
+        $pemberi = $dk['pemberi'] ?? [];
+        $penerima = $dk['penerima'] ?? [];
+
+        $isiSurat = "Yang bertanda tangan di bawah ini:\n\n";
+        $isiSurat .= "Nama\t\t: " . ($pemberi['nama'] ?? '-') . "\n";
+        $isiSurat .= "Alamat\t\t: " . ($pemberi['alamat'] ?? '-') . "\n";
+        $isiSurat .= "No. KTP\t\t: " . ($pemberi['ktp'] ?? '-') . "\n\n";
+        $isiSurat .= "Dengan ini memberikan kuasa kepada:\n\n";
+        $isiSurat .= "Nama\t\t: " . ($penerima['nama'] ?? '-') . "\n";
+        $isiSurat .= "Alamat\t\t: " . ($penerima['alamat'] ?? '-') . "\n";
+        $isiSurat .= "No. KTP\t\t: " . ($penerima['ktp'] ?? '-') . "\n\n";
+        $isiSurat .= "Untuk\t\t: " . ($dk['hal'] ?? '-') . "\n\n";
+        $isiSurat .= "Demikian surat kuasa ini dibuat untuk dipergunakan sebagaimana mestinya.";
+
+        return [
+            'perihal' => 'Pemberian Kuasa',
+            'tujuan' => $penerima['nama'] ?? $request->tujuan,
+            'isi_surat' => $isiSurat,
+            'data_khusus' => $dk,
+        ];
     }
 
     /**
      * Generate Nomor Surat Otomatis
      * Format:
-     * 001/PT-MDI/VII/2026
+     * 001/SK/DIR-I/PT-MDI/VIII/2026
      */
- private function generateNomorSurat($perihal, $kodeDivisi)
-{
-    $bulan = now()->month;
-    $tahun = now()->year;
+    private function generateNomorSurat($kodeSurat, $kodeDivisi)
+    {
+        $bulan = now()->month;
+        $tahun = now()->year;
 
-    $romawi = [
-        1 => 'I', 2 => 'II', 3 => 'III', 4 => 'IV',
-        5 => 'V', 6 => 'VI', 7 => 'VII', 8 => 'VIII',
-        9 => 'IX', 10 => 'X', 11 => 'XI', 12 => 'XII',
-    ];
+        $romawi = [
+            1 => 'I', 2 => 'II', 3 => 'III', 4 => 'IV',
+            5 => 'V', 6 => 'VI', 7 => 'VII', 8 => 'VIII',
+            9 => 'IX', 10 => 'X', 11 => 'XI', 12 => 'XII',
+        ];
 
-    $slugPerihal = \Illuminate\Support\Str::slug($perihal);
+        $kodeSurat = strtoupper($kodeSurat);
 
-    do {
-        $lastNomor = SuratKeluar::withTrashed()
-            ->whereMonth('created_at', $bulan)
-            ->whereYear('created_at', $tahun)
-            ->get()
-            ->map(function ($surat) {
-                return (int) explode('/', $surat->nomor_surat)[0];
-            })
-            ->max();
+        do {
+            $lastNomor = SuratKeluar::withTrashed()
+                ->whereMonth('created_at', $bulan)
+                ->whereYear('created_at', $tahun)
+                ->get()
+                ->map(function ($surat) {
+                    return (int) explode('/', $surat->nomor_surat)[0];
+                })
+                ->max();
 
-        $jumlah = ($lastNomor ?? 0) + 1;
+            $jumlah = ($lastNomor ?? 0) + 1;
 
-        $nomorFormatted = $jumlah < 100
-            ? str_pad($jumlah, 2, '0', STR_PAD_LEFT)
-            : $jumlah;
+            $nomorFormatted = $jumlah < 100
+                ? str_pad($jumlah, 2, '0', STR_PAD_LEFT)
+                : $jumlah;
 
-        $nomorSurat = $nomorFormatted . '/' . $slugPerihal . '/' . $kodeDivisi . '/PT-MDI/' . $romawi[$bulan] . '/' . $tahun;
+            $nomorSurat = $nomorFormatted . '/' . $kodeSurat . '/' . $kodeDivisi . '/PT-MDI/' . $romawi[$bulan] . '/' . $tahun;
 
-        $exists = SuratKeluar::where('nomor_surat', $nomorSurat)->exists();
+            $exists = SuratKeluar::where('nomor_surat', $nomorSurat)->exists();
 
-        $jumlah++;
-    } while ($exists);
+            $jumlah++;
+        } while ($exists);
 
-    return $nomorSurat;
-}
+        return $nomorSurat;
+    }
 /**
  * Menyimpan surat keluar
  */
 public function store(Request $request)
 {
+    $isKuasa = JenisSurat::where('nama', $request->jenis_surat)
+        ->where('form_type', 'kuasa')
+        ->exists();
+
     $request->validate([
         'tanggal_surat' => 'required|date',
         'jenis_surat' => 'required|string|max:100',
+        'kode_surat' => 'nullable|string|max:10',
         'kode_divisi' => 'required|string|max:20',
-        'tujuan' => 'required|string|max:255',
-        'perihal' => 'required|string|max:255',
-        'isi_surat' => 'required|string',
+        'tujuan' => $isKuasa ? 'nullable|string|max:255' : 'required|string|max:255',
+        'perihal' => $isKuasa ? 'nullable|string|max:255' : 'required|string|max:255',
+        'isi_surat' => $isKuasa ? 'nullable|string' : 'required|string',
+        'data_khusus' => $isKuasa ? 'required|array' : 'nullable|array',
         'lampiran' => 'nullable|string|max:255',
-        'penandatangan' => 'required|string|max:255',
-        'jabatan_penandatangan' => 'required|string|max:255',
+        'penandatangan' => $isKuasa ? 'nullable|string|max:255' : 'required|string|max:255',
+        'jabatan_penandatangan' => $isKuasa ? 'nullable|string|max:255' : 'required|string|max:255',
         'status' => 'required|in:Draft,Dikirim,Selesai',
         'file_surat' => 'nullable|mimes:pdf|max:2048',
     ]);
 
-    $namaFile = null;
+    // Kumpulkan data khusus (misal data Surat Kuasa)
+    $kuasaData = $this->buildKuasaData($request);
+    $dataKhusus = $kuasaData['data_khusus'];
+
 
     if ($request->hasFile('file_surat')) {
 
@@ -120,25 +174,29 @@ public function store(Request $request)
     // Simpan Surat Keluar
     $surat = SuratKeluar::create([
 
-        'nomor_surat' => $this->generateNomorSurat($request->perihal, $request->kode_divisi),
+        'nomor_surat' => $this->generateNomorSurat($request->kode_surat ?? 'SK', $request->kode_divisi),
 
         'tanggal_surat' => $request->tanggal_surat,
 
         'jenis_surat' => $request->jenis_surat,
 
+        'kode_surat' => strtoupper($request->kode_surat),
+
         'kode_divisi' => $request->kode_divisi,
 
-        'tujuan' => $request->tujuan,
+        'tujuan' => $kuasaData['tujuan'],
 
-        'perihal' => $request->perihal,
+        'perihal' => $kuasaData['perihal'],
 
-        'isi_surat' => $request->isi_surat,
+        'isi_surat' => $kuasaData['isi_surat'],
+
+        'data_khusus' => $dataKhusus,
 
         'lampiran' => $request->lampiran,
 
-        'penandatangan' => $request->penandatangan,
+        'penandatangan' => $request->penandatangan ?? ($dataKhusus['pemberi']['nama'] ?? 'Pemberi Kuasa'),
 
-        'jabatan_penandatangan' => $request->jabatan_penandatangan,
+        'jabatan_penandatangan' => $request->jabatan_penandatangan ?? 'Pemberi Kuasa',
 
         'status' => $request->status,
 
@@ -204,7 +262,9 @@ public function edit($id)
 {
     $surat = SuratKeluar::findOrFail($id);
 
-    return view('surat_keluar.edit', compact('surat'));
+    $jenisSuratList = JenisSurat::orderBy('nama')->get();
+
+    return view('surat_keluar.edit', compact('surat', 'jenisSuratList'));
 }
 
 /**
@@ -214,21 +274,30 @@ public function update(Request $request, $id)
 {
     $surat = SuratKeluar::findOrFail($id);
 
+    $isKuasa = JenisSurat::where('nama', $request->jenis_surat)
+        ->where('form_type', 'kuasa')
+        ->exists();
+
     $request->validate([
         'tanggal_surat' => 'required|date',
         'jenis_surat' => 'required|string|max:100',
+        'kode_surat' => 'nullable|string|max:10',
         'kode_divisi' => 'required|string|max:20',
-        'tujuan' => 'required|string|max:255',
-        'perihal' => 'required|string|max:255',
-        'isi_surat' => 'required|string',
+        'tujuan' => $isKuasa ? 'nullable|string|max:255' : 'required|string|max:255',
+        'perihal' => $isKuasa ? 'nullable|string|max:255' : 'required|string|max:255',
+        'isi_surat' => $isKuasa ? 'nullable|string' : 'required|string',
+        'data_khusus' => $isKuasa ? 'required|array' : 'nullable|array',
         'lampiran' => 'nullable|string|max:255',
-        'penandatangan' => 'required|string|max:255',
-        'jabatan_penandatangan' => 'required|string|max:255',
+        'penandatangan' => $isKuasa ? 'nullable|string|max:255' : 'required|string|max:255',
+        'jabatan_penandatangan' => $isKuasa ? 'nullable|string|max:255' : 'required|string|max:255',
         'status' => 'required|in:Draft,Dikirim,Selesai',
         'file_surat' => 'nullable|mimes:pdf|max:2048',
     ]);
 
-    $namaFile = $surat->file_surat;
+    // Kumpulkan data khusus (misal data Surat Kuasa)
+    $kuasaData = $this->buildKuasaData($request);
+    $dataKhusus = $kuasaData['data_khusus'];
+
 
     if ($request->hasFile('file_surat')) {
 
@@ -254,19 +323,23 @@ public function update(Request $request, $id)
 
         'jenis_surat' => $request->jenis_surat,
 
+        'kode_surat' => strtoupper($request->kode_surat),
+
         'kode_divisi' => $request->kode_divisi,
 
-        'tujuan' => $request->tujuan,
+        'tujuan' => $kuasaData['tujuan'],
 
-        'perihal' => $request->perihal,
+        'perihal' => $kuasaData['perihal'],
 
-        'isi_surat' => $request->isi_surat,
+        'isi_surat' => $kuasaData['isi_surat'],
+
+        'data_khusus' => $dataKhusus,
 
         'lampiran' => $request->lampiran,
 
-        'penandatangan' => $request->penandatangan,
+        'penandatangan' => $request->penandatangan ?? ($dataKhusus['pemberi']['nama'] ?? 'Pemberi Kuasa'),
 
-        'jabatan_penandatangan' => $request->jabatan_penandatangan,
+        'jabatan_penandatangan' => $request->jabatan_penandatangan ?? 'Pemberi Kuasa',
 
         'status' => $request->status,
 

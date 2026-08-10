@@ -97,11 +97,7 @@
 
                         <th class="px-6 py-4">Tanggal</th>
 
-                        <th class="px-6 py-4">Jenis Surat</th>
-
                         <th class="px-6 py-4">Tujuan</th>
-
-                        <th class="px-6 py-4">Perihal</th>
 
                         <th class="px-6 py-4">Status</th>
 
@@ -137,19 +133,7 @@
 
                         <td class="px-6 py-4 text-slate-300">
 
-                            {{ $item->jenis_surat }}
-
-                        </td>
-
-                        <td class="px-6 py-4 text-slate-300">
-
                             {{ Str::limit($item->tujuan,30) }}
-
-                        </td>
-
-                        <td class="px-6 py-4 text-slate-300">
-
-                            {{ Str::limit($item->perihal,35) }}
 
                         </td>
 
@@ -331,7 +315,7 @@
 
                     <tr>
 
-                        <td colspan="8"
+                        <td colspan="6"
                             class="text-center py-12 text-slate-400">
 
                             <i class="fa-regular fa-folder-open text-5xl mb-4 block"></i>

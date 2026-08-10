@@ -91,11 +91,9 @@
                     <tr class="text-left text-slate-300">
 
                         <th class="px-6 py-4">No</th>
-                        <th class="px-6 py-4">No Agenda</th>
                         <th class="px-6 py-4">Nomor Surat</th>
                         <th class="px-6 py-4">Tanggal</th>
                         <th class="px-6 py-4">Asal Surat</th>
-                        <th class="px-6 py-4">Jenis Surat</th>
                         <th class="px-6 py-4">Perihal</th>
                         <th class="px-6 py-4">Status</th>
                         <th class="px-6 py-4 text-center">Aksi</th>
@@ -114,10 +112,6 @@
                             {{ $loop->iteration + ($surat->currentPage()-1) * $surat->perPage() }}
                         </td>
 
-                        <td class="px-6 py-4 font-semibold text-white">
-                            {{ $item->nomor_agenda }}
-                        </td>
-
                         <td class="px-6 py-4 text-slate-300">
                             {{ $item->nomor_surat }}
                         </td>
@@ -128,10 +122,6 @@
 
                         <td class="px-6 py-4 text-slate-300">
                             {{ Str::limit($item->asal_surat,30) }}
-                        </td>
-
-                        <td class="px-6 py-4 text-slate-300">
-                            {{ $item->jenis_surat }}
                         </td>
 
                         <td class="px-6 py-4 text-slate-300">
@@ -213,7 +203,7 @@
 
                     <tr>
 
-                        <td colspan="9"
+                        <td colspan="7"
                             class="text-center py-12 text-slate-400">
 
                             <i class="fa-regular fa-folder-open text-5xl mb-4 block"></i>
