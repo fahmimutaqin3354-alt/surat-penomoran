@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="id" class="dark">
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -36,106 +37,117 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- DataTables CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.css">
+    <link rel="stylesheet"
+href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.css">
+<link rel="stylesheet"
+href="https://cdn.datatables.net/searchbuilder/1.8.2/css/searchBuilder.dataTables.css">
 
-    <style>
-        /* ============================
-           DataTables Dark Modern
-        ============================= */
-        .dataTables_wrapper {
-            color: #e2e8f0;
-            padding: 20px;
-        }
+<link rel="stylesheet"
+href="https://cdn.datatables.net/searchpanes/2.3.2/css/searchPanes.dataTables.css">
+<style>
 
-        .dataTables_length { float: left; }
-        .dataTables_filter { float: right; }
+/* ============================
+   DataTables Dark Modern
+============================= */
 
-        .dataTables_filter label,
-        .dataTables_length label {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: #cbd5e1;
-            font-weight: 600;
-        }
+.dataTables_wrapper{
+    color:#e2e8f0;
+    padding:20px;
+}
 
-        .dataTables_filter input {
-            width: 260px;
-            background: #111827 !important;
-            color: white !important;
-            border: 1px solid #374151 !important;
-            border-radius: 8px;
-            padding: 8px 12px;
-        }
+/* Top */
+.dataTables_length{
+    float:left;
+}
 
-        .dataTables_length select {
-            background: #111827;
-            color: white;
-            border: 1px solid #374151;
-            border-radius: 8px;
-            padding: 6px 12px;
-        }
+.dataTables_filter{
+    float:right;
+}
 
-        table.dataTable { border: none !important; }
+.dataTables_filter label,
+.dataTables_length label{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    color:#cbd5e1;
+    font-weight:600;
+}
 
-        table.dataTable thead th {
-            background: #1e293b !important;
-            color: white !important;
-            font-weight: 700;
-            border-bottom: 1px solid #334155 !important;
-            padding: 18px;
-        }
+/* Search */
+.dataTables_filter input{
+    width:260px;
+    background:#111827 !important;
+    color:white !important;
+    border:1px solid #374151 !important;
+    border-radius:8px;
+    padding:8px 12px;
+}
 
-        table.dataTable tbody td {
-            background: #0f172a;
-            color: #e2e8f0;
-            padding: 18px;
-            border-bottom: 1px solid #1e293b;
-        }
+/* Dropdown */
+.dataTables_length select{
+    background:#111827;
+    color:white;
+    border:1px solid #374151;
+    border-radius:8px;
+    padding:6px 12px;
+}
 
-        table.dataTable tbody tr:hover { background: #1e293b !important; }
+/* Table */
+table.dataTable{
+    border:none !important;
+}
 
-        .dataTables_info {
-            color: #cbd5e1 !important;
-            margin-top: 18px;
-        }
+table.dataTable thead th{
+    background:#1e293b !important;
+    color:white !important;
+    font-weight:700;
+    border-bottom:1px solid #334155 !important;
+    padding:18px;
+}
 
-        .dataTables_paginate { margin-top: 18px !important; }
+table.dataTable tbody td{
+    background:#0f172a;
+    color:#e2e8f0;
+    padding:18px;
+    border-bottom:1px solid #1e293b;
+}
 
-        .dataTables_paginate .paginate_button {
-            background: #1e293b !important;
-            color: white !important;
-            border-radius: 8px !important;
-            border: none !important;
-            margin: 0 4px;
-            padding: 6px 14px !important;
-        }
+table.dataTable tbody tr:hover{
+    background:#1e293b !important;
+}
 
-        .dataTables_paginate .paginate_button.current { background: #4f46e5 !important; }
-        .dataTables_paginate .paginate_button:hover { background: #6366f1 !important; }
+/* Info */
+.dataTables_info{
+    color:#cbd5e1 !important;
+    margin-top:18px;
+}
 
-        /* ============================
-           Print Mode Utility
-        ============================= */
-        @media print {
-            header, aside, #sidebarBackdrop, .no-print {
-                display: none !important;
-            }
-            main {
-                padding: 0 !important;
-                margin: 0 !important;
-            }
-            body {
-                background-color: #ffffff !important;
-                color: #000000 !important;
-            }
-        }
-    </style>
+/* Pagination */
+.dataTables_paginate{
+    margin-top:18px !important;
+}
 
-    <!-- SweetAlert2 -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+.dataTables_paginate .paginate_button{
+    background:#1e293b !important;
+    color:white !important;
+    border-radius:8px !important;
+    border:none !important;
+    margin:0 4px;
+    padding:6px 14px !important;
+}
+
+.dataTables_paginate .paginate_button.current{
+    background:#4f46e5 !important;
+}
+
+.dataTables_paginate .paginate_button:hover{
+    background:#6366f1 !important;
+}
+
+</style>
+
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     @stack('styles')
 </head>
@@ -179,7 +191,7 @@
     <aside id="sidebar" class="fixed top-16 left-0 bottom-0 w-64 bg-slate-900/90 backdrop-blur-xl border-r border-slate-800/80 z-30 transition-transform -translate-x-full md:translate-x-0 overflow-y-auto">
         <div class="p-4 space-y-6">
 
-            <!-- Brand Logo Inside Sidebar -->
+            <!-- Brand Logo Inside Sidebar (Gantikan Logo 'M' Teks ke Gambar Logo Microdata) -->
             <div class="p-3.5 rounded-2xl bg-slate-950/80 border border-slate-800/80 backdrop-blur-xl flex items-center justify-center shadow-md">
                 <img src="{{ asset('images/microdata-logo.webp') }}"
                      alt="Microdata Indonesia"
@@ -188,6 +200,7 @@
 
             <!-- Navigation Links -->
             <nav class="space-y-1">
+
                 <!-- Dashboard -->
                 <a href="{{ route('dashboard') }}"
                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->routeIs('dashboard') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50' }}">
@@ -195,7 +208,7 @@
                     <span>Dashboard</span>
                 </a>
 
-                <!-- Data Instansi -->
+                <!-- Data Instansi (MENU BARU) -->
                 <a href="{{ route('instansi.index') }}"
                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->routeIs('instansi.*') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50' }}">
                     <i class="fa-solid fa-building w-5 text-center"></i>
@@ -223,22 +236,33 @@
                     <span>Arsip Surat</span>
                 </a>
 
-                <!-- Pengaturan Akun -->
-                <a href="{{ route('akun.index') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 transition-all">
-                    <i class="fa-solid fa-users w-5 text-center"></i>
-                    <span>Pengaturan Akun</span>
-                </a>
 
                 <!-- Laporan -->
                 <a href="{{ route('laporan.index') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 transition-all">
-                    <i class="fa-solid fa-file-chart-column w-5 text-center"></i>
-                    <span>Laporan</span>
+                class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 transition-all">
+                <i class="fa-solid fa-chart-column w-5 text-center"></i>
+                <span>Laporan</span>
+            </a>
+
+            <!-- Pengaturan Akun -->
+            <a href="{{ route('akun.index') }}"
+               class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 transition-all">
+                <i class="fa-solid fa-users w-5 text-center"></i>
+                <span>Pengaturan Akun</span>
+            </a>
+
+             <!-- Recycle Bin -->
+                <a href="{{ route('recycle-bin.index') }}"
+                class="flex items-center gap-4 px-4 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 transition-all">
+                     <i class="fa-solid fa-trash-can"></i>
+                  Tempat Sampah
                 </a>
+
             </nav>
         </div>
     </aside>
+
+
 
     <!-- Main Content Container -->
     <main class="pt-20 pb-10 md:pl-64 transition-all">
@@ -293,12 +317,15 @@
             });
         @endif
     </script>
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
-    <!-- JS Libraries -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/searchbuilder/1.8.2/js/dataTables.searchBuilder.js"></script>
 
+<script src="https://cdn.datatables.net/searchpanes/2.3.2/js/dataTables.searchPanes.js"></script>
     @stack('scripts')
+
+
 </body>
 </html>

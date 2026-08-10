@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SuratMasuk extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     /**
      * Nama tabel yang terikat dengan model (opsional jika sesuai konvensi "surat_masuks")
