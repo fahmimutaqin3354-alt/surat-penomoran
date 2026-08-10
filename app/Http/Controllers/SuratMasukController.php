@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Arsip;
 use App\Models\Instansi;
 use App\Models\SuratMasuk;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -319,5 +320,19 @@ public function destroy(string $id)
     return redirect()
         ->route('surat_masuk.index')
         ->with('success', 'Surat masuk berhasil dihapus.');
+}
+
+/**
+ * Unduh PDF Lembar Agenda Surat Masuk
+ */
+public function downloadPdf($id)
+{
+    $surat = SuratMasuk::with('instansi')->findOrFail($id);
+
+    $pdf = Pdf::loadView('surat_masuk.pdf', compact('surat'));
+
+    $namaFile = 'Surat-Masuk-' . str_replace(['/', '\\'], '-', $surat->nomor_agenda) . '.pdf';
+
+    return $pdf->stream($namaFile);
 }
 }

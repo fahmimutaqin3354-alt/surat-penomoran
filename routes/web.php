@@ -28,6 +28,8 @@ Route::middleware(['auth'])->group(function () {
    Route::resource('instansi', InstansiController::class);
 
     // Surat Masuk
+    Route::get('/surat_masuk/{id}/pdf', [SuratMasukController::class, 'downloadPdf'])
+        ->name('surat_masuk.pdf');
     Route::resource('surat_masuk', SuratMasukController::class);
 
     // Surat Keluar
