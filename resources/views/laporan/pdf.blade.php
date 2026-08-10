@@ -212,6 +212,7 @@
             @endforelse
         </tbody>
     </table>
+    
 
     <!-- Footer -->
     <div class="footer">
