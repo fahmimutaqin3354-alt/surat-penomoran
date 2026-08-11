@@ -37,11 +37,12 @@
             <i class="fa-solid fa-filter"></i>
             Filter:
         </div>
+        {{-- Diubah value-nya agar cocok dengan teks yang dirender di tabel (Masuk / Keluar) --}}
         <select id="filterJenis"
                 class="bg-slate-950 border border-slate-700 rounded-xl px-4 py-2 text-sm text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition cursor-pointer">
             <option value="">Semua Jenis</option>
-            <option value="Surat Masuk">Surat Masuk</option>
-            <option value="Surat Keluar">Surat Keluar</option>
+            <option value="Masuk">Surat Masuk</option>
+            <option value="Keluar">Surat Keluar</option>
         </select>
 
         <select id="filterStatus"
@@ -95,7 +96,8 @@
                         <td class="font-semibold text-white font-mono">{{ $surat->nomor_surat }}</td>
 
                         <td>
-                            @if($surat->jenis == 'Surat Masuk')
+                            {{-- Fleksibel mengecek 'Masuk', 'Surat Masuk', maupun lowercase --}}
+                            @if(in_array(strtolower($surat->jenis), ['surat masuk', 'masuk']))
                                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-500/15 text-blue-400 border border-blue-500/20">
                                     <i class="fa-solid fa-inbox text-xs"></i>
                                     Masuk
@@ -213,15 +215,15 @@ $(document).ready(function () {
                 previous: '‹',
                 next: '›'
             }
-        },
+        }
     });
 
-    // Filter Jenis secara instan via DataTables API
+    // Filter Jenis menggunakan pencarian parsial (tanpa regex rigid ^...$)
     $('#filterJenis').on('change', function () {
         table.column(2).search(this.value).draw();
     });
 
-    // Filter Status secara instan via DataTables API
+    // Filter Status menggunakan pencarian parsial
     $('#filterStatus').on('change', function () {
         table.column(6).search(this.value).draw();
     });
