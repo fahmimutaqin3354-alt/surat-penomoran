@@ -19,37 +19,27 @@ class ArsipController extends Controller
 
         // Pencarian
         if ($request->filled('q')) {
-
             $keyword = $request->q;
-
             $query->where(function ($q) use ($keyword) {
-
                 $q->where('nomor_surat', 'like', "%{$keyword}%")
                     ->orWhere('perihal', 'like', "%{$keyword}%")
                     ->orWhere('pengirim_penerima', 'like', "%{$keyword}%");
-
             });
-
         }
 
         // Filter Jenis
         if ($request->filled('jenis')) {
-
             $query->where('jenis', $request->jenis);
-
         }
 
         // Filter Status
         if ($request->filled('status')) {
-
             $query->where('status', $request->status);
-
         }
 
         $arsipSurat = $query
             ->latest('tanggal_surat')
-            ->paginate(10)
-            ->withQueryString();
+            ->get();
 
         return view('arsip.index', compact('arsipSurat'));
     }

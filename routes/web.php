@@ -41,6 +41,8 @@ Route::middleware(['auth'])->group(function () {
         ->name('surat_keluar.preview');
     Route::get( '/surat_keluar/{id}/pdf', [SuratKeluarController::class, 'downloadPublic']
 )->name('surat_keluar.pdf');
+    Route::get('/surat_keluar/{id}/download', [SuratKeluarController::class, 'downloadAndSave'])
+        ->name('surat_keluar.download');
 
 Route::get('/surat_keluar/{id}/unduh-publik', [SuratKeluarController::class, 'downloadPublic'])
     ->name('surat_keluar.download.public')

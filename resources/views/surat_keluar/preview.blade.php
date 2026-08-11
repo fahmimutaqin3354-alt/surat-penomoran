@@ -191,7 +191,7 @@
         </button>
 
         <a
-            href="{{ route('surat_keluar.pdf', $surat) }}"
+            href="{{ route('surat_keluar.download', $surat) }}"
             class="btn btn-pdf">
 
             <i class="fa-solid fa-file-pdf"></i>

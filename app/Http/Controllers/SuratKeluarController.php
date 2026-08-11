@@ -443,5 +443,23 @@ public function preview($id)
     return back()->with('error', 'Gagal mengirim ke WhatsApp. Coba lagi.');
 }
 
+/**
+ * Download PDF dan simpan ke storage/app/public/pdf/
+ */
+public function downloadAndSave($id)
+{
+    $surat = SuratKeluar::findOrFail($id);
+
+    $pdf = Pdf::loadView('surat_keluar.pdf', compact('surat'));
+
+    $namaFile = 'Surat-' . str_replace(['/', '\\'], '-', $surat->nomor_surat) . '.pdf';
+
+    // Simpan ke storage/app/public/pdf/
+    Storage::disk('public')->put('pdf/' . $namaFile, $pdf->output());
+
+    // Kembalikan sebagai download
+    return $pdf->download($namaFile);
+}
+
 }
 

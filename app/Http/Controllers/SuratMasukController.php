@@ -20,22 +20,17 @@ class SuratMasukController extends Controller
         $query = SuratMasuk::with('instansi');
 
         if ($request->filled('search')) {
-
             $query->where(function ($q) use ($request) {
-
                 $q->where('nomor_agenda', 'like', '%' . $request->search . '%')
                     ->orWhere('nomor_surat', 'like', '%' . $request->search . '%')
                     ->orWhere('asal_surat', 'like', '%' . $request->search . '%')
                     ->orWhere('perihal', 'like', '%' . $request->search . '%');
-
             });
-
         }
 
         $surat = $query
             ->latest()
-            ->paginate(10)
-            ->withQueryString();
+            ->get();
 
         $jumlahDihapus = SuratMasuk::onlyTrashed()->count();
 

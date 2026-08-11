@@ -7,22 +7,9 @@ use Illuminate\Http\Request;
 
 class InstansiController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $query = Instansi::query();
-
-        // Fitur pencarian instansi (bisa cari berdasarkan kode, nama, telepon, atau alamat)
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('kode_instansi', 'like', "%{$search}%")
-                  ->orWhere('nama_instansi', 'like', "%{$search}%")
-                  ->orWhere('telepon', 'like', "%{$search}%")
-                  ->orWhere('alamat', 'like', "%{$search}%");
-            });
-        }
-
-        $instansi = $query->latest()->paginate(10)->withQueryString();
+        $instansi = Instansi::latest()->get();
 
         return view('instansi.index', compact('instansi'));
     }

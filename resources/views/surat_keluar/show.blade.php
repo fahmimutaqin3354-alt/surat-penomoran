@@ -248,7 +248,7 @@
     @if($surat->file_surat)
 
         <a
-            href="{{ asset('storage/'.$surat->file_surat) }}"
+            href="{{ asset('storage/surat_keluar/'.$surat->file_surat) }}"
             target="_blank"
             class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-5 py-3 rounded-xl transition">
 

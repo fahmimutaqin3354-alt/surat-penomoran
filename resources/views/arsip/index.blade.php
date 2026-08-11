@@ -4,465 +4,234 @@
 
 @section('content')
 
-<div class="px-4 py-6">
+<div class="space-y-6">
 
-    {{-- ================= HEADER ================= --}}
-    <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
-
+    {{-- Header --}}
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-6 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl">
         <div>
-
-            <h4 class="text-2xl font-bold text-white">
+            <h1 class="text-2xl font-extrabold text-white tracking-tight flex items-center gap-3">
+                <span class="w-9 h-9 rounded-xl bg-emerald-600/20 border border-emerald-500/30 flex items-center justify-center">
+                    <i class="fa-solid fa-box-archive text-emerald-400 text-sm"></i>
+                </span>
                 Arsip Surat
-            </h4>
-
-            <p class="text-sm text-slate-400 mt-1">
-                Seluruh surat masuk dan surat keluar akan otomatis masuk ke arsip.
-            </p>
-
+            </h1>
+            <p class="text-slate-400 text-sm mt-1 ml-12">Seluruh surat masuk dan surat keluar secara otomatis masuk ke arsip.</p>
         </div>
-
-        <div
-            class="px-4 py-2 rounded-lg bg-emerald-500/10 text-emerald-400 text-sm font-medium">
-
+        <span class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-semibold">
+            <i class="fa-solid fa-circle-check text-xs"></i>
             Arsip Otomatis
-
-        </div>
-
+        </span>
     </div>
 
-    {{-- ================= ALERT ================= --}}
-
+    {{-- Alert --}}
     @if(session('success'))
-
-        <div
-            class="mb-5 rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-emerald-400">
-
-            {{ session('success') }}
-
-        </div>
-
+    <div class="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm flex items-center gap-3">
+        <i class="fa-solid fa-circle-check"></i>
+        <span>{{ session('success') }}</span>
+    </div>
     @endif
 
-    {{-- ================= SEARCH ================= --}}
-
-    <form
-        method="GET"
-        action="{{ route('arsip.index') }}"
-        class="flex flex-wrap items-center gap-3 mb-5">
-
-        <div class="relative flex-1 min-w-[260px]">
-
-            <svg
-                class="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                stroke-width="2">
-
-                <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
-
-            </svg>
-
-            <input
-                type="text"
-                name="q"
-                value="{{ request('q') }}"
-                placeholder="Cari nomor surat, perihal atau pengirim/penerima..."
-
-                class="w-full
-                bg-slate-900
-                border
-                border-slate-800
-                rounded-lg
-                pl-10
-                pr-3
-                py-2.5
-                text-sm
-                text-slate-100
-                placeholder-slate-500
-                focus:outline-none
-                focus:ring-2
-                focus:ring-indigo-500">
-
+    {{-- Filter Bar --}}
+    <div class="flex flex-wrap items-center gap-3 p-4 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl">
+        <div class="flex items-center gap-2 text-slate-400 text-xs font-semibold uppercase tracking-wider mr-2">
+            <i class="fa-solid fa-filter"></i>
+            Filter:
         </div>
-
-        {{-- Filter Jenis --}}
-
-        <select
-            name="jenis"
-
-            class="bg-slate-900
-            border
-            border-slate-800
-            rounded-lg
-            px-3
-            py-2.5
-            text-sm
-            text-slate-300">
-
+        <select id="filterJenis"
+                class="bg-slate-950 border border-slate-700 rounded-xl px-4 py-2 text-sm text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition cursor-pointer">
             <option value="">Semua Jenis</option>
-
-            <option
-                value="Surat Masuk"
-                @selected(request('jenis')=='Surat Masuk')>
-
-                Surat Masuk
-
-            </option>
-
-            <option
-                value="Surat Keluar"
-                @selected(request('jenis')=='Surat Keluar')>
-
-                Surat Keluar
-
-            </option>
-
+            <option value="Surat Masuk">Surat Masuk</option>
+            <option value="Surat Keluar">Surat Keluar</option>
         </select>
 
-        {{-- Filter Status --}}
-
-        <select
-            name="status"
-
-            class="bg-slate-900
-            border
-            border-slate-800
-            rounded-lg
-            px-3
-            py-2.5
-            text-sm
-            text-slate-300">
-
+        <select id="filterStatus"
+                class="bg-slate-950 border border-slate-700 rounded-xl px-4 py-2 text-sm text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition cursor-pointer">
             <option value="">Semua Status</option>
-
-            <option value="Baru"
-                @selected(request('status')=='Baru')>
-                Baru
-            </option>
-
-            <option value="Diproses"
-                @selected(request('status')=='Diproses')>
-                Diproses
-            </option>
-
-            <option value="Draft"
-                @selected(request('status')=='Draft')>
-                Draft
-            </option>
-
-            <option value="Dikirim"
-                @selected(request('status')=='Dikirim')>
-                Dikirim
-            </option>
-
-            <option value="Selesai"
-                @selected(request('status')=='Selesai')>
-                Selesai
-            </option>
-
+            <option value="Baru">Baru</option>
+            <option value="Diproses">Diproses</option>
+            <option value="Draft">Draft</option>
+            <option value="Dikirim">Dikirim</option>
+            <option value="Selesai">Selesai</option>
         </select>
 
-        <button
-            type="submit"
-
-            class="px-5
-            py-2.5
-            rounded-lg
-            bg-indigo-600
-            text-white
-            text-sm
-            hover:bg-indigo-700
-            transition">
-
-            Cari
-
+        <button id="resetFilter"
+                class="px-4 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 text-white text-sm font-semibold transition-all duration-150 flex items-center gap-2">
+            <i class="fa-solid fa-rotate-left text-xs"></i>
+            Reset
         </button>
 
-        <a
-            href="{{ route('arsip.index') }}"
-
-            class="px-5
-            py-2.5
-            rounded-lg
-            bg-slate-700
-            text-white
-            text-sm
-            hover:bg-slate-600
-            transition">
-
-            Reset
-
-        </a>
-
-    </form>
-
-    {{-- ================= TABEL ================= --}}
-
-    <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
-
-        <div class="overflow-x-auto">
-
-            <table class="min-w-full text-sm text-left">
-
-                <thead>
-
-                    <tr class="border-b border-slate-800 text-slate-400 uppercase text-xs">
-
-                        <th class="px-4 py-3">No</th>
-
-                        <th class="px-4 py-3">Nomor Surat</th>
-
-                        <th class="px-4 py-3">Jenis</th>
-
-                        <th class="px-4 py-3">Perihal</th>
-
-                        <th class="px-4 py-3">Pengirim / Penerima</th>
-
-                        <th class="px-4 py-3">Tanggal</th>
-
-                        <th class="px-4 py-3">Status</th>
-
-                        <th class="px-4 py-3 text-right">Aksi</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody class="divide-y divide-slate-800">
-@forelse($arsipSurat as $i => $surat)
-
-<tr class="hover:bg-slate-800/40 transition">
-
-    <td class="px-4 py-3 text-slate-400">
-
-        {{ $arsipSurat->firstItem() + $i }}
-
-    </td>
-
-    <td class="px-4 py-3 font-semibold text-white">
-
-        {{ $surat->nomor_surat }}
-
-    </td>
-
-    <td class="px-4 py-3">
-
-        @if($surat->jenis == 'Surat Masuk')
-
-            <span
-                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-500/20 text-blue-400">
-
-                Surat Masuk
-
-            </span>
-
-        @else
-
-            <span
-                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-400">
-
-                Surat Keluar
-
-            </span>
-
-        @endif
-
-    </td>
-
-    <td class="px-4 py-3 text-slate-300">
-
-        {{ $surat->perihal }}
-
-    </td>
-
-    <td class="px-4 py-3 text-slate-300">
-
-        {{ $surat->pengirim_penerima }}
-
-    </td>
-
-    <td class="px-4 py-3 text-slate-400">
-
-        {{ \Carbon\Carbon::parse($surat->tanggal_surat)->translatedFormat('d M Y') }}
-
-    </td>
-
-    <td class="px-4 py-3">
-
-        @php
-
-            $warna = match($surat->status){
-
-                'Baru' => 'bg-sky-500/20 text-sky-400',
-
-                'Diproses' => 'bg-yellow-500/20 text-yellow-400',
-
-                'Draft' => 'bg-gray-500/20 text-gray-300',
-
-                'Dikirim' => 'bg-indigo-500/20 text-indigo-400',
-
-                'Selesai' => 'bg-emerald-500/20 text-emerald-400',
-
-                default => 'bg-slate-500/20 text-slate-300'
-
-            };
-
-        @endphp
-
-        <span class="px-3 py-1 rounded-full text-xs font-medium {{ $warna }}">
-
-            {{ $surat->status }}
-
-        </span>
-
-    </td>
-                            <td class="px-4 py-3">
-                                <div class="flex items-center justify-end gap-2">
-
-                                    {{-- Lihat --}}
-                                    <a href="{{ route('arsip.show', $surat->id) }}"
-                                        class="p-2 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500 hover:text-white transition"
-                                        title="Lihat">
-
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                            class="w-4 h-4"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor">
-
-                                            <path stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                stroke-width="2"
-                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0" />
-
-                                            <path stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                stroke-width="2"
-                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-
-                                        </svg>
-
-                                    </a>
-
-                                    {{-- Hapus --}}
-                                    <form action="{{ route('arsip.destroy', $surat->id) }}"
-                                        method="POST"
-                                        onsubmit="return confirm('Yakin ingin menghapus arsip ini?')">
-
-                                        @csrf
-                                        @method('DELETE')
-
-                                        <button type="submit"
-                                            class="p-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition"
-                                            title="Hapus">
-
-                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                class="w-4 h-4"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke="currentColor">
-
-                                                <path stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M19 7H5" />
-
-                                                <path stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M10 11V17" />
-
-                                                <path stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M14 11V17" />
-
-                                                <path stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M6 7L7 19a2 2 0 002 2h6a2 2 0 002-2l1-12" />
-
-                                                <path stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3" />
-
-                                            </svg>
-
-                                        </button>
-
-                                    </form>
-
-                                </div>
-                            </td>
-
-                        </tr>
-
-                    @empty
-
-                        <tr>
-
-                            <td colspan="8" class="py-16">
-
-                                <div class="flex flex-col items-center justify-center gap-3 text-slate-500">
-
-                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                        class="w-12 h-12"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor">
-
-                                        <path stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="1.5"
-                                            d="M9 12h6m-6 4h6M7 4h10a2 2 0 012 2v12a2 2 0 01-2 2H7a2 2 0 01-2-2V6a2 2 0 012-2z" />
-
-                                    </svg>
-
-                                    <p>Belum ada data arsip.</p>
-
-                                </div>
-
-                            </td>
-
-                        </tr>
-
-                    @endforelse
-
-                </tbody>
-
-            </table>
-
+        <div class="ml-auto flex items-center gap-2 text-slate-500 text-xs">
+            <i class="fa-solid fa-database text-slate-600"></i>
+            Total: <span class="text-slate-300 font-semibold">{{ count($arsipSurat) }}</span> arsip
+        </div>
+    </div>
+
+    {{-- Table Card --}}
+    <div class="rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-800/80 flex items-center gap-2">
+            <i class="fa-solid fa-table-list text-emerald-400"></i>
+            <h2 class="text-sm font-semibold text-slate-300">Daftar Arsip Surat</h2>
         </div>
 
-        @if($arsipSurat->total() > 0)
+        <div class="overflow-x-auto">
+            <table id="tableArsip" class="w-full text-sm">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Nomor Surat</th>
+                        <th>Jenis</th>
+                        <th>Perihal</th>
+                        <th>Pengirim / Penerima</th>
+                        <th>Tanggal</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($arsipSurat as $index => $surat)
+                    <tr>
+                        <td class="text-center text-slate-500 font-medium">{{ $index + 1 }}</td>
 
-            <div class="flex items-center justify-between px-5 py-4 border-t border-slate-800">
+                        <td class="font-semibold text-white font-mono">{{ $surat->nomor_surat }}</td>
 
-                <small class="text-slate-500">
+                        <td>
+                            @if($surat->jenis == 'Surat Masuk')
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-500/15 text-blue-400 border border-blue-500/20">
+                                    <i class="fa-solid fa-inbox text-xs"></i>
+                                    Masuk
+                                </span>
+                            @else
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">
+                                    <i class="fa-solid fa-paper-plane text-xs"></i>
+                                    Keluar
+                                </span>
+                            @endif
+                        </td>
 
-                    Menampilkan
-                    {{ $arsipSurat->firstItem() }}
-                    -
-                    {{ $arsipSurat->lastItem() }}
-                    dari
-                    {{ $arsipSurat->total() }}
-                    data
+                        <td class="text-slate-300 max-w-xs">
+                            <span title="{{ $surat->perihal }}">{{ Str::limit($surat->perihal, 40) }}</span>
+                        </td>
 
-                </small>
+                        <td class="text-slate-300">{{ $surat->pengirim_penerima }}</td>
 
-                {{ $arsipSurat->withQueryString()->links() }}
+                        <td class="text-slate-400 whitespace-nowrap">
+                            {{ \Carbon\Carbon::parse($surat->tanggal_surat)->translatedFormat('d M Y') }}
+                        </td>
 
-            </div>
+                        <td>
+                            @php
+                                $badge = match($surat->status) {
+                                    'Baru'     => 'bg-sky-500/15 text-sky-400 border-sky-500/20',
+                                    'Diproses' => 'bg-yellow-500/15 text-yellow-400 border-yellow-500/20',
+                                    'Draft'    => 'bg-slate-500/15 text-slate-300 border-slate-500/20',
+                                    'Dikirim'  => 'bg-indigo-500/15 text-indigo-400 border-indigo-500/20',
+                                    'Selesai'  => 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20',
+                                    default    => 'bg-slate-500/15 text-slate-400 border-slate-500/20',
+                                };
+                            @endphp
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold border {{ $badge }}">
+                                {{ $surat->status }}
+                            </span>
+                        </td>
 
-        @endif
+                        <td class="text-center">
+                            <div class="flex items-center justify-center gap-2">
+                                <a href="{{ route('arsip.show', $surat->id) }}"
+                                   class="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 hover:bg-blue-500 hover:text-white hover:border-blue-500 flex items-center justify-center transition-all duration-150"
+                                   title="Lihat Detail">
+                                    <i class="fa-solid fa-eye text-xs"></i>
+                                </a>
 
+                                <form action="{{ route('arsip.destroy', $surat->id) }}" method="POST" class="deleteArsipForm inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit"
+                                            class="w-8 h-8 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-400 hover:bg-rose-500 hover:text-white hover:border-rose-500 flex items-center justify-center transition-all duration-150"
+                                            title="Hapus Arsip">
+                                        <i class="fa-solid fa-trash text-xs"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     </div>
 
 </div>
 
 @endsection
+
+@push('scripts')
+<script>
+// SweetAlert konfirmasi hapus arsip
+document.querySelectorAll('.deleteArsipForm').forEach(form => {
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        Swal.fire({
+            title: 'Hapus Arsip?',
+            text: 'Arsip dan surat asli akan dihapus. Data tidak dapat dikembalikan.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#6366f1',
+            cancelButtonColor: '#ef4444',
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal',
+            background: '#0f172a',
+            color: '#f8fafc',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+    });
+});
+
+$(document).ready(function () {
+    // Inisialisasi DataTable
+    var table = $('#tableArsip').DataTable({
+        pageLength: 10,
+        responsive: true,
+        autoWidth: false,
+        ordering: true,
+        searching: true,
+        info: true,
+        columnDefs: [
+            { orderable: false, targets: [0, 7] },
+            { className: 'text-center', targets: [0, 2, 6, 7] },
+            { className: 'text-left', targets: [1, 3, 4, 5] },
+        ],
+        language: {
+            search: '🔍 Cari:',
+            lengthMenu: 'Tampilkan _MENU_ data',
+            info: 'Menampilkan _START_ sampai _END_ dari _TOTAL_ arsip',
+            infoEmpty: 'Tidak ada data',
+            zeroRecords: 'Arsip tidak ditemukan',
+            paginate: {
+                previous: '‹',
+                next: '›'
+            }
+        },
+    });
+
+    // Filter Jenis secara instan via DataTables API
+    $('#filterJenis').on('change', function () {
+        table.column(2).search(this.value).draw();
+    });
+
+    // Filter Status secara instan via DataTables API
+    $('#filterStatus').on('change', function () {
+        table.column(6).search(this.value).draw();
+    });
+
+    // Reset filter
+    $('#resetFilter').on('click', function () {
+        $('#filterJenis').val('');
+        $('#filterStatus').val('');
+        table.search('').columns().search('').draw();
+    });
+});
+</script>
+@endpush
