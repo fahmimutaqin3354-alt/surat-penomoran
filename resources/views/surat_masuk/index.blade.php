@@ -4,10 +4,10 @@
 
 @section('content')
 
-<div class="space-y-6">
+<div class="space-y-4">
 
     {{-- Header --}}
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-6 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl">
         <div>
             <h1 class="text-2xl font-extrabold text-white tracking-tight flex items-center gap-3">
                 <span class="w-9 h-9 rounded-xl bg-cyan-600/20 border border-cyan-500/30 flex items-center justify-center">
@@ -42,7 +42,7 @@
 
     {{-- Table Card --}}
     <div class="rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl overflow-hidden">
-        <div class="px-6 py-4 border-b border-slate-800/80 flex items-center justify-between">
+        <div class="px-6 py-3.5 border-b border-slate-800/80 flex items-center justify-between">
             <h2 class="text-sm font-semibold text-slate-300 flex items-center gap-2">
                 <i class="fa-solid fa-table-list text-cyan-400"></i>
                 Daftar Surat Masuk

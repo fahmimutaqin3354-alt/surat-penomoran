@@ -51,20 +51,33 @@ href="https://cdn.datatables.net/searchpanes/2.3.2/css/searchPanes.dataTables.cs
 .dataTables_wrapper, .dt-container {
     color: #cbd5e1;
     font-size: 0.875rem;
-    padding: 1.25rem;
+    padding: 0.75rem 1.25rem 1.25rem 1.25rem;
+}
+
+/* Reset DataTables v2 layout row margins to remove excess gap */
+div.dt-container div.dt-layout-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin: 0.25rem 0 !important;
+}
+
+div.dt-container div.dt-layout-row.dt-layout-table {
+    margin: 0.25rem 0 !important;
 }
 
 /* Top Controls Header Bar */
 .dataTables_wrapper .dataTables_length,
 .dt-container .dt-length {
     float: left;
-    margin-bottom: 1.25rem;
+    margin-bottom: 0.35rem !important;
 }
 
 .dataTables_wrapper .dataTables_filter,
 .dt-container .dt-search {
     float: right;
-    margin-bottom: 1.25rem;
+    margin-bottom: 0.35rem !important;
 }
 
 .dataTables_wrapper .dataTables_length label,
@@ -86,7 +99,7 @@ href="https://cdn.datatables.net/searchpanes/2.3.2/css/searchPanes.dataTables.cs
     color: #f8fafc !important;
     border: 1px solid #334155 !important; /* slate-700 */
     border-radius: 0.75rem !important;
-    padding: 0.5rem 1rem !important;
+    padding: 0.4rem 1rem !important;
     font-size: 0.875rem !important;
     outline: none !important;
     transition: all 0.2s ease-in-out;
@@ -105,7 +118,7 @@ href="https://cdn.datatables.net/searchpanes/2.3.2/css/searchPanes.dataTables.cs
     color: #f8fafc !important;
     border: 1px solid #334155 !important;
     border-radius: 0.75rem !important;
-    padding: 0.4rem 0.75rem !important;
+    padding: 0.35rem 0.75rem !important;
     font-size: 0.875rem !important;
     outline: none !important;
     cursor: pointer;
@@ -122,8 +135,8 @@ table.dataTable {
     border-collapse: collapse !important;
     border-spacing: 0 !important;
     border: none !important;
-    margin-top: 0.5rem !important;
-    margin-bottom: 1rem !important;
+    margin-top: 0.25rem !important;
+    margin-bottom: 0.75rem !important;
 }
 
 table.dataTable thead th {
@@ -134,13 +147,13 @@ table.dataTable thead th {
     font-size: 0.75rem !important;
     letter-spacing: 0.05em;
     border-bottom: 1px solid #334155 !important;
-    padding: 1rem 1.25rem !important;
+    padding: 0.75rem 1rem !important;
 }
 
 table.dataTable tbody td {
     background-color: transparent !important;
     color: #cbd5e1;
-    padding: 1rem 1.25rem !important;
+    padding: 0.75rem 1rem !important;
     border-bottom: 1px solid #1e293b !important;
     vertical-align: middle;
 }
