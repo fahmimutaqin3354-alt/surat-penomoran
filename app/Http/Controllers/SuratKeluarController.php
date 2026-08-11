@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\SuratKeluar;
 use App\Models\SuratMasuk;
 use App\Models\Arsip;
+use App\Models\JenisSurat;
 use App\Models\Instansi;
 use App\Mail\SuratKeluarMail;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -15,7 +16,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\URL;
 
-
+       
 class SuratKeluarController extends Controller
 {
     /**
@@ -23,9 +24,7 @@ class SuratKeluarController extends Controller
      */
     public function index()
     {
-        $surat = SuratKeluar::with('instansi')
-    ->latest()
-    ->get();
+        $surat = SuratKeluar::with('instansi')->latest()->get();
         $jumlahDihapus = SuratKeluar::onlyTrashed()->count();
 
         return view('surat_keluar.index', compact('surat','jumlahDihapus'));
@@ -35,29 +34,92 @@ class SuratKeluarController extends Controller
      * Menampilkan form tambah surat keluar
      */
     public function create(Request $request)
-{
-    $suratMasuk = null;
+    {
+        $suratMasuk = null;
 
-    if ($request->filled('surat_masuk')) {
-        $suratMasuk = SuratMasuk::findOrFail($request->surat_masuk);
+        if ($request->filled('surat_masuk')) {
+            $suratMasuk = SuratMasuk::findOrFail($request->surat_masuk);
+        }
+
+        $jenisSuratList = JenisSurat::orderBy('nama')->get();
+        $instansis = Instansi::orderBy('nama_instansi')->get();
+
+        return view('surat_keluar.create', compact('suratMasuk', 'jenisSuratList', 'instansis'));
     }
 
-    $instansis = Instansi::orderBy('nama_instansi')->get();
-
-    return view('surat_keluar.create', compact(
-        'suratMasuk',
-        'instansis'
-    ));
-}
     /**
-     * Generate Nomor Surat Otomatis
-     * Format:
-     * 001/PT-MDI/VII/2026
+     * Bangun payload untuk jenis surat khusus (misal Surat Kuasa & Tabel Surat Umum).
      */
- private function generateNomorSurat($perihal, $kodeDivisi)
+    private function buildKuasaData(Request $request)
+    {
+        $isKuasa = JenisSurat::where('nama', $request->jenis_surat)
+            ->where('form_type', 'kuasa')
+            ->exists() || \Illuminate\Support\Str::contains(strtolower($request->jenis_surat), 'kuasa');
+
+        $dk = $request->input('data_khusus', []);
+
+        if (!$isKuasa) {
+            return [
+                'perihal' => $request->perihal,
+                'tujuan' => $request->tujuan,
+                'isi_surat' => $request->isi_surat,
+                'data_khusus' => $dk,
+            ];
+        }
+
+        $pemberi = $dk['pemberi'] ?? [];
+        $penerima = $dk['penerima'] ?? [];
+        $pembukaMaksud = $dk['pembuka_maksud'] ?? 'mewakili Direktur untuk melaksanakan Pembuktian Kualifikasi';
+        $kegiatanItems = is_array($dk['kegiatan_items'] ?? null) 
+            ? array_values(array_filter($dk['kegiatan_items'], fn($v) => trim($v ?? '') !== '')) 
+            : [];
+        $lokasiInstansi = $dk['lokasi_instansi'] ?? '';
+
+        $isiSurat = "Yang bertanda tangan di bawah ini:\n";
+        $isiSurat .= "Nama\t\t: " . ($pemberi['nama'] ?? '-') . "\n";
+        $isiSurat .= "Jabatan\t\t: " . ($pemberi['jabatan'] ?? '-') . "\n";
+        $isiSurat .= "Alamat\t\t: " . ($pemberi['alamat'] ?? '-') . "\n\n";
+        $isiSurat .= "Dengan ini memberikan kuasa kepada:\n";
+        $isiSurat .= "Nama\t\t: " . ($penerima['nama'] ?? '-') . "\n";
+        $isiSurat .= "Jabatan\t\t: " . ($penerima['jabatan'] ?? '-') . "\n\n";
+        $isiSurat .= "Dengan ini " . $pembukaMaksud . " dengan Kegiatan sebagai berikut:\n";
+        foreach ($kegiatanItems as $idx => $item) {
+            $isiSurat .= ($idx + 1) . ". " . $item . "\n";
+        }
+        if ($lokasiInstansi) {
+            $isiSurat .= "pada " . $lokasiInstansi . ".\n\n";
+        } else {
+            $isiSurat .= "\n";
+        }
+        $isiSurat .= "Demikian Surat Kuasa ini dibuat untuk dipergunakan sebagaimana mestinya.";
+
+        return [
+            'perihal' => 'SURAT KUASA',
+            'tujuan' => $penerima['nama'] ?? ($request->tujuan ?: 'Penerima Kuasa'),
+            'isi_surat' => $isiSurat,
+            'data_khusus' => $dk,
+        ];
+    }
+
+    /**
+ * API: Hitung nomor surat berikutnya (untuk preview realtime di form create)
+ * GET /surat_keluar/next-nomor?kode_surat=SK&kode_divisi=HRD&tanggal_surat=2026-08-11
+ */
+public function nextNomor(Request $request)
 {
-    $bulan = now()->month;
-    $tahun = now()->year;
+    $kodeSurat  = strtoupper($request->input('kode_surat', 'SK'));
+    $kodeDivisi = $request->input('kode_divisi', 'HRD');
+    $tglSurat   = $request->input('tanggal_surat');
+
+    // Tentukan bulan & tahun dari tanggal yang dipilih user (bukan bulan sekarang)
+    if ($tglSurat) {
+        $dt     = \Carbon\Carbon::parse($tglSurat);
+        $bulan  = $dt->month;
+        $tahun  = $dt->year;
+    } else {
+        $bulan  = now()->month;
+        $tahun  = now()->year;
+    }
 
     $romawi = [
         1 => 'I', 2 => 'II', 3 => 'III', 4 => 'IV',
@@ -65,104 +127,158 @@ class SuratKeluarController extends Controller
         9 => 'IX', 10 => 'X', 11 => 'XI', 12 => 'XII',
     ];
 
-    $slugPerihal = \Illuminate\Support\Str::slug($perihal);
+    $lastNomor = SuratKeluar::withTrashed()
+        ->whereMonth('tanggal_surat', $bulan)
+        ->whereYear('tanggal_surat', $tahun)
+        ->get()
+        ->map(fn($s) => (int) explode('/', $s->nomor_surat)[0])
+        ->max();
 
-    do {
-        $lastNomor = SuratKeluar::withTrashed()
-            ->whereMonth('created_at', $bulan)
-            ->whereYear('created_at', $tahun)
-            ->get()
-            ->map(function ($surat) {
-                return (int) explode('/', $surat->nomor_surat)[0];
-            })
-            ->max();
+    $jumlah = ($lastNomor ?? 0) + 1;
+    $nomorFormatted = $jumlah < 100
+        ? str_pad($jumlah, 2, '0', STR_PAD_LEFT)
+        : $jumlah;
 
-        $jumlah = ($lastNomor ?? 0) + 1;
+    $nomorSurat = $nomorFormatted . '/' . $kodeSurat . '/' . $kodeDivisi . '/PT-MDI/' . $romawi[$bulan] . '/' . $tahun;
 
-        $nomorFormatted = $jumlah < 100
-            ? str_pad($jumlah, 2, '0', STR_PAD_LEFT)
-            : $jumlah;
-
-        $nomorSurat = $nomorFormatted . '/' . $slugPerihal . '/' . $kodeDivisi . '/PT-MDI/' . $romawi[$bulan] . '/' . $tahun;
-
-        $exists = SuratKeluar::where('nomor_surat', $nomorSurat)->exists();
-
-        $jumlah++;
-    } while ($exists);
-
-    return $nomorSurat;
+    return response()->json(['nomor' => $nomorSurat]);
 }
+
+/**
+ * Generate Nomor Surat Otomatis
+ * Format:
+ * 001/SK/DIR-I/PT-MDI/VIII/2026
+ */    
+    private function generateNomorSurat($kodeSurat, $kodeDivisi, $tanggalSurat = null)
+    {
+        if ($tanggalSurat) {
+            $dt     = \Carbon\Carbon::parse($tanggalSurat);
+            $bulan  = $dt->month;
+            $tahun  = $dt->year;
+        } else {
+            $bulan  = now()->month;
+            $tahun  = now()->year;
+        }
+
+        $romawi = [
+            1 => 'I', 2 => 'II', 3 => 'III', 4 => 'IV',
+            5 => 'V', 6 => 'VI', 7 => 'VII', 8 => 'VIII',
+            9 => 'IX', 10 => 'X', 11 => 'XI', 12 => 'XII',
+        ];
+
+        $kodeSurat = strtoupper($kodeSurat);
+
+        do {
+            $lastNomor = SuratKeluar::withTrashed()
+                ->whereMonth('tanggal_surat', $bulan)
+                ->whereYear('tanggal_surat', $tahun)
+                ->get()
+                ->map(function ($surat) {
+                    return (int) explode('/', $surat->nomor_surat)[0];
+                })
+                ->max();
+
+            $jumlah = ($lastNomor ?? 0) + 1;
+
+            $nomorFormatted = $jumlah < 100
+                ? str_pad($jumlah, 2, '0', STR_PAD_LEFT)
+                : $jumlah;
+
+            $nomorSurat = $nomorFormatted . '/' . $kodeSurat . '/' . $kodeDivisi . '/PT-MDI/' . $romawi[$bulan] . '/' . $tahun;
+
+            $exists = SuratKeluar::where('nomor_surat', $nomorSurat)->exists();
+
+            $jumlah++;
+        } while ($exists);
+
+        return $nomorSurat;
+    }
 /**
  * Menyimpan surat keluar
  */
 public function store(Request $request)
 {
+    $isKuasa = JenisSurat::where('nama', $request->jenis_surat)
+        ->where('form_type', 'kuasa')
+        ->exists() || \Illuminate\Support\Str::contains(strtolower($request->jenis_surat), 'kuasa');
+
     $request->validate([
         'tanggal_surat' => 'required|date',
         'jenis_surat' => 'required|string|max:100',
+        'kode_surat' => 'nullable|string|max:10',
         'kode_divisi' => 'required|string|max:20',
-        'instansi_id' => 'required|exists:instansis,id',
-        'tujuan' => 'required|string|max:255',
-        'perihal' => 'required|string|max:255',
-        'isi_surat' => 'required|string',
+        'instansi_id' => 'nullable|exists:instansis,id',
+        'tujuan' => $isKuasa ? 'nullable|string|max:255' : 'required|string|max:255',
+        'perihal' => $isKuasa ? 'nullable|string|max:255' : 'required|string|max:255',
+        'isi_surat' => $isKuasa ? 'nullable|string' : 'required|string',
+        'data_khusus' => $isKuasa ? 'required|array' : 'nullable|array',
         'lampiran' => 'nullable|string|max:255',
-        'penandatangan' => 'required|string|max:255',
-        'jabatan_penandatangan' => 'required|string|max:255',
+        'penandatangan' => $isKuasa ? 'nullable|string|max:255' : 'required|string|max:255',
+        'jabatan_penandatangan' => $isKuasa ? 'nullable|string|max:255' : 'required|string|max:255',
         'status' => 'required|in:Draft,Dikirim,Selesai',
+        'file_surat' => 'nullable|mimes:pdf|max:2048',
     ]);
 
+    // Kumpulkan data khusus (misal data Surat Kuasa)
+    $kuasaData = $this->buildKuasaData($request);
+    $dataKhusus = $kuasaData['data_khusus'];
 
+    // instansi_id hanya dipakai sebagai penanda/tag untuk sorting & filter
+    // di daftar surat keluar — tidak memengaruhi isi surat (tujuan/perihal/isi_surat).
+    $tujuan = $kuasaData['tujuan'];
 
+    // Default nama file: null kalau tidak upload PDF baru
+    $namaFile = null;
+
+    if ($request->hasFile('file_surat')) {
+
+        $namaFile = time() . '_' . $request->file('file_surat')->getClientOriginalName();
+
+        $request->file('file_surat')->storeAs(
+            'surat_keluar',
+            $namaFile,
+            'public'
+        );
+    }
 
     // Simpan Surat Keluar
     $surat = SuratKeluar::create([
 
-        'nomor_surat' => $this->generateNomorSurat($request->perihal, $request->kode_divisi),
+        'nomor_surat' => $this->generateNomorSurat($request->kode_surat ?? 'SK', $request->kode_divisi, $request->tanggal_surat),
 
         'tanggal_surat' => $request->tanggal_surat,
 
         'jenis_surat' => $request->jenis_surat,
 
+        'kode_surat' => strtoupper($request->kode_surat),
+
         'kode_divisi' => $request->kode_divisi,
 
         'instansi_id' => $request->instansi_id,
 
-        'tujuan' => $request->tujuan,
+        'tujuan' => $tujuan,
 
-        'perihal' => $request->perihal,
+        'perihal' => $kuasaData['perihal'],
 
-        'isi_surat' => $request->isi_surat,
+        'isi_surat' => $kuasaData['isi_surat'],
+
+        'data_khusus' => $dataKhusus,
 
         'lampiran' => $request->lampiran,
 
-        'penandatangan' => $request->penandatangan,
+        'penandatangan' => $request->penandatangan ?? ($dataKhusus['pemberi']['nama'] ?? 'Pemberi Kuasa'),
 
-        'jabatan_penandatangan' => $request->jabatan_penandatangan,
+        'jabatan_penandatangan' => $request->jabatan_penandatangan ?? 'Pemberi Kuasa',
 
         'status' => $request->status,
 
-        'file_surat' => null,
+        'file_surat' => $namaFile,
 
         'surat_masuk_id' => $request->surat_masuk_id,
 
         'user_id' => Auth::id(),
 
     ]);
-    $pdf = Pdf::loadView('surat_keluar.pdf', [
-    'surat' => $surat
-]);
-
-$namaFile = 'surat_' . $surat->id . '.pdf';
-
-Storage::disk('public')->put(
-    'surat_keluar/' . $namaFile,
-    $pdf->output()
-);
-
-$surat->update([
-    'file_surat' => $namaFile
-]);
-
 
     // ============================
     // Simpan Otomatis ke Arsip
@@ -218,7 +334,10 @@ public function edit($id)
 {
     $surat = SuratKeluar::findOrFail($id);
 
-    return view('surat_keluar.edit', compact('surat'));
+    $jenisSuratList = JenisSurat::orderBy('nama')->get();
+    $instansis = Instansi::orderBy('nama_instansi')->get();
+
+    return view('surat_keluar.edit', compact('surat', 'jenisSuratList', 'instansis'));
 }
 
 /**
@@ -228,21 +347,36 @@ public function update(Request $request, $id)
 {
     $surat = SuratKeluar::findOrFail($id);
 
+    $isKuasa = JenisSurat::where('nama', $request->jenis_surat)
+        ->where('form_type', 'kuasa')
+        ->exists() || \Illuminate\Support\Str::contains(strtolower($request->jenis_surat), 'kuasa');
+
     $request->validate([
         'tanggal_surat' => 'required|date',
         'jenis_surat' => 'required|string|max:100',
+        'kode_surat' => 'nullable|string|max:10',
         'kode_divisi' => 'required|string|max:20',
-        'instansi_id' => 'required|exists:instansis,id',
-        'tujuan' => 'required|string|max:255',
-        'perihal' => 'required|string|max:255',
-        'isi_surat' => 'required|string',
+        'instansi_id' => 'nullable|exists:instansis,id',
+        'tujuan' => $isKuasa ? 'nullable|string|max:255' : 'required|string|max:255',
+        'perihal' => $isKuasa ? 'nullable|string|max:255' : 'required|string|max:255',
+        'isi_surat' => $isKuasa ? 'nullable|string' : 'required|string',
+        'data_khusus' => $isKuasa ? 'required|array' : 'nullable|array',
         'lampiran' => 'nullable|string|max:255',
-        'penandatangan' => 'required|string|max:255',
-        'jabatan_penandatangan' => 'required|string|max:255',
+        'penandatangan' => $isKuasa ? 'nullable|string|max:255' : 'required|string|max:255',
+        'jabatan_penandatangan' => $isKuasa ? 'nullable|string|max:255' : 'required|string|max:255',
         'status' => 'required|in:Draft,Dikirim,Selesai',
         'file_surat' => 'nullable|mimes:pdf|max:2048',
     ]);
 
+    // Kumpulkan data khusus (misal data Surat Kuasa)
+    $kuasaData = $this->buildKuasaData($request);
+    $dataKhusus = $kuasaData['data_khusus'];
+
+    // instansi_id hanya dipakai sebagai penanda/tag untuk sorting & filter
+    // di daftar surat keluar — tidak memengaruhi isi surat.
+    $tujuan = $kuasaData['tujuan'];
+
+    // Default nama file: tetap pakai file lama kalau tidak upload PDF baru
     $namaFile = $surat->file_surat;
 
     if ($request->hasFile('file_surat')) {
@@ -269,21 +403,25 @@ public function update(Request $request, $id)
 
         'jenis_surat' => $request->jenis_surat,
 
+        'kode_surat' => strtoupper($request->kode_surat),
+
         'kode_divisi' => $request->kode_divisi,
 
         'instansi_id' => $request->instansi_id,
 
-        'tujuan' => $request->tujuan,
+        'tujuan' => $tujuan,
 
-        'perihal' => $request->perihal,
+        'perihal' => $kuasaData['perihal'],
 
-        'isi_surat' => $request->isi_surat,
+        'isi_surat' => $kuasaData['isi_surat'],
+
+        'data_khusus' => $dataKhusus,
 
         'lampiran' => $request->lampiran,
 
-        'penandatangan' => $request->penandatangan,
+        'penandatangan' => $request->penandatangan ?? ($dataKhusus['pemberi']['nama'] ?? 'Pemberi Kuasa'),
 
-        'jabatan_penandatangan' => $request->jabatan_penandatangan,
+        'jabatan_penandatangan' => $request->jabatan_penandatangan ?? 'Pemberi Kuasa',
 
         'status' => $request->status,
 
@@ -357,16 +495,16 @@ public function preview($id)
  public function downloadPublic($id)
     {
         $surat = SuratKeluar::findOrFail($id);
-
+ 
         $pdf = Pdf::loadView('surat_keluar.pdf', compact('surat'));
-
+ 
         $namaFile = 'Surat-' . str_replace(['/', '\\'], '-', $surat->nomor_surat) . '.pdf';
-
-        return $pdf->stream($namaFile);
+ 
+      return $pdf->stream($namaFile);
     }
 
 /**
- * Kirim Email
+ * Kirim Email — Generate PDF on-the-fly via DomPDF
  */
     public function sendEmail(Request $request, $id)
 {
@@ -376,20 +514,22 @@ public function preview($id)
         'email' => 'required|email',
     ]);
 
-    if (!$surat->file_surat) {
-        return back()->with('error', 'File surat belum tersedia. Silakan unduh/generate PDF terlebih dahulu.');
-    }
+    $namaFilePdf = 'Surat-' . str_replace(['/', '\\'], '-', $surat->nomor_surat) . '.pdf';
 
-    $path = 'surat_keluar/' . $surat->file_surat;
-
-    if (!Storage::disk('public')->exists($path)) {
-        return back()->with('error', 'File surat tidak ditemukan di server.');
+    // Cek apakah ada file fisik yang di-upload manual
+    if ($surat->file_surat && Storage::disk('public')->exists('surat_keluar/' . $surat->file_surat)) {
+        // Gunakan file fisik yang sudah ada
+        $pdfContent = Storage::disk('public')->get('surat_keluar/' . $surat->file_surat);
+    } else {
+        // Generate PDF on-the-fly dari template (sama seperti downloadPublic)
+        $pdf = Pdf::loadView('surat_keluar.pdf', compact('surat'));
+        $pdfContent = $pdf->output();
     }
 
     $lampiran = [[
-        'nama' => 'Surat-' . str_replace(['/', '\\'], '-', $surat->nomor_surat) . '.pdf',
+        'nama' => $namaFilePdf,
         'mime' => 'application/pdf',
-        'isi'  => Storage::disk('public')->get($path),
+        'isi'  => $pdfContent,
     ]];
 
     Mail::to($request->email)->send(new SuratKeluarMail($surat, $lampiran));
@@ -398,7 +538,7 @@ public function preview($id)
 }
 
 /**
- * Kirim WA
+ * Kirim WA — Generate PDF on-the-fly, simpan temp, lalu kirim
  */
 
    public function sendWhatsapp(Request $request, $id)
@@ -416,18 +556,23 @@ public function preview($id)
         $nomor = '62' . $nomor;
     }
 
-    if (!$surat->file_surat) {
-        return back()->with('error', 'File surat belum tersedia.');
-    }
+    $namaFilePdf = 'Surat-' . str_replace(['/', '\\'], '-', $surat->nomor_surat) . '.pdf';
 
-    $path = storage_path('app/public/surat_keluar/' . $surat->file_surat);
-
-    if (!file_exists($path)) {
-        return back()->with('error', 'File surat tidak ditemukan di server.');
+    // Cek apakah ada file fisik yang di-upload manual
+    if ($surat->file_surat && file_exists(storage_path('app/public/surat_keluar/' . $surat->file_surat))) {
+        $path = storage_path('app/public/surat_keluar/' . $surat->file_surat);
+    } else {
+        // Generate PDF on-the-fly, simpan ke file temp
+        $pdf = Pdf::loadView('surat_keluar.pdf', compact('surat'));
+        $tempDir = storage_path('app/public/surat_keluar/temp');
+        if (!is_dir($tempDir)) {
+            mkdir($tempDir, 0755, true);
+        }
+        $path = $tempDir . '/' . $namaFilePdf;
+        file_put_contents($path, $pdf->output());
     }
 
     $pesan = "Berikut surat keluar No. {$surat->nomor_surat}, perihal: {$surat->perihal}.";
-    $namaFilePdf = 'Surat-' . str_replace(['/', '\\'], '-', $surat->nomor_surat) . '.pdf';
 
     $response = Http::post('http://localhost:3000/send-file', [
         'nomor'    => $nomor,
@@ -436,11 +581,16 @@ public function preview($id)
         'fileName' => $namaFilePdf,
     ]);
 
+    // Hapus file temp jika dibuat
+    if (!$surat->file_surat && isset($path) && file_exists($path)) {
+        @unlink($path);
+    }
+
     if ($response->successful() && $response->json('success') === true) {
         return back()->with('success', 'Surat berhasil dikirim ke WhatsApp.');
     }
 
-    return back()->with('error', 'Gagal mengirim ke WhatsApp. Coba lagi.');
+    return back()->with('error', 'Gagal mengirim ke WhatsApp. Pastikan server WhatsApp aktif.');
 }
 
 /**
@@ -462,4 +612,3 @@ public function downloadAndSave($id)
 }
 
 }
-

@@ -329,7 +329,7 @@
                                     {{ $surat->perihal }}
                                 </td>
                                 <td class="px-4 py-4 text-slate-400 text-xs">
-                                    {{ $surat->tanggal_surat ? $surat->tanggal_surat->translatedFormat('d M Y') : '-' }}
+                                    {{ $surat->tanggal_surat ? \Carbon\Carbon::parse($surat->tanggal_surat)->translatedFormat('d M Y') : '-' }}
                                 </td>
                                 <td class="px-4 py-4">
                                     @if($surat->status == 'Baru')
@@ -401,7 +401,7 @@
                                     {{ $surat->perihal }}
                                 </td>
                                 <td class="px-4 py-4 text-slate-400 text-xs">
-                                    {{ $surat->tanggal_surat ? $surat->tanggal_surat->translatedFormat('d M Y') : '-' }}
+                                    {{ $surat->tanggal_surat ? \Carbon\Carbon::parse($surat->tanggal_surat)->translatedFormat('d M Y') : '-' }}
                                 </td>
                                 <td class="px-4 py-4">
                                     @if($surat->status == 'Draft')
@@ -484,7 +484,7 @@
                                     {{ $arsip->perihal }}
                                 </td>
                                 <td class="px-4 py-4 text-slate-400 text-xs">
-                                    {{ $arsip->tanggal_surat ? $arsip->tanggal_surat->translatedFormat('d M Y') : '-' }}
+                                    {{ $arsip->tanggal_surat ? \Carbon\Carbon::parse($arsip->tanggal_surat)->translatedFormat('d M Y') : '-' }}
                                 </td>
                                 <td class="px-4 py-4 text-center">
                                     <a href="{{ route('arsip.show', $arsip->id) }}" class="inline-flex items-center gap-1 text-xs font-semibold text-amber-400 hover:text-amber-300 px-2.5 py-1 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 transition">

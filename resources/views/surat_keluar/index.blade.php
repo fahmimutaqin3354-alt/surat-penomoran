@@ -52,17 +52,17 @@
             </span>
         </div>
 
-        <div class="overflow-x-auto">
+        <div class="p-4 overflow-x-auto">
             <table id="tableSuratKeluar" class="w-full text-sm">
                 <thead>
                     <tr>
-                        <th>No</th>
-                        <th>Nomor Surat</th>
-                        <th>Tanggal</th>
-                        <th>Instansi</th>
-                        <th>Tujuan</th>
-                        <th>Status</th>
-                        <th>Aksi</th>
+                        <th class="px-6 py-4 text-center">No</th>
+                        <th class="px-6 py-4">Nomor Surat</th>
+                        <th class="px-6 py-4">Tanggal</th>
+                        <th class="px-6 py-4">Instansi Tujuan</th>
+                        <th class="px-6 py-4">Tujuan</th>
+                        <th class="px-6 py-4 text-center">Status</th>
+                        <th class="px-6 py-4 text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -76,8 +76,15 @@
                             {{ \Carbon\Carbon::parse($item->tanggal_surat)->format('d-m-Y') }}
                         </td>
 
-                        <td class="text-slate-300">
-                            {{ Str::limit($item->instansi->nama_instansi ?? '-', 30) }}
+                        <td class="px-6 py-4">
+                            @if($item->instansi)
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-medium">
+                                    <i class="fa-solid fa-building text-indigo-400 text-[10px]"></i>
+                                    {{ $item->instansi->nama_instansi }}
+                                </span>
+                            @else
+                                <span class="text-slate-600 text-xs italic">—</span>
+                            @endif
                         </td>
 
                         <td class="text-slate-300">

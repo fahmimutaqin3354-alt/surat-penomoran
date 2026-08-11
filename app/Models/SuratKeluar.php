@@ -2,79 +2,61 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\User;
+use App\Models\Instansi;
 
 class SuratKeluar extends Model
 {
-    use HasFactory;
-    use SoftDeletes;
-
-    /**
-     * Nama tabel yang terhubung.
-     */
-    protected $table = 'surat_keluars';
-
-    /**
-     * Atribut yang dapat diisi secara massal (mass assignable).
-     */
+    use SoftDeletes; 
+    
     protected $fillable = [
         'nomor_surat',
-        'kode_divisi',
-        'instansi_id',
         'tanggal_surat',
         'jenis_surat',
+        'kode_surat',
+        'kode_divisi',
+        'instansi_id',
         'tujuan',
         'perihal',
         'isi_surat',
+        'data_khusus',
         'lampiran',
         'penandatangan',
         'jabatan_penandatangan',
         'file_surat',
         'status',
-        'surat_masuk_id',
         'user_id',
     ];
 
-    /**
-     * Type casting atribut.
-     */
     protected $casts = [
         'tanggal_surat' => 'date',
+        'data_khusus' => 'array',
     ];
 
     /**
-     * Relasi ke model User (Pembuat / Pemproses Surat).
+     * Relasi ke User
      */
-    public function user(): BelongsTo
+    public function user()
     {
         return $this->belongsTo(User::class);
     }
 
     /**
-     * Relasi ke model Instansi (Tujuan / Instansi Terkait).
+     * Relasi ke JenisSurat
      */
-    public function instansi(): BelongsTo
+    public function jenisSurat()
     {
-        return $this->belongsTo(Instansi::class, 'instansi_id');
+        return $this->belongsTo(JenisSurat::class, 'jenis_surat', 'nama');
     }
 
     /**
-     * Relasi ke model SuratMasuk (Jika surat keluar ini merupakan balasan dari surat masuk).
+     * Relasi ke Instansi
      */
-    public function suratMasuk(): BelongsTo
+    public function instansi()
     {
-        return $this->belongsTo(SuratMasuk::class, 'surat_masuk_id');
-    }
-
-    /**
-     * Relasi ke model Arsip.
-     */
-    public function arsip(): HasOne
-    {
-        return $this->hasOne(Arsip::class, 'surat_keluar_id');
+        return $this->belongsTo(Instansi::class);
     }
 }
+
