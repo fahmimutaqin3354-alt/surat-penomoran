@@ -9,6 +9,7 @@ use App\Http\Controllers\ArsipController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\RecycleBinController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\InstansiController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -16,7 +17,7 @@ Route::get('/', function () {
 
 Route::middleware(['auth'])->group(function () {
 
-    
+
 
     Route::get('/dashboard', function () {
         return view('dashboard');
@@ -25,12 +26,16 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/laporan/kirim-email', [LaporanController::class, 'sendEmail'])
     ->name('laporan.send.email');
 
-   
+   Route::resource('instansi', InstansiController::class);
 
     // Surat Masuk
+    Route::get('/surat_masuk/{id}/pdf', [SuratMasukController::class, 'downloadPdf'])
+        ->name('surat_masuk.pdf');
     Route::resource('surat_masuk', SuratMasukController::class);
 
     // Surat Keluar
+    Route::get('/surat_keluar/next-nomor', [SuratKeluarController::class, 'nextNomor'])
+        ->name('surat_keluar.next_nomor');
     Route::resource('surat_keluar', SuratKeluarController::class);
     Route::post('/jenis_surat/store', [JenisSuratController::class, 'store'])
     ->name('jenis_surat.store');
@@ -74,7 +79,7 @@ Route::get('/arsip/export', [ArsipController::class, 'ekspor'])->name('arsip.exp
 
      // RecycleBin
     Route::get('/recycle-bin', [RecycleBinController::class, 'index'])->name('recycle-bin.index');
-    
+
     Route::post('/recycle-bin/surat-keluar/{id}/restore', [RecycleBinController::class, 'restoreSuratKeluar'])->name('recycle-bin.restore.keluar');
     Route::post('/recycle-bin/surat-masuk/{id}/restore', [RecycleBinController::class, 'restoreSuratMasuk'])->name('recycle-bin.restore.masuk');
     Route::post('/recycle-bin/arsip/{id}/restore', [RecycleBinController::class, 'restoreArsip'])->name('recycle-bin.restore.arsip');

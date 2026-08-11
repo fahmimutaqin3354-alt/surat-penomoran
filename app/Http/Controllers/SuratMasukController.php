@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Arsip;
+use App\Models\Instansi;
 use App\Models\SuratMasuk;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -15,7 +17,7 @@ class SuratMasukController extends Controller
      */
     public function index(Request $request)
     {
-        $query = SuratMasuk::query();
+        $query = SuratMasuk::with('instansi');
 
         if ($request->filled('search')) {
 
@@ -32,8 +34,7 @@ class SuratMasukController extends Controller
 
         $surat = $query
             ->latest()
-            ->paginate(10)
-            ->withQueryString();
+            ->get();
 
         $jumlahDihapus = SuratMasuk::onlyTrashed()->count();
 
@@ -56,7 +57,12 @@ class SuratMasukController extends Controller
 
     $nomorAgenda = 'AGD-' . str_pad($angka, 4, '0', STR_PAD_LEFT);
 
-    return view('surat_masuk.create', compact('nomorAgenda'));
+   $instansis = Instansi::orderBy('nama_instansi')->get();
+
+return view('surat_masuk.create', compact(
+    'nomorAgenda',
+    'instansis'
+));
 }
 /**
  * Simpan surat masuk
@@ -66,9 +72,9 @@ public function store(Request $request)
     $request->validate([
         'nomor_agenda'   => 'required|unique:surat_masuks',
         'nomor_surat'    => 'required|string|max:255',
+        'instansi_id' => 'required|exists:instansis,id',
         'tanggal_surat'  => 'required|date',
         'tanggal_terima' => 'required|date',
-        'asal_surat'     => 'required|string|max:255',
         'jenis_surat'    => 'required|string|max:255',
         'perihal'        => 'required|string|max:255',
         'isi_ringkas'    => 'nullable|string',
@@ -96,35 +102,39 @@ public function store(Request $request)
     // Simpan Surat Masuk
     // ==========================
 
-    $surat = SuratMasuk::create([
+    $lastAngka = SuratMasuk::withTrashed()
+    ->get()
+    ->map(function ($surat) {
+        return (int) substr($surat->nomor_agenda, 4);
+    })
+    ->max();
 
-        'nomor_agenda'   => $request->nomor_agenda,
+$angka = ($lastAngka ?? 0) + 1;
 
-        'nomor_surat'    => $request->nomor_surat,
+$nomorAgenda = 'AGD-' . str_pad($angka, 4, '0', STR_PAD_LEFT);
 
-        'tanggal_surat'  => $request->tanggal_surat,
+$instansi = Instansi::findOrFail($request->instansi_id);
 
-        'tanggal_terima' => $request->tanggal_terima,
+$surat = SuratMasuk::create([
+    'nomor_agenda' => $nomorAgenda,
+    'nomor_surat'    => $request->nomor_surat,
 
-        'asal_surat'     => $request->asal_surat,
+    'instansi_id'    => $request->instansi_id,
+    'asal_surat'     => $instansi->nama_instansi,
 
-        'jenis_surat'    => $request->jenis_surat,
+    'tanggal_surat'  => $request->tanggal_surat,
+    'tanggal_terima' => $request->tanggal_terima,
 
-        'perihal'        => $request->perihal,
+    'jenis_surat'    => $request->jenis_surat,
+    'perihal'        => $request->perihal,
+    'isi_ringkas'    => $request->isi_ringkas,
+    'lampiran'       => $request->lampiran,
+    'keterangan'     => $request->keterangan,
+    'status'         => $request->status,
+    'file_surat'     => $namaFile,
+    'user_id'        => Auth::id(),
 
-        'isi_ringkas'    => $request->isi_ringkas,
-
-        'lampiran'       => $request->lampiran,
-
-        'keterangan'     => $request->keterangan,
-
-        'status'         => $request->status,
-
-        'file_surat'     => $namaFile,
-
-        'user_id'        => Auth::id(),
-
-    ]);
+]);
 
     // ==========================
     // Simpan Otomatis ke Arsip
@@ -175,13 +185,17 @@ public function show(string $id)
 /**
  * Form edit surat
  */
-public function edit(string $id)
+public function edit($id)
 {
     $surat = SuratMasuk::findOrFail($id);
 
-    return view('surat_masuk.edit', compact('surat'));
-}
+    $instansis = Instansi::orderBy('nama_instansi')->get();
 
+    return view('surat_masuk.edit', compact(
+        'surat',
+        'instansis'
+    ));
+}
 /**
  * Update surat masuk
  */
@@ -190,11 +204,10 @@ public function update(Request $request, string $id)
     $surat = SuratMasuk::findOrFail($id);
 
     $request->validate([
-        'nomor_agenda'   => 'required|unique:surat_masuks,nomor_agenda,' . $surat->id,
         'nomor_surat'    => 'required|string|max:255',
+        'instansi_id'    => 'required|exists:instansis,id',
         'tanggal_surat'  => 'required|date',
         'tanggal_terima' => 'required|date',
-        'asal_surat'     => 'required|string|max:255',
         'jenis_surat'    => 'required|string|max:255',
         'perihal'        => 'required|string|max:255',
         'isi_ringkas'    => 'nullable|string',
@@ -226,17 +239,20 @@ public function update(Request $request, string $id)
     }
 
     // Update Surat Masuk
+    $instansi = Instansi::findOrFail($request->instansi_id);
     $surat->update([
 
         'nomor_agenda'   => $request->nomor_agenda,
 
         'nomor_surat'    => $request->nomor_surat,
 
+        'instansi_id' => $request->instansi_id,
+
         'tanggal_surat'  => $request->tanggal_surat,
 
         'tanggal_terima' => $request->tanggal_terima,
 
-        'asal_surat'     => $request->asal_surat,
+        'asal_surat' => $instansi->nama_instansi,
 
         'jenis_surat'    => $request->jenis_surat,
 
@@ -269,7 +285,7 @@ public function update(Request $request, string $id)
 
             'perihal' => $surat->perihal,
 
-            'pengirim_penerima' => $surat->asal_surat,
+            'pengirim_penerima' => $instansi->nama_instansi,
 
             'tanggal_surat' => $surat->tanggal_surat,
 
@@ -303,5 +319,19 @@ public function destroy(string $id)
     return redirect()
         ->route('surat_masuk.index')
         ->with('success', 'Surat masuk berhasil dihapus.');
+}
+
+/**
+ * Unduh PDF Lembar Agenda Surat Masuk
+ */
+public function downloadPdf($id)
+{
+    $surat = SuratMasuk::with('instansi')->findOrFail($id);
+
+    $pdf = Pdf::loadView('surat_masuk.pdf', compact('surat'));
+
+    $namaFile = 'Surat-Masuk-' . str_replace(['/', '\\'], '-', $surat->nomor_agenda) . '.pdf';
+
+    return $pdf->stream($namaFile);
 }
 }

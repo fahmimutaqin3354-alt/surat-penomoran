@@ -4,7 +4,26 @@
 
 @section('content')
 
-{{-- Style khusus untuk mengubah warna ikon kalender menjadi putih cerah --}}
+@php
+    $oldDk = old('data_khusus', []);
+    $oldKegiatan = old('data_khusus.kegiatan_items');
+    $kegiatanItems = is_array($oldKegiatan) ? array_values($oldKegiatan) : [''];
+    if (empty($kegiatanItems)) $kegiatanItems = [''];
+
+    $oldHeaders = old('data_khusus.table_headers');
+    $tableHeaders = is_array($oldHeaders) ? $oldHeaders : ['No', 'Uraian / Kegiatan', 'Jumlah', 'Keterangan'];
+
+    $oldRows = old('data_khusus.table_rows');
+    $tableRows = is_array($oldRows) ? $oldRows : [
+        ['1', 'Contoh item kegiatan / barang A', '1 Paket', 'Terlampir'],
+        ['2', 'Contoh item kegiatan / barang B', '2 Unit', 'Lengkap']
+    ];
+
+    $defaultTujuan = isset($suratMasuk) ? $suratMasuk->pengirim : '';
+    $defaultPerihal = isset($suratMasuk) ? 'Balasan: ' . $suratMasuk->perihal : '';
+    $defaultInstansiId = isset($suratMasuk) ? $suratMasuk->instansi_id : '';
+@endphp
+
 <style>
     input[type="date"]::-webkit-calendar-picker-indicator {
         filter: invert(1) brightness(2) !important;
@@ -12,769 +31,1103 @@
         opacity: 0.9 !important;
     }
     [x-cloak] { display: none !important; }
+    .a4-paper {
+        width: 100%;
+        min-height: 297mm;
+        background: white;
+        color: #000;
+        font-family: "Times New Roman", Times, serif;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    }
 </style>
 
-<div class="max-w-7xl mx-auto">
+<div class="max-w-[1700px] mx-auto"
+     x-data="{
+        jenisSuratList: {{ json_encode($jenisSuratList) }},
+        jenis_surat: @js(old('jenis_surat', '')),
+        kode_surat: '',
+        kode_divisi: @js(old('kode_divisi', 'HRD')),
+        instansi_id: @js(old('instansi_id', (string)$defaultInstansiId)),
+        instansi_nama: '',
+        tanggal_surat: @js(old('tanggal_surat', date('Y-m-d'))),
+        tujuan: @js(old('tujuan', $defaultTujuan)),
+        perihal: @js(old('perihal', $defaultPerihal)),
+        isi_surat: @js(old('isi_surat', '')),
+        lampiran: @js(old('lampiran', '')),
+        status: @js(old('status', 'Draft')),
+        penandatangan: @js(old('penandatangan', 'DIREKTUR UTAMA')),
+        jabatan_penandatangan: @js(old('jabatan_penandatangan', 'PT Microdata Indonesia')),
 
-@if(session('surat_tersimpan'))
-    @php($suratBaru = session('surat_tersimpan'))
- 
-    <div class="mb-6 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-5 flex flex-wrap items-center justify-between gap-4">
- 
-        <div>
-            <p class="text-emerald-400 font-semibold flex items-center gap-2">
-                <i class="fa-solid fa-circle-check"></i>
-                Surat berhasil disimpan
-            </p>
-            <p class="text-sm text-slate-400 mt-1">
-                Nomor Surat: <span class="text-slate-200 font-medium">{{ $suratBaru->nomor_surat }}</span>
-                — silakan ekspor surat ini kalau diperlukan.
-            </p>
-        </div>
- 
-        {{-- ============ DROPDOWN EKSPOR (Email / WhatsApp) ============ --}}
-        <div class="relative" x-data="{ open: false }" @click.outside="open = false">
-            <button type="button" @click="open = !open"
-                class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 focus:outline-none transition">
-                <i class="fa-solid fa-share-nodes"></i>
-                Ekspor Surat
-                <i class="fa-solid fa-chevron-down text-xs opacity-70"></i>
-            </button>
- 
-            <div x-show="open" x-cloak
-                class="absolute right-0 mt-2 w-52 bg-slate-900 border border-slate-800 rounded-xl shadow-lg z-20 overflow-hidden py-1">
- 
-                <a href="{{ route('surat_keluar.pdf', $suratBaru->id) }}"
-                    class="flex items-center gap-2 px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-800">
-                    <i class="fa-solid fa-file-pdf text-slate-500 w-4"></i>
-                    Unduh PDF
+        isKuasa: false,
+
+        // Nomor surat preview (diisi via fetch ke server)
+        nomorUrut: '...',
+
+        // Data Khusus Surat Kuasa (Struktur Gambar) & Surat Umum Tabel
+        dataKhusus: {
+            pemberi: {
+                nama: @js(old('data_khusus.pemberi.nama', '')),
+                jabatan: @js(old('data_khusus.pemberi.jabatan', '')),
+                alamat: @js(old('data_khusus.pemberi.alamat', ''))
+            },
+            penerima: {
+                nama: @js(old('data_khusus.penerima.nama', '')),
+                jabatan: @js(old('data_khusus.penerima.jabatan', '')),
+                alamat: @js(old('data_khusus.penerima.alamat', ''))
+            },
+            pembuka_maksud: @js(old('data_khusus.pembuka_maksud', 'mewakili Direktur untuk melaksanakan Pembuktian Kualifikasi')),
+            kegiatan_items: {{ json_encode($kegiatanItems) }},
+            lokasi_instansi: @js(old('data_khusus.lokasi_instansi', '')),
+            penutup: @js(old('data_khusus.penutup', 'Demikian Surat Kuasa ini dibuat untuk dipergunakan sebagaimana mestinya.')),
+            kota_tanggal: @js(old('data_khusus.kota_tanggal', '')),
+
+            // Builder Tabel Surat Umum
+            has_table: {{ old('data_khusus.has_table') ? 'true' : 'false' }},
+            table_title: @js(old('data_khusus.table_title', '')),
+            table_headers: {{ json_encode($tableHeaders) }},
+            table_rows: {{ json_encode($tableRows) }},
+            isi_setelah_tabel: @js(old('data_khusus.isi_setelah_tabel', ''))
+        },
+
+        addKegiatanItem() {
+            this.dataKhusus.kegiatan_items.push('');
+        },
+        removeKegiatanItem(idx) {
+            if (this.dataKhusus.kegiatan_items.length > 1) {
+                this.dataKhusus.kegiatan_items.splice(idx, 1);
+            } else {
+                this.dataKhusus.kegiatan_items[0] = '';
+            }
+        },
+
+        addTableHeader() {
+            this.dataKhusus.table_headers.push('Header Baru');
+            this.dataKhusus.table_rows.forEach(r => r.push('-'));
+        },
+        removeTableHeader(idx) {
+            if (this.dataKhusus.table_headers.length > 1) {
+                this.dataKhusus.table_headers.splice(idx, 1);
+                this.dataKhusus.table_rows.forEach(r => r.splice(idx, 1));
+            }
+        },
+        addTableRow() {
+            const newR = this.dataKhusus.table_headers.map((_, i) => i === 0 ? (this.dataKhusus.table_rows.length + 1).toString() : '');
+            this.dataKhusus.table_rows.push(newR);
+        },
+        removeTableRow(idx) {
+            if (this.dataKhusus.table_rows.length > 1) {
+                this.dataKhusus.table_rows.splice(idx, 1);
+            }
+        },
+
+        updateInstansiNama(el) {
+            if (el && el.selectedIndex >= 0) {
+                const optText = el.options[el.selectedIndex].text;
+                this.instansi_nama = optText.startsWith('--') ? '' : optText;
+            }
+        },
+
+        updateJenisSurat() {
+            const val = this.jenis_surat || '';
+            const found = Array.isArray(this.jenisSuratList) ? this.jenisSuratList.find(j => j.nama === val) : null;
+            if (found) {
+                this.kode_surat = found.kode_surat || '';
+                const formType = (found.form_type || '').toLowerCase();
+                this.isKuasa = (formType === 'kuasa') || val.toLowerCase().includes('kuasa');
+            } else {
+                const isK = val.toLowerCase().includes('kuasa');
+                this.isKuasa = isK;
+                if (isK && (!this.kode_surat || this.kode_surat === '')) {
+                    this.kode_surat = 'SK';
+                } else if (!isK && val === '') {
+                    this.kode_surat = '';
+                }
+            }
+
+            if (this.isKuasa && (!this.perihal || this.perihal.trim() === '')) {
+                this.perihal = 'SURAT KUASA';
+            }
+
+            this.fetchNextNomor();
+        },
+
+        formatTanggal(val) {
+            if (!val) return '-';
+            const parts = val.split('-');
+            if (parts.length !== 3) return val;
+            const bulan = ['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            const blnIdx = parseInt(parts[1], 10);
+            return parseInt(parts[2], 10) + ' ' + (bulan[blnIdx] || '') + ' ' + parts[0];
+        },
+
+        async fetchNextNomor() {
+            const kode = this.kode_surat || 'SK';
+            const div  = this.kode_divisi || 'HRD';
+            const tgl  = this.tanggal_surat || '';
+            try {
+                const res = await fetch(
+                    `{{ route('surat_keluar.next_nomor') }}?kode_surat=${encodeURIComponent(kode)}&kode_divisi=${encodeURIComponent(div)}&tanggal_surat=${encodeURIComponent(tgl)}`,
+                    { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' } }
+                );
+                if (res.ok) {
+                    const data = await res.json();
+                    this.nomorUrut = data.nomor ?? '...';
+                }
+            } catch(e) {
+                // Fallback bila fetch gagal
+                const romawi = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
+                const d = new Date(this.tanggal_surat || Date.now());
+                this.nomorUrut = '01/' + kode + '/' + div + '/PT-MDI/' + (romawi[d.getMonth()] || 'I') + '/' + d.getFullYear();
+            }
+        },
+
+        get previewNomor() {
+            return this.nomorUrut;
+        },
+
+        downloadPreviewPdf() {
+            const element = document.getElementById('surat-keluar-preview-paper');
+            const opt = {
+                margin: [10, 10, 10, 10],
+                filename: 'Surat_Keluar_Preview.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true, logging: false },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
+     }"
+     x-init="$nextTick(() => {
+        $watch('jenis_surat', () => updateJenisSurat());
+        $watch('kode_divisi', () => fetchNextNomor());
+        $watch('tanggal_surat', () => fetchNextNomor());
+        const selInstansi = document.getElementById('instansi_select');
+        if (selInstansi) updateInstansiNama(selInstansi);
+        updateJenisSurat();
+     })">
+
+    {{-- Notification if saved --}}
+    @if(session('surat_tersimpan'))
+        @php($suratBaru = session('surat_tersimpan'))
+        <div x-data="{ openKirim: false }" class="mb-6 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-5 flex flex-wrap items-center justify-between gap-4">
+            <div>
+                <p class="text-emerald-400 font-semibold flex items-center gap-2">
+                    <i class="fa-solid fa-circle-check"></i>
+                    Surat keluar berhasil disimpan
+                </p>
+                <p class="text-sm text-slate-400 mt-1">
+                    Nomor Surat: <span class="text-slate-200 font-medium">{{ $suratBaru->nomor_surat }}</span>
+                </p>
+            </div>
+            <div class="flex items-center gap-3">
+
+                {{-- Preview --}}
+                <a href="{{ route('surat_keluar.preview', $suratBaru->id) }}" target="_blank"
+                   class="px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-slate-200 text-sm font-semibold hover:bg-slate-700 transition flex items-center gap-2">
+                    <i class="fa-solid fa-eye"></i> Preview
                 </a>
- 
-                <div class="my-1 border-t border-slate-800"></div>
- 
-                <button type="button" @click="$dispatch('open-modal-email-surat'); open = false"
-                    class="flex items-center gap-2 w-full text-left px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-800">
-                    <i class="fa-solid fa-envelope text-slate-500 w-4"></i>
-                    Kirim ke Email
-                </button>
-                <button type="button" @click="$dispatch('open-modal-wa-surat'); open = false"
-                    class="flex items-center gap-2 w-full text-left px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-800">
-                    <i class="fa-brands fa-whatsapp text-slate-500 w-4"></i>
-                    Kirim ke WhatsApp
-                </button>
+
+                {{-- Dropdown Kirim --}}
+                <div class="relative" @click.outside="openKirim = false">
+                    <button type="button" @click="openKirim = !openKirim"
+                            class="px-4 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-sm font-semibold transition flex items-center gap-2">
+                        <i class="fa-solid fa-share-nodes"></i>
+                        Kirim Surat
+                        <i class="fa-solid fa-chevron-down text-xs" :class="openKirim ? 'rotate-180' : ''"
+                           style="transition: transform .2s"></i>
+                    </button>
+                    <div x-show="openKirim" x-cloak
+                         class="absolute right-0 mt-2 w-52 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl z-30 overflow-hidden py-1">
+
+                        {{-- Kirim via Email --}}
+                        <button type="button"
+                                @click="$dispatch('open-modal-email-notif-{{ $suratBaru->id }}'); openKirim = false"
+                                class="flex items-center gap-2 w-full text-left px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-800">
+                            <i class="fa-solid fa-envelope text-indigo-400 w-4"></i>
+                            Kirim ke Email
+                        </button>
+
+                        {{-- Kirim via WhatsApp --}}
+                        <button type="button"
+                                @click="$dispatch('open-modal-wa-notif-{{ $suratBaru->id }}'); openKirim = false"
+                                class="flex items-center gap-2 w-full text-left px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-800">
+                            <i class="fa-brands fa-whatsapp text-emerald-400 w-4"></i>
+                            Kirim ke WhatsApp
+                        </button>
+                    </div>
+                </div>
+
             </div>
         </div>
- 
-    </div>
-@endif
+
+        {{-- Modal Email (notifikasi sukses) --}}
+        <div x-data="{ show: false }"
+             @open-modal-email-notif-{{ $suratBaru->id }}.window="show = true"
+             x-show="show" x-cloak
+             class="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div class="absolute inset-0 bg-black/60" @click="show = false"></div>
+            <div class="relative bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm p-6">
+                <h3 class="text-base font-semibold text-white mb-1">Kirim Surat via Email</h3>
+                <p class="text-sm text-slate-400 mb-4">
+                    Masukkan alamat email tujuan, surat akan dikirim beserta lampiran PDF-nya.
+                </p>
+                <form action="{{ route('surat_keluar.send.email', $suratBaru->id) }}" method="POST">
+                    @csrf
+                    <label class="block text-sm font-medium text-slate-300 mb-1">Alamat Email</label>
+                    <input type="email" name="email" required placeholder="nama@contoh.com"
+                           class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4">
+                    <div class="flex justify-end gap-2">
+                        <button type="button" @click="show = false"
+                                class="px-4 py-2 rounded-xl text-sm text-slate-400 hover:bg-slate-800 transition">Batal</button>
+                        <button type="submit"
+                                class="px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition">Kirim</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {{-- Modal WhatsApp (notifikasi sukses) --}}
+        <div x-data="{ show: false }"
+             @open-modal-wa-notif-{{ $suratBaru->id }}.window="show = true"
+             x-show="show" x-cloak
+             class="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div class="absolute inset-0 bg-black/60" @click="show = false"></div>
+            <div class="relative bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm p-6">
+                <h3 class="text-base font-semibold text-white mb-1">Kirim Surat ke WhatsApp</h3>
+                <p class="text-sm text-slate-400 mb-4">Surat akan dikirim beserta file PDF-nya.</p>
+                <form action="{{ route('surat_keluar.send.whatsapp', $suratBaru->id) }}" method="POST">
+                    @csrf
+                    <label class="block text-sm font-medium text-slate-300 mb-1">Nomor WhatsApp</label>
+                    <input type="text" name="nomor_wa" required placeholder="08xxxxxxxxxx"
+                           class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4">
+                    <div class="flex justify-end gap-2">
+                        <button type="button" @click="show = false"
+                                class="px-4 py-2 rounded-xl text-sm text-slate-400 hover:bg-slate-800 transition">Batal</button>
+                        <button type="submit"
+                                class="px-4 py-2 rounded-xl bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition">Kirim</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    @endif
 
     {{-- Header --}}
     <div class="flex items-center justify-between mb-6">
-
         <div>
-
-            <h1 class="text-3xl font-bold text-white">
+            <h1 class="text-3xl font-bold text-white flex items-center gap-3">
+                <i class="fa-solid fa-paper-plane text-indigo-500"></i>
                 Tambah Surat Keluar
             </h1>
-
             <p class="text-slate-400 mt-1">
-                Tambahkan data surat keluar baru.
+                Isi form otomatis untuk <span class="text-indigo-400 font-semibold">Surat Kuasa</span> atau <span class="text-emerald-400 font-semibold">Surat Umum</span>. Pratinjau surat A4 ter-update secara real-time.
             </p>
-
         </div>
-
-        <a href="{{ route('surat_keluar.index') }}"
-           class="px-5 py-3 rounded-xl bg-slate-700 hover:bg-slate-600 text-white font-semibold transition">
-
-            <i class="fa-solid fa-arrow-left mr-2"></i>
-
-            Kembali
-
-        </a>
-
+        <div class="flex items-center gap-3">
+            <a href="{{ route('surat_keluar.index') }}"
+               class="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold transition inline-flex items-center gap-2 border border-slate-700">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>Kembali</span>
+            </a>
+        </div>
     </div>
 
-    {{-- Card --}}
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-lg">
+    {{-- Grid Split Screen --}}
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
-        {{-- Header Card --}}
-        <div class="border-b border-slate-800 px-6 py-5">
+        {{-- LEFT COLUMN: FORM INPUTS --}}
+        <div class="lg:col-span-6 space-y-6">
 
-            <h2 class="text-xl font-bold text-white flex items-center gap-2">
-
-                <i class="fa-solid fa-file-circle-plus text-indigo-500"></i>
-
-                Form Surat Keluar
-
-            </h2>
-
-        </div>
-
-        {{-- Body --}}
-        <div class="p-6">
-
-            {{-- Error --}}
-            @if ($errors->any())
-
-                <div class="mb-6 rounded-xl bg-red-500/10 border border-red-500/30 p-4">
-
-                    <div class="text-red-400 font-semibold mb-2">
-
-                        Terjadi kesalahan:
-
+            {{-- Mode Indicator Card --}}
+            <div class="p-4 rounded-2xl border transition-all duration-300 flex items-center justify-between"
+                 :class="isKuasa ? 'bg-amber-500/10 border-amber-500/30 text-amber-300' : 'bg-indigo-500/10 border-indigo-500/30 text-indigo-300'">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-lg"
+                         :class="isKuasa ? 'bg-amber-500/20 text-amber-400' : 'bg-indigo-500/20 text-indigo-400'">
+                        <i :class="isKuasa ? 'fa-solid fa-file-signature' : 'fa-solid fa-file-lines'"></i>
                     </div>
-
-                    <ul class="list-disc list-inside text-red-300 space-y-1">
-
-                        @foreach ($errors->all() as $error)
-
-                            <li>{{ $error }}</li>
-
-                        @endforeach
-
-                    </ul>
-
+                    <div>
+                        <h4 class="font-bold text-sm" x-text="isKuasa ? 'Modus Template: SURAT KUASA (Khusus Dual Penandatangan)' : 'Modus Template: SURAT UMUM (Standar Industri & Tabel Flexible)'"></h4>
+                        <p class="text-xs opacity-80" x-text="isKuasa ? 'Form mengikuti struktur dari atas ke bawah: Pemberi, Penerima, Maksud, Kegiatan, & 2 Tanda tangan' : 'Form surat standar perusahaan dengan opsi pembuat tabel fleksibel di isi surat'"></p>
+                    </div>
                 </div>
+            </div>
 
+            @if(isset($suratMasuk))
+                <div class="mb-4 bg-sky-500/10 border border-sky-500/30 rounded-2xl p-4 flex items-center justify-between text-sky-300">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-reply text-lg"></i>
+                        <div>
+                            <p class="text-sm font-semibold">Membalas Surat Masuk</p>
+                            <p class="text-xs text-sky-400">Nomor: <span class="font-bold">{{ $suratMasuk->nomor_surat }}</span> (Pengirim: {{ $suratMasuk->pengirim }})</p>
+                        </div>
+                    </div>
+                    <span class="text-xs bg-sky-500/20 px-3 py-1 rounded-full font-medium">Terhubung</span>
+                </div>
             @endif
 
-            <form
-                action="{{ route('surat_keluar.store') }}"
-                method="POST"
-                enctype="multipart/form-data"
-                x-data="suratKeluarForm()"
-                x-init="initForm()">
-
+            <form action="{{ route('surat_keluar.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
+                <input type="hidden" name="surat_masuk_id" value="{{ old('surat_masuk_id', $suratMasuk->id ?? '') }}">
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {{-- CARD 1: INFORMASI KEPALA SURAT --}}
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden mb-6">
+                    <div class="border-b border-slate-800 px-6 py-4 bg-slate-950/50 flex items-center justify-between">
+                        <h2 class="text-base font-bold text-white flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-full bg-indigo-600 text-white text-xs flex items-center justify-center font-semibold">1</span>
+                            Informasi Dasar Surat
+                        </h2>
+                        <span class="text-xs text-slate-400">Pilih jenis & tanggal</span>
+                    </div>
 
-                    {{-- Jenis Surat + Tombol Tambah --}}
-                    <div>
-                        <label class="block text-sm font-medium text-slate-300 mb-2">
-                            Jenis Surat
-                        </label>
+                    <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-5">
 
-                        <div class="flex gap-2">
-                            <select
-                                name="jenis_surat"
-                                id="jenis_surat"
-                                x-model="jenisSurat"
-                                required
-                                class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                        {{-- Jenis Surat + Modal Tambah --}}
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">
+                                Jenis Surat <span class="text-rose-500">*</span>
+                            </label>
+                            <div class="flex gap-2">
+                                <select name="jenis_surat" id="jenis_surat" required
+                                        x-model="jenis_surat"
+                                        @change="updateJenisSurat()"
+                                        class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                                    <option value="">-- Pilih Jenis Surat --</option>
+                                    @foreach($jenisSuratList as $jenis)
+                                        <option value="{{ $jenis->nama }}"
+                                            data-kode="{{ $jenis->kode_surat }}"
+                                            data-form="{{ $jenis->form_type }}"
+                                            {{ old('jenis_surat') == $jenis->nama ? 'selected' : '' }}>
+                                            {{ $jenis->nama }} ({{ $jenis->kode_surat }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <button type="button" @click="$dispatch('open-modal-jenis-surat')"
+                                    title="Tambah Jenis Surat Baru"
+                                    class="shrink-0 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold transition">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
 
-                                <option value="">-- Pilih Jenis Surat --</option>
+                        {{-- Kode Surat (Otomatis) --}}
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">
+                                Kode Surat
+                            </label>
+                            <input type="text" name="kode_surat" x-model="kode_surat" readonly
+                                   placeholder="Otomatis dari Jenis Surat"
+                                   class="w-full rounded-xl border border-slate-700 bg-slate-950/60 px-4 py-3 text-slate-300 outline-none cursor-not-allowed">
+                        </div>
 
-                                @foreach($jenisSuratList as $jenis)
-                                    <option value="{{ $jenis->nama }}"
-                                        data-kode="{{ $jenis->kode_surat }}"
-                                        data-form="{{ $jenis->form_type }}"
-                                        {{ old('jenis_surat') == $jenis->nama ? 'selected' : '' }}>
-                                        {{ $jenis->nama }} ({{ $jenis->kode_surat }})
+                        {{-- Kode Divisi --}}
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">
+                                Divisi Pengirim <span class="text-rose-500">*</span>
+                            </label>
+                            <select name="kode_divisi" required x-model="kode_divisi"
+                                    @change="fetchNextNomor()"
+                                    class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                                <option value="HRD">HRD</option>
+                                <option value="DIR-I">Direktur I</option>
+                                <option value="DIR-II">Direktur II</option>
+                                <option value="IT">IT & Software</option>
+                                <option value="OPS">Operasional</option>
+                            </select>
+                        </div>
+
+                        {{-- Tanggal Surat --}}
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">
+                                Tanggal Surat <span class="text-rose-500">*</span>
+                            </label>
+                            <input type="date" name="tanggal_surat" required x-model="tanggal_surat"
+                                   @change="fetchNextNomor()"
+                                   class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                        </div>
+
+                        {{-- Instansi (Penanda di Tabel Data, bukan isi surat) --}}
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-slate-300 mb-2">
+                                Instansi Tujuan
+                                <span class="ml-2 text-xs font-normal text-slate-400 bg-slate-800 border border-slate-700 px-2 py-0.5 rounded-full inline-flex items-center gap-1">
+                                    <i class="fa-solid fa-tag text-indigo-400 text-[10px]"></i>
+                                    Penanda di Tabel Data
+                                </span>
+                            </label>
+                            <select name="instansi_id" id="instansi_select" x-model="instansi_id" @change="updateInstansiNama($event.target)"
+                                    class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                                <option value="">-- Tanpa Instansi / Bebas --</option>
+                                @foreach($instansis as $instansi)
+                                    <option value="{{ $instansi->id }}" {{ old('instansi_id') == $instansi->id ? 'selected' : '' }}>
+                                        {{ $instansi->nama_instansi }}
                                     </option>
                                 @endforeach
-
                             </select>
-
-                            <button type="button"
-                                @click="$dispatch('open-modal-jenis-surat')"
-                                title="Tambah Jenis Surat Baru"
-                                class="shrink-0 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold transition">
-                                <i class="fa-solid fa-plus"></i>
-                            </button>
+                            <p class="text-xs text-slate-500 mt-1.5 flex items-center gap-1.5">
+                                <i class="fa-solid fa-circle-info text-slate-600"></i>
+                                Pilihan instansi akan tampil sebagai penanda di tabel daftar surat, <strong class="text-slate-400">bukan</strong> dimasukkan ke dalam isi surat.
+                            </p>
                         </div>
-                    </div>
-
-                    {{-- Kode Surat --}}
-                    <div>
-                        <label class="block text-sm font-medium text-slate-300 mb-2">
-                            Kode Surat
-                        </label>
-
-                        <input
-                            type="text"
-                            name="kode_surat"
-                            id="kode_surat"
-                            x-model="kodeSurat"
-                            placeholder="Contoh : SK"
-                            class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
-
-                        <p class="text-xs text-slate-500 mt-1">
-                            Kode ini otomatis terisi dari jenis surat dan dipakai saat generate nomor surat.
-                        </p>
-                    </div>
-
-                    {{-- Kode Divisi --}}
-                    <div>
-                        <label class="block text-sm font-medium text-slate-300 mb-2">
-                            Kode Divisi
-                        </label>
-
-                        <select
-                            name="kode_divisi"
-                            required
-                            class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
-
-                            <option value="">-- Pilih Divisi --</option>
-                            <option value="DIR-I" {{ old('kode_divisi') == 'DIR-I' ? 'selected' : '' }}>Direktur I</option>
-                            <option value="DIR-II" {{ old('kode_divisi') == 'DIR-II' ? 'selected' : '' }}>Direktur II</option>
-                            <option value="HRD" {{ old('kode_divisi') == 'HRD' ? 'selected' : '' }}>HRD</option>
-                            <option value="IT" {{ old('kode_divisi') == 'IT' ? 'selected' : '' }}>IT</option>
-                        </select>
-                    </div>
-
-                    {{-- Tanggal Surat --}}
-                    <div>
-
-                        <label class="block text-sm font-medium text-slate-300 mb-2">
-                            Tanggal Surat
-                        </label>
-
-                        <input
-                            type="date"
-                            name="tanggal_surat"
-                            value="{{ old('tanggal_surat') }}"
-                            required
-                            class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
 
                     </div>
-
-                    {{-- ============================================================
-                         FORM UMUM
-                    ============================================================ --}}
-                    <template x-if="isKuasa">
-                        <div class="md:col-span-2"></div>
-                    </template>
-
-                    <template x-if="!isKuasa">
-                        <div class="md:col-span-2">
-                            <div class="border border-slate-800 rounded-2xl p-5 bg-slate-950/50">
-                                <h3 class="text-sm font-semibold text-slate-300 mb-4 flex items-center gap-2">
-                                    <i class="fa-solid fa-file-lines text-indigo-500"></i>
-                                    Data Surat Umum
-                                </h3>
-
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    {{-- Tujuan --}}
-                                    <div>
-                                        <label class="block text-sm font-medium text-slate-300 mb-2">
-                                            Tujuan
-                                        </label>
-
-                                        <input
-                                            type="text"
-                                            name="tujuan"
-                                            value="{{ old('tujuan') }}"
-                                            placeholder="Masukkan tujuan surat"
-                                            class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
-                                    </div>
-
-                                    {{-- Perihal --}}
-                                    <div>
-                                        <label class="block text-sm font-medium text-slate-300 mb-2">
-                                            Perihal
-                                        </label>
-
-                                        <input
-                                            type="text"
-                                            name="perihal"
-                                            value="{{ old('perihal') }}"
-                                            placeholder="Masukkan perihal"
-                                            class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
-                                    </div>
-
-                                    {{-- Isi Surat --}}
-                                    <div class="md:col-span-2">
-                                        <label class="block text-sm font-medium text-slate-300 mb-2">
-                                            Isi Surat
-                                        </label>
-
-                                        <textarea
-                                            name="isi_surat"
-                                            rows="6"
-                                            placeholder="Tulis isi surat..."
-                                            class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">{{ old('isi_surat') }}</textarea>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </template>
-
-                    {{-- ============================================================
-                         FORM KHUSUS SURAT KUASA
-                    ============================================================ --}}
-                    <template x-if="isKuasa">
-                        <div class="md:col-span-2">
-                            <div class="border border-indigo-500/30 rounded-2xl p-5 bg-indigo-500/5">
-                                <h3 class="text-sm font-semibold text-indigo-300 mb-4 flex items-center gap-2">
-                                    <i class="fa-solid fa-file-signature text-indigo-400"></i>
-                                    Form Surat Kuasa
-                                </h3>
-
-                                {{-- Pemberi Kuasa --}}
-                                <div class="mb-6">
-                                    <h4 class="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
-                                        <i class="fa-solid fa-user text-slate-500"></i>
-                                        Pemberi Kuasa
-                                    </h4>
-
-                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                        <div>
-                                            <label class="block text-sm font-medium text-slate-400 mb-1">Nama Lengkap</label>
-                                            <input type="text"
-                                                name="data_khusus[pemberi][nama]"
-                                                x-model="dataKhusus.pemberi.nama"
-                                                placeholder="Nama pemberi kuasa"
-                                                class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none">
-                                        </div>
-                                        <div>
-                                            <label class="block text-sm font-medium text-slate-400 mb-1">Alamat</label>
-                                            <input type="text"
-                                                name="data_khusus[pemberi][alamat]"
-                                                x-model="dataKhusus.pemberi.alamat"
-                                                placeholder="Alamat lengkap"
-                                                class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none">
-                                        </div>
-                                        <div>
-                                            <label class="block text-sm font-medium text-slate-400 mb-1">No. KTP</label>
-                                            <input type="text"
-                                                name="data_khusus[pemberi][ktp]"
-                                                x-model="dataKhusus.pemberi.ktp"
-                                                placeholder="Nomor KTP"
-                                                class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {{-- Penerima Kuasa --}}
-                                <div class="mb-6">
-                                    <h4 class="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
-                                        <i class="fa-solid fa-user-tie text-slate-500"></i>
-                                        Penerima Kuasa
-                                    </h4>
-
-                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                        <div>
-                                            <label class="block text-sm font-medium text-slate-400 mb-1">Nama Lengkap</label>
-                                            <input type="text"
-                                                name="data_khusus[penerima][nama]"
-                                                x-model="dataKhusus.penerima.nama"
-                                                placeholder="Nama penerima kuasa"
-                                                class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none">
-                                        </div>
-                                        <div>
-                                            <label class="block text-sm font-medium text-slate-400 mb-1">Alamat</label>
-                                            <input type="text"
-                                                name="data_khusus[penerima][alamat]"
-                                                x-model="dataKhusus.penerima.alamat"
-                                                placeholder="Alamat lengkap"
-                                                class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none">
-                                        </div>
-                                        <div>
-                                            <label class="block text-sm font-medium text-slate-400 mb-1">No. KTP</label>
-                                            <input type="text"
-                                                name="data_khusus[penerima][ktp]"
-                                                x-model="dataKhusus.penerima.ktp"
-                                                placeholder="Nomor KTP"
-                                                class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {{-- Hal yang dikuasakan --}}
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-400 mb-1">
-                                        Hal yang Dikuasakan
-                                    </label>
-                                    <textarea
-                                        name="data_khusus[hal]"
-                                        x-model="dataKhusus.hal"
-                                        rows="4"
-                                        placeholder="Contoh: Mewakili saya untuk mengurus dan menandatangani dokumen terkait ..."
-                                        class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </template>
-
-                    {{-- Lampiran --}}
-                    <div>
-
-                        <label class="block text-sm font-medium text-slate-300 mb-2">
-                            Lampiran
-                        </label>
-
-                        <input
-                            type="text"
-                            name="lampiran"
-                            value="{{ old('lampiran') }}"
-                            placeholder="Contoh : 1 Berkas"
-                            class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
-
-                    </div>
-
-                    {{-- Status --}}
-                    <div>
-
-                        <label class="block text-sm font-medium text-slate-300 mb-2">
-                            Status
-                        </label>
-
-                        <select
-                            name="status"
-                            required
-                            class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
-
-                            <option value="">-- Pilih Status --</option>
-
-                            <option value="Draft"
-                                {{ old('status') == 'Draft' ? 'selected' : '' }}>
-                                Draft
-                            </option>
-
-                            <option value="Dikirim"
-                                {{ old('status') == 'Dikirim' ? 'selected' : '' }}>
-                                Dikirim
-                            </option>
-
-                            <option value="Selesai"
-                                {{ old('status') == 'Selesai' ? 'selected' : '' }}>
-                                Selesai
-                            </option>
-
-                        </select>
-
-                    </div>
-
-                    {{-- Penandatangan --}}
-                    <div>
-
-                        <label class="block text-sm font-medium text-slate-300 mb-2">
-                            Penandatangan
-                        </label>
-
-                        <input
-                            type="text"
-                            name="penandatangan"
-                            value="{{ old('penandatangan') }}"
-                            required
-                            class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
-
-                    </div>
-
-                    {{-- Jabatan --}}
-                    <div>
-
-                        <label class="block text-sm font-medium text-slate-300 mb-2">
-                            Jabatan Penandatangan
-                        </label>
-
-                        <input
-                            type="text"
-                            name="jabatan_penandatangan"
-                            value="{{ old('jabatan_penandatangan') }}"
-                            required
-                            class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
-
-                    </div>
-
-                    {{-- Upload PDF --}}
-                    <div class="md:col-span-2">
-
-                        <label class="block text-sm font-medium text-slate-300 mb-2">
-                            Upload File Surat (PDF)
-                        </label>
-
-                        <input
-                            type="file"
-                            name="file_surat"
-                            accept=".pdf"
-                            class="block w-full text-sm text-slate-300 file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-600 file:px-4 file:py-2 file:text-white hover:file:bg-indigo-700">
-
-                    </div>
-
                 </div>
 
-                {{-- Tombol --}}
-                <div class="mt-8 flex flex-col sm:flex-row gap-3">
+                {{-- CARD 2: ISIAN KHUSUS SURAT KUASA (MENGIKUTI STRUKTUR GAMBAR TOP-TO-BOTTOM) --}}
+                <template x-if="isKuasa">
+                    <div class="bg-slate-900 border border-amber-500/30 rounded-2xl shadow-xl overflow-hidden mb-6">
+                        <div class="border-b border-amber-500/20 px-6 py-4 bg-amber-500/5 flex items-center justify-between">
+                            <h2 class="text-base font-bold text-amber-300 flex items-center gap-2">
+                                <span class="w-6 h-6 rounded-full bg-amber-500 text-slate-950 text-xs flex items-center justify-center font-bold">2</span>
+                                Form Isian Surat Kuasa (Struktur Lengkap Template)
+                            </h2>
+                            <span class="text-xs bg-amber-500/20 text-amber-300 px-3 py-1 rounded-full font-medium">Struktur Gambar Standard</span>
+                        </div>
 
-                    <button
-                        type="submit"
-                        class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 rounded-xl text-white font-semibold transition duration-200 shadow">
+                        <div class="p-6 space-y-6">
 
+                            {{-- SECTION A: PEMBERI KUASA --}}
+                            <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-5">
+                                <h3 class="text-sm font-bold text-slate-200 mb-4 flex items-center gap-2 border-b border-slate-800 pb-2">
+                                    <i class="fa-solid fa-user-tie text-amber-400"></i>
+                                    1. Data Pemberi Kuasa ("Yang bertanda tangan di bawah ini")
+                                </h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-medium text-slate-400 mb-1">Nama Lengkap & Gelar <span class="text-rose-500">*</span></label>
+                                        <input type="text" name="data_khusus[pemberi][nama]" x-model="dataKhusus.pemberi.nama" required
+                                               placeholder="Contoh: Budi Setyadi S,Kom"
+                                               class="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-slate-400 mb-1">Jabatan Pemberi Kuasa <span class="text-rose-500">*</span></label>
+                                        <input type="text" name="data_khusus[pemberi][jabatan]" x-model="dataKhusus.pemberi.jabatan" required
+                                               placeholder="Contoh: Direktur PT. BEKASI TATA JAYA"
+                                               class="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <label class="block text-xs font-medium text-slate-400 mb-1">Alamat Lengkap</label>
+                                        <input type="text" name="data_khusus[pemberi][alamat]" x-model="dataKhusus.pemberi.alamat"
+                                               placeholder="Contoh: Jl. Wirayuda II/G-14 RT 002 Rw 007 Cipinang Melayu Jakarta Timur"
+                                               class="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- SECTION B: PENERIMA KUASA --}}
+                            <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-5">
+                                <h3 class="text-sm font-bold text-slate-200 mb-4 flex items-center gap-2 border-b border-slate-800 pb-2">
+                                    <i class="fa-solid fa-user text-indigo-400"></i>
+                                    2. Data Penerima Kuasa ("Dengan ini memberikan kuasa kepada")
+                                </h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-medium text-slate-400 mb-1">Nama Lengkap Penerima <span class="text-rose-500">*</span></label>
+                                        <input type="text" name="data_khusus[penerima][nama]" x-model="dataKhusus.penerima.nama" required
+                                               placeholder="Contoh: Abdul Fitri"
+                                               class="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-white text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-slate-400 mb-1">Jabatan Penerima Kuasa <span class="text-rose-500">*</span></label>
+                                        <input type="text" name="data_khusus[penerima][jabatan]" x-model="dataKhusus.penerima.jabatan" required
+                                               placeholder="Contoh: Staff / Manajer Proyek"
+                                               class="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-white text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <label class="block text-xs font-medium text-slate-400 mb-1">Alamat Penerima (Opsional)</label>
+                                        <input type="text" name="data_khusus[penerima][alamat]" x-model="dataKhusus.penerima.alamat"
+                                               placeholder="Masukkan alamat jika ada"
+                                               class="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-white text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- SECTION C: MAKSUD & LIST KEGIATAN --}}
+                            <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-5">
+                                <h3 class="text-sm font-bold text-slate-200 mb-4 flex items-center gap-2 border-b border-slate-800 pb-2">
+                                    <i class="fa-solid fa-list-check text-emerald-400"></i>
+                                    3. Maksud Kuasa & Poin-Poin Kegiatan
+                                </h3>
+
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-xs font-medium text-slate-400 mb-1">Kalimat Maksud Utama</label>
+                                        <input type="text" name="data_khusus[pembuka_maksud]" x-model="dataKhusus.pembuka_maksud"
+                                               placeholder="Contoh: mewakili Direktur untuk melaksanakan Pembuktian Kualifikasi"
+                                               class="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-white text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+                                        <p class="text-[11px] text-slate-500 mt-1">Hasil pada surat: "Dengan ini [Kalimat Maksud Utama] dengan Kegiatan sebagai berikut :"</p>
+                                    </div>
+
+                                    {{-- Dynamic Kegiatan Items Builder --}}
+                                    <div>
+                                        <div class="flex items-center justify-between mb-2">
+                                            <label class="block text-xs font-medium text-slate-300">Daftar Poin Kegiatan / Kuasa</label>
+                                            <button type="button" @click="addKegiatanItem()"
+                                                    class="text-xs bg-emerald-600/20 text-emerald-400 hover:bg-emerald-600/30 border border-emerald-500/30 px-3 py-1 rounded-lg font-semibold flex items-center gap-1 transition">
+                                                <i class="fa-solid fa-plus"></i> Tambah Poin
+                                            </button>
+                                        </div>
+
+                                        <div class="space-y-2">
+                                            <template x-for="(item, idx) in dataKhusus.kegiatan_items" :key="idx">
+                                                <div class="flex items-center gap-2">
+                                                    <span class="w-7 h-9 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 flex items-center justify-center font-bold text-xs shrink-0" x-text="(idx + 1) + '.'"></span>
+                                                    <input type="text" :name="'data_khusus[kegiatan_items][' + idx + ']'"
+                                                           x-model="dataKhusus.kegiatan_items[idx]"
+                                                           placeholder="Contoh: Monitoring Evaluasi Dan pelaporan Pembangunan Infrastruktur Pedesaan wilayah 3"
+                                                           class="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-2 text-white text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+                                                    <button type="button" @click="removeKegiatanItem(idx)"
+                                                            class="p-2 rounded-xl bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/30 shrink-0 transition"
+                                                            title="Hapus Poin Ini">
+                                                        <i class="fa-solid fa-trash-can text-xs"></i>
+                                                    </button>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-xs font-medium text-slate-400 mb-1">Target Dinas / Instansi / Lokasi Kegiatan</label>
+                                        <input type="text" name="data_khusus[lokasi_instansi]" x-model="dataKhusus.lokasi_instansi"
+                                               placeholder="Contoh: Dinas Bina Marga Dan Pengelolaan Sumber Daya Air Kabupaten Bekasi"
+                                               class="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-white text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+                                        <p class="text-[11px] text-slate-500 mt-1">Hasil pada surat: "pada [Target Dinas / Instansi]" di bawah daftar kegiatan</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- SECTION D: PENUTUP & LOKASI TANGGAL --}}
+                            <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-5">
+                                <h3 class="text-sm font-bold text-slate-200 mb-4 flex items-center gap-2 border-b border-slate-800 pb-2">
+                                    <i class="fa-solid fa-location-dot text-rose-400"></i>
+                                    4. Penutup & Lokasi / Tanggal Pengesahan
+                                </h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="md:col-span-2">
+                                        <label class="block text-xs font-medium text-slate-400 mb-1">Kalimat Penutup Surat Kuasa</label>
+                                        <input type="text" name="data_khusus[penutup]" x-model="dataKhusus.penutup"
+                                               placeholder="Demikian Surat Kuasa ini dibuat untuk dipergunakan sebagaimana mestinya."
+                                               class="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-white text-sm focus:ring-2 focus:ring-rose-500 outline-none">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-slate-400 mb-1">Kota & Tanggal Ttd (Sisi Kanan Atas Ttd)</label>
+                                        <input type="text" name="data_khusus[kota_tanggal]" x-model="dataKhusus.kota_tanggal"
+                                               placeholder="Contoh: Bekasi, 03 Mei 2016"
+                                               class="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-white text-sm focus:ring-2 focus:ring-rose-500 outline-none">
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </template>
+
+                {{-- CARD 2: ISIAN STANDAR SURAT UMUM (DENGAN FLEXIBLE TABLE BUILDER) --}}
+                <template x-if="!isKuasa">
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden mb-6">
+                        <div class="border-b border-slate-800 px-6 py-4 bg-slate-950/50 flex items-center justify-between">
+                            <h2 class="text-base font-bold text-white flex items-center gap-2">
+                                <span class="w-6 h-6 rounded-full bg-indigo-600 text-white text-xs flex items-center justify-center font-semibold">2</span>
+                                Isi Konten Surat Umum & Builder Tabel Fleksibel
+                            </h2>
+                            <span class="text-xs bg-indigo-500/20 text-indigo-300 px-3 py-1 rounded-full font-medium">Standard Perusahaan</span>
+                        </div>
+
+                        <div class="p-6 space-y-5">
+
+                            {{-- Tujuan Penerima Detail --}}
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300 mb-2">
+                                    Tujuan Penerima Detail (Yth.) <span class="text-rose-500">*</span>
+                                </label>
+                                <input type="text" name="tujuan" x-model="tujuan" required
+                                       placeholder="Contoh: Kepada Yth. Bapak / Ibu Pimpinan PT Jaya Abadi"
+                                       class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                            </div>
+
+                            {{-- Perihal --}}
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300 mb-2">
+                                    Perihal Surat <span class="text-rose-500">*</span>
+                                </label>
+                                <input type="text" name="perihal" x-model="perihal" required
+                                       placeholder="Masukkan perihal surat (misal: Undangan Rapat / Permohonan Izin)"
+                                       class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                            </div>
+
+                            {{-- Isi Utama Surat --}}
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300 mb-2">
+                                    Isi Utama / Paragraf Pembuka Surat <span class="text-rose-500">*</span>
+                                </label>
+                                <textarea name="isi_surat" rows="6" x-model="isi_surat" required
+                                          placeholder="Tuliskan isi surat lengkap di sini..."
+                                          class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
+                            </div>
+
+                            {{-- FLEXIBLE TABLE BUILDER ACCORDION --}}
+                            <div class="border border-slate-800 rounded-xl bg-slate-950/60 p-5">
+                                <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+                                    <div class="flex items-center gap-3">
+                                        <input type="checkbox" id="has_table_check" name="data_khusus[has_table]" value="1"
+                                               x-model="dataKhusus.has_table"
+                                               class="w-5 h-5 rounded border-slate-700 bg-slate-900 text-indigo-600 focus:ring-indigo-500">
+                                        <label for="has_table_check" class="font-bold text-sm text-slate-200 cursor-pointer flex items-center gap-2">
+                                            <i class="fa-solid fa-table text-indigo-400"></i>
+                                            Sertakan Tabel Data Fleksibel Dalam Surat
+                                        </label>
+                                    </div>
+                                    <span class="text-xs bg-indigo-500/10 text-indigo-400 px-2.5 py-1 rounded-lg border border-indigo-500/20 font-medium">Fitur Opsional</span>
+                                </div>
+
+                                <div x-show="dataKhusus.has_table" x-cloak class="space-y-4 pt-2">
+                                    <div>
+                                        <label class="block text-xs font-medium text-slate-400 mb-1">Judul Tabel / Pengantar (Opsional)</label>
+                                        <input type="text" name="data_khusus[table_title]" x-model="dataKhusus.table_title"
+                                               placeholder="Contoh: Berikut daftar rincian barang yang dipesan:"
+                                               class="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-2 text-white text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                                    </div>
+
+                                    {{-- Headers Configurator --}}
+                                    <div>
+                                        <div class="flex items-center justify-between mb-2">
+                                            <label class="block text-xs font-medium text-slate-300">Kolom Header Tabel</label>
+                                            <button type="button" @click="addTableHeader()"
+                                                    class="text-xs bg-indigo-600/20 text-indigo-400 hover:bg-indigo-600/30 border border-indigo-500/30 px-3 py-1 rounded-lg font-semibold flex items-center gap-1">
+                                                <i class="fa-solid fa-plus"></i> Tambah Kolom
+                                            </button>
+                                        </div>
+                                        <div class="flex flex-wrap gap-2">
+                                            <template x-for="(header, hIdx) in dataKhusus.table_headers" :key="hIdx">
+                                                <div class="flex items-center gap-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5">
+                                                    <input type="text" :name="'data_khusus[table_headers][' + hIdx + ']'"
+                                                           x-model="dataKhusus.table_headers[hIdx]"
+                                                           class="bg-transparent text-white text-xs font-semibold outline-none w-28">
+                                                    <button type="button" @click="removeTableHeader(hIdx)"
+                                                            class="text-rose-400 hover:text-rose-300 text-xs px-1">
+                                                        &times;
+                                                    </button>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </div>
+
+                                    {{-- Rows Configurator --}}
+                                    <div>
+                                        <div class="flex items-center justify-between mb-2">
+                                            <label class="block text-xs font-medium text-slate-300">Baris Data Tabel</label>
+                                            <button type="button" @click="addTableRow()"
+                                                    class="text-xs bg-emerald-600/20 text-emerald-400 hover:bg-emerald-600/30 border border-emerald-500/30 px-3 py-1 rounded-lg font-semibold flex items-center gap-1">
+                                                <i class="fa-solid fa-plus"></i> Tambah Baris Data
+                                            </button>
+                                        </div>
+
+                                        <div class="overflow-x-auto border border-slate-800 rounded-xl">
+                                            <table class="w-full text-xs text-left">
+                                                <thead class="bg-slate-900 text-slate-300 font-bold border-b border-slate-800">
+                                                    <tr>
+                                                        <template x-for="(hdr, hIdx) in dataKhusus.table_headers" :key="hIdx">
+                                                            <th class="p-2 border-r border-slate-800" x-text="hdr"></th>
+                                                        </template>
+                                                        <th class="p-2 w-10 text-center">Aksi</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <template x-for="(r, rIdx) in dataKhusus.table_rows" :key="rIdx">
+                                                        <tr class="border-b border-slate-800/60 bg-slate-950/40">
+                                                            <template x-for="(c, cIdx) in dataKhusus.table_headers" :key="cIdx">
+                                                                <td class="p-1.5 border-r border-slate-800">
+                                                                    <input type="text" :name="'data_khusus[table_rows][' + rIdx + '][' + cIdx + ']'"
+                                                                           x-model="dataKhusus.table_rows[rIdx][cIdx]"
+                                                                           class="w-full bg-slate-900 border border-slate-700/60 rounded px-2 py-1 text-white text-xs outline-none">
+                                                                </td>
+                                                            </template>
+                                                            <td class="p-1.5 text-center">
+                                                                <button type="button" @click="removeTableRow(rIdx)" class="text-rose-400 hover:text-rose-300 p-1">
+                                                                    <i class="fa-solid fa-trash-can"></i>
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    </template>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-xs font-medium text-slate-400 mb-1">Paragraf Penjelas Setelah Tabel (Opsional)</label>
+                                        <textarea name="data_khusus[isi_setelah_tabel]" rows="2" x-model="dataKhusus.isi_setelah_tabel"
+                                                  placeholder="Tulis penjelasan lanjutan setelah tabel jika ada..."
+                                                  class="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-2 text-white text-sm focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </template>
+
+                {{-- CARD 3: PENANDATANGAN & PENGESAHAN --}}
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden mb-6">
+                    <div class="border-b border-slate-800 px-6 py-4 bg-slate-950/50 flex items-center justify-between">
+                        <h2 class="text-base font-bold text-white flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-full bg-indigo-600 text-white text-xs flex items-center justify-center font-semibold">3</span>
+                            Pengesahan & Penandatangan
+                        </h2>
+                        <span class="text-xs text-slate-400" x-text="isKuasa ? '2 Penandatangan (Dual)' : '1 Penandatangan Utama'"></span>
+                    </div>
+
+                    <div class="p-6">
+                        {{-- IF SURAT KUASA: INFORMASI DUAL PENANDATANGAN --}}
+                        <template x-if="isKuasa">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <input type="hidden" name="penandatangan" :value="dataKhusus.pemberi.nama || penandatangan || 'Pemberi Kuasa'">
+                                <input type="hidden" name="jabatan_penandatangan" :value="dataKhusus.pemberi.jabatan || jabatan_penandatangan || 'Pemberi Kuasa'">
+                                <div class="p-4 bg-slate-950 rounded-xl border border-slate-800">
+                                    <h4 class="text-xs font-bold text-slate-400 mb-2 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-signature text-indigo-400"></i> Penandatangan Kiri (Penerima Kuasa)
+                                    </h4>
+                                    <p class="text-sm font-semibold text-white" x-text="dataKhusus.penerima.nama || '(Nama Penerima)'"></p>
+                                    <p class="text-xs text-slate-400" x-text="dataKhusus.penerima.jabatan || '(Jabatan Penerima)'"></p>
+                                </div>
+
+                                <div class="p-4 bg-slate-950 rounded-xl border border-slate-800">
+                                    <h4 class="text-xs font-bold text-slate-400 mb-2 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-signature text-amber-400"></i> Penandatangan Kanan (Pemberi Kuasa)
+                                    </h4>
+                                    <p class="text-sm font-semibold text-white" x-text="dataKhusus.pemberi.nama || '(Nama Pemberi)'"></p>
+                                    <p class="text-xs text-slate-400" x-text="dataKhusus.pemberi.jabatan || '(Jabatan Pemberi)'"></p>
+                                </div>
+                            </div>
+                        </template>
+
+                        {{-- IF SURAT UMUM: INPUT PENANDATANGAN SINGLE --}}
+                        <template x-if="!isKuasa">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-300 mb-2">
+                                        Nama Penandatangan <span class="text-rose-500">*</span>
+                                    </label>
+                                    <input type="text" name="penandatangan" x-model="penandatangan" required
+                                           placeholder="Nama Lengkap Penandatangan"
+                                           class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-300 mb-2">
+                                        Jabatan Penandatangan <span class="text-rose-500">*</span>
+                                    </label>
+                                    <input type="text" name="jabatan_penandatangan" x-model="jabatan_penandatangan" required
+                                           placeholder="Jabatan Penandatangan"
+                                           class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                                </div>
+                            </div>
+                        </template>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5 pt-4 border-t border-slate-800">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300 mb-2">
+                                    Lampiran Dokumen
+                                </label>
+                                <input type="text" name="lampiran" x-model="lampiran"
+                                       placeholder="Contoh: 1 Berkas / -"
+                                       class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300 mb-2">
+                                    Status Surat <span class="text-rose-500">*</span>
+                                </label>
+                                <select name="status" required x-model="status"
+                                        class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                                    <option value="Draft">Draft</option>
+                                    <option value="Dikirim">Dikirim</option>
+                                    <option value="Selesai">Selesai</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                {{-- Submit Buttons --}}
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <button type="submit"
+                            class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-indigo-600 hover:bg-indigo-700 rounded-xl text-white font-bold transition cursor-pointer shadow-lg shadow-indigo-600/30 text-base">
                         <i class="fa-solid fa-floppy-disk"></i>
-
-                        Simpan Surat
-
+                        <span>Simpan Surat Keluar</span>
                     </button>
-
-                    <a
-                        href="{{ route('surat_keluar.index') }}"
-                        class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-slate-700 hover:bg-slate-600 rounded-xl text-white font-semibold transition duration-200">
-
-                        <i class="fa-solid fa-arrow-left"></i>
-
-                        Kembali
-
-                    </a>
-
-                    <button
-                        type="reset"
-                        class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700 rounded-xl text-white font-semibold transition duration-200">
-
+                    <button type="reset"
+                            class="inline-flex items-center justify-center gap-2 px-6 py-4 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-semibold transition border border-slate-700">
                         <i class="fa-solid fa-rotate-left"></i>
-
-                        Reset
-
+                        <span>Reset Form</span>
                     </button>
-
                 </div>
 
             </form>
 
         </div>
 
-    </div>
+        {{-- RIGHT COLUMN: REALTIME A4 LETTER PREVIEW --}}
+        <div class="lg:col-span-6 lg:sticky lg:top-20">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden">
+                <div class="border-b border-slate-800 px-6 py-4 bg-slate-950/80 flex items-center justify-between">
+                    <h2 class="text-base font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-eye text-emerald-400"></i>
+                        Pratinjau Realtime Surat (A4)
+                    </h2>
+                    <button type="button" @click="downloadPreviewPdf()"
+                            class="px-3.5 py-1.5 rounded-lg bg-emerald-600/20 text-emerald-400 hover:bg-emerald-600/30 border border-emerald-500/30 text-xs font-semibold flex items-center gap-1.5 transition">
+                        <i class="fa-solid fa-download"></i>
+                        <span>Unduh PDF</span>
+                    </button>
+                </div>
 
-</div>
+                {{-- A4 Container Scroll Area --}}
+                <div class="p-6 bg-slate-950 max-h-[85vh] overflow-y-auto flex justify-center">
+                    <div id="surat-keluar-preview-paper" class="a4-paper p-10 text-slate-900 relative text-sm sm:text-base leading-relaxed">
 
-{{-- ============================================================
-     MODAL TAMBAH JENIS SURAT
-============================================================ --}}
-<div x-data="modalJenisSurat()"
-    @open-modal-jenis-surat.window="show = true; nama=''; kode=''; formType='umum'; msg=''"
-    x-show="show" x-cloak
-    class="fixed inset-0 z-50 flex items-center justify-center p-4">
+                        {{-- Kop Surat Header --}}
+                        <div class="mb-6 border-b-2 border-black pb-3">
+                            <img src="{{ asset('image/kop-surat.png') }}" alt="Kop Surat" class="w-full h-auto block"
+                                 onerror="this.style.display='none'; document.getElementById('kop-fallback').style.display='block';">
+                            <div id="kop-fallback" style="display:none;" class="text-center font-bold text-lg border-b-2 border-black pb-2">
+                                PT MICRODATA INDONESIA<br>
+                                <span class="text-xs font-normal">Jl. Utama No. 123, Bandar Lampung | Telp: (0721) 123456</span>
+                            </div>
+                        </div>
 
-    <div class="absolute inset-0 bg-black/60" @click="show = false"></div>
+                        {{-- ============================================================
+                             REALTIME PREVIEW: SURAT KUASA (STRUKTUR GAMBAR EXACT)
+                        ============================================================ --}}
+                        <template x-if="isKuasa">
+                            <div>
+                                <div class="text-center my-4">
+                                    <h2 class="font-bold text-lg uppercase underline tracking-wider">SURAT KUASA</h2>
+                                    <p class="text-sm mt-1">No : <span x-text="previewNomor"></span></p>
+                                </div>
 
-    <div class="relative bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6">
-        <h3 class="text-base font-semibold text-white mb-1">Tambah Jenis Surat</h3>
-        <p class="text-sm text-slate-400 mb-4">
-            Jenis surat baru akan langsung tersedia di dropdown.
-        </p>
+                                <div class="my-5 text-sm space-y-3">
+                                    <p>Yang bertanda tangan di bawah ini :</p>
+                                    <table class="w-full text-sm border-collapse ml-4">
+                                        <tr><td class="w-28 py-0.5">Nama</td><td class="w-4 py-0.5">:</td><td class="py-0.5 font-bold" x-text="dataKhusus.pemberi.nama || '(Nama Pemberi Kuasa)'"></td></tr>
+                                        <tr><td class="py-0.5">Jabatan</td><td class="py-0.5">:</td><td class="py-0.5" x-text="dataKhusus.pemberi.jabatan || '(Jabatan Pemberi Kuasa)'"></td></tr>
+                                        <tr><td class="py-0.5">Alamat</td><td class="py-0.5">:</td><td class="py-0.5" x-text="dataKhusus.pemberi.alamat || '(Alamat Pemberi Kuasa)'"></td></tr>
+                                    </table>
 
-        <form @submit.prevent="simpanJenis()">
-            <label class="block text-sm font-medium text-slate-300 mb-1">Nama Jenis Surat</label>
-            <input type="text" x-model="nama" required placeholder="Contoh : Surat Edaran"
-                class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4">
+                                    <p class="pt-2">Dengan ini memberikan kuasa kepada :</p>
+                                    <table class="w-full text-sm border-collapse ml-4">
+                                        <tr><td class="w-28 py-0.5">Nama</td><td class="w-4 py-0.5">:</td><td class="py-0.5 font-bold" x-text="dataKhusus.penerima.nama || '(Nama Penerima Kuasa)'"></td></tr>
+                                        <tr><td class="py-0.5">Jabatan</td><td class="py-0.5">:</td><td class="py-0.5" x-text="dataKhusus.penerima.jabatan || '(Jabatan Penerima Kuasa)'"></td></tr>
+                                        <template x-if="dataKhusus.penerima.alamat">
+                                            <tr><td class="py-0.5">Alamat</td><td class="py-0.5">:</td><td class="py-0.5" x-text="dataKhusus.penerima.alamat"></td></tr>
+                                        </template>
+                                    </table>
 
-            <label class="block text-sm font-medium text-slate-300 mb-1">Kode Surat</label>
-            <input type="text" x-model="kode" required placeholder="Contoh : SE" maxlength="10"
-                class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4">
+                                    <div class="pt-2 text-justify">
+                                        <p>Dengan ini <span x-text="dataKhusus.pembuka_maksud || 'mewakili Direktur untuk melaksanakan Pembuktian Kualifikasi'"></span> dengan Kegiatan sebagai berikut :</p>
 
-            <label class="block text-sm font-medium text-slate-300 mb-1">Tipe Form</label>
-            <select x-model="formType"
-                class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4">
-                <option value="umum">Umum (Tujuan, Perihal, Isi Surat)</option>
-                <option value="kuasa">Khusus (Surat Kuasa)</option>
-            </select>
+                                        <ol class="list-decimal list-inside ml-4 my-2 font-bold space-y-1">
+                                            <template x-for="(kItem, kIdx) in dataKhusus.kegiatan_items" :key="kIdx">
+                                                <template x-if="kItem && String(kItem).trim() !== ''">
+                                                    <li x-text="kItem"></li>
+                                                </template>
+                                            </template>
+                                        </ol>
 
-            <p x-show="msg" x-cloak class="text-sm text-emerald-400 mb-4" x-text="msg"></p>
+                                        <template x-if="dataKhusus.lokasi_instansi">
+                                            <p class="mt-2">pada <span x-text="dataKhusus.lokasi_instansi"></span>.</p>
+                                        </template>
+                                    </div>
 
-            <div class="flex justify-end gap-2 mt-2">
-                <button type="button" @click="show = false"
-                    class="px-4 py-2 rounded-xl text-sm text-slate-400 hover:bg-slate-800 transition">
-                    Batal
-                </button>
-                <button type="submit"
-                    class="px-4 py-2 rounded-xl bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition"
-                    x-text="loading ? 'Menyimpan...' : 'Simpan'"
-                    :disabled="loading">
-                </button>
+                                    <p class="pt-3 text-justify" x-text="dataKhusus.penutup || 'Demikian Surat Kuasa ini dibuat untuk dipergunakan sebagaimana mestinya.'"></p>
+
+                                    {{-- Signatories Table Dual --}}
+                                    <div class="mt-12 text-sm">
+                                        <table class="w-full text-center border-collapse">
+                                            <tr>
+                                                <td class="w-1/2 align-top">
+                                                    <p class="mb-14">Penerima Kuasa,</p>
+                                                    <p class="font-bold underline uppercase" x-text="dataKhusus.penerima.nama || '(Nama Penerima)'"></p>
+                                                    <p class="text-xs text-slate-700" x-text="dataKhusus.penerima.jabatan || 'Staff'"></p>
+                                                </td>
+                                                <td class="w-1/2 align-top">
+                                                    <p class="mb-3" x-text="dataKhusus.kota_tanggal || ('Bandar Lampung, ' + formatTanggal(tanggal_surat))"></p>
+                                                    <p class="mb-14">Pemberi Kuasa,</p>
+                                                    <p class="font-bold underline uppercase" x-text="dataKhusus.pemberi.nama || '(Nama Pemberi)'"></p>
+                                                    <p class="text-xs text-slate-700" x-text="dataKhusus.pemberi.jabatan || 'Direktur Utama'"></p>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </template>
+
+                        {{-- ============================================================
+                             REALTIME PREVIEW: SURAT UMUM (DENGAN BUILDER TABEL)
+                        ============================================================ --}}
+                        <template x-if="!isKuasa">
+                            <div>
+                                <div class="text-center my-4">
+                                    <h2 class="font-bold text-lg uppercase underline tracking-wider" x-text="jenis_surat ? jenis_surat.toUpperCase() : 'SURAT KELUAR'"></h2>
+                                </div>
+
+                                <div class="text-right my-4 text-sm font-medium">
+                                    Bandar Lampung, <span x-text="formatTanggal(tanggal_surat)"></span>
+                                </div>
+
+                                <table class="w-full text-sm mb-6 border-collapse">
+                                    <tr><td class="w-28 align-top py-1">Nomor</td><td class="w-4 align-top py-1">:</td><td class="align-top py-1 font-mono font-semibold" x-text="previewNomor"></td></tr>
+                                    <tr><td class="align-top py-1">Lampiran</td><td class="align-top py-1">:</td><td class="align-top py-1" x-text="lampiran || '-'"></td></tr>
+                                    <tr><td class="align-top py-1">Hal / Perihal</td><td class="align-top py-1">:</td><td class="align-top py-1 font-bold" x-text="perihal || '(Perihal Surat)'"></td></tr>
+                                </table>
+
+                                <div class="my-6 text-sm leading-relaxed">
+                                    <p>Kepada Yth.</p>
+                                    <p class="font-bold" x-text="tujuan || '(Tujuan Penerima)'"></p>
+                                    <p>Di Tempat</p>
+                                </div>
+
+                                <div class="my-6 text-sm leading-relaxed space-y-3">
+                                    <p>Dengan hormat,</p>
+                                    <div class="text-justify whitespace-pre-line leading-relaxed min-h-[100px]"
+                                         x-text="isi_surat || 'Tuliskan isi utama surat Anda pada form di sebelah kiri...'"></div>
+                                </div>
+
+                                {{-- Render Flexible Data Table Preview --}}
+                                <template x-if="dataKhusus.has_table">
+                                    <div class="my-4 text-sm">
+                                        <template x-if="dataKhusus.table_title">
+                                            <p class="font-bold mb-2" x-text="dataKhusus.table_title"></p>
+                                        </template>
+                                        <table class="w-full border-collapse border border-black text-xs my-2">
+                                            <thead>
+                                                <tr class="bg-gray-100 border-b border-black">
+                                                    <template x-for="(h, hI) in dataKhusus.table_headers" :key="hI">
+                                                        <th class="border border-black p-2 text-left font-bold" x-text="h"></th>
+                                                    </template>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <template x-for="(r, rI) in dataKhusus.table_rows" :key="rI">
+                                                    <tr class="border-b border-black">
+                                                        <template x-for="(cell, cI) in r" :key="cI">
+                                                            <td class="border border-black p-2" x-text="cell"></td>
+                                                        </template>
+                                                    </tr>
+                                                </template>
+                                            </tbody>
+                                        </table>
+                                        <template x-if="dataKhusus.isi_setelah_tabel">
+                                            <p class="mt-3 text-justify whitespace-pre-line" x-text="dataKhusus.isi_setelah_tabel"></p>
+                                        </template>
+                                    </div>
+                                </template>
+
+                                <div class="my-6 text-sm leading-relaxed">
+                                    <p>Demikian surat ini kami sampaikan. Atas perhatian dan kerja sama yang baik, kami mengucapkan terima kasih.</p>
+                                </div>
+
+                                {{-- Single Signatory --}}
+                                <div class="mt-12 text-sm flex justify-end">
+                                    <div class="w-64 text-center">
+                                        <p>Hormat kami,</p>
+                                        <p class="font-semibold">PT Microdata Indonesia</p>
+                                        <div class="h-20 flex items-center justify-center text-slate-400 text-xs italic">
+                                            ( Tanda Tangan & Stempel )
+                                        </div>
+                                        <p class="font-bold uppercase underline" x-text="penandatangan || 'NAMA PENANDATANGAN'"></p>
+                                        <p class="text-xs text-slate-700 font-medium" x-text="jabatan_penandatangan || 'Jabatan'"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+
+                        {{-- Footer --}}
+                        <div class="mt-16 pt-3 border-t border-slate-300 text-center text-[10px] text-slate-500">
+                            Dokumen ini dibuat melalui <strong>Sistem Arsip Surat PT Microdata Indonesia</strong>
+                        </div>
+
+                    </div>
+                </div>
             </div>
-        </form>
+        </div>
+
     </div>
+
 </div>
 
-<script>
-function suratKeluarForm() {
-    return {
-        jenisSurat: '{{ old('jenis_surat') }}',
-        kodeSurat: '',
-        dataKhusus: {
-            pemberi: { nama: '', alamat: '', ktp: '' },
-            penerima: { nama: '', alamat: '', ktp: '' },
-            hal: ''
-        },
-        isKuasa: false,
-
-        getJenisOptions() {
-            return document.querySelectorAll('#jenis_surat option');
-        },
-
-        onJenisChange() {
-            const opt = this.getJenisOptions();
-            let found = null;
-            opt.forEach(o => {
-                if (o.value === this.jenisSurat) {
-                    found = o;
-                }
-            });
-
-            if (found) {
-                this.kodeSurat = found.dataset.kode || '';
-                this.isKuasa = (found.dataset.form === 'kuasa');
-            } else {
-                this.kodeSurat = '';
-                this.isKuasa = false;
-            }
-        },
-
-        initForm() {
-            this.$watch('jenisSurat', () => this.onJenisChange());
-            this.onJenisChange();
-        }
-    };
-}
-
-// Handler modal tambah jenis surat (dipanggil dari komponen modal)
-document.addEventListener('alpine:init', () => {
-    Alpine.data('modalJenisSurat', () => ({
-        show: false,
-        nama: '',
-        kode: '',
-        formType: 'umum',
-        loading: false,
-        msg: '',
-        simpanJenis() {
-            this.loading = true;
-            this.msg = '';
-
-            fetch('{{ route('jenis_surat.store') }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({
-                    nama: this.nama,
-                    kode_surat: this.kode,
-                    form_type: this.formType
-                })
-            })
-            .then(r => r.json())
-            .then(data => {
-                this.loading = false;
-                if (data.success) {
-                    this.msg = data.message;
-                    // Tambahkan option ke dropdown
-                    const sel = document.getElementById('jenis_surat');
-                    const opt = document.createElement('option');
-                    opt.value = data.data.nama;
-                    opt.dataset.kode = data.data.kode_surat;
-                    opt.dataset.form = data.data.form_type;
-                    opt.textContent = data.data.nama + ' (' + data.data.kode_surat + ')';
-                    sel.appendChild(opt);
-                    sel.value = data.data.nama;
-                    sel.dispatchEvent(new Event('change'));
-                    setTimeout(() => { this.show = false; }, 800);
-                } else {
-                    this.msg = 'Gagal menyimpan. Periksa kembali data.';
-                }
-            })
-            .catch(() => {
-                this.loading = false;
-                this.msg = 'Terjadi kesalahan. Coba lagi.';
-            });
-        }
-    }));
-});
-</script>
-
-@if(session('surat_tersimpan'))
-    @php($suratBaru = session('surat_tersimpan'))
- 
-    {{-- Modal: Kirim ke Email --}}
-    <div x-data="{ show: false }"
-        @open-modal-email-surat.window="show = true"
-        x-show="show" x-cloak
-        class="fixed inset-0 z-50 flex items-center justify-center p-4">
- 
-        <div class="absolute inset-0 bg-black/60" @click="show = false"></div>
- 
-        <div class="relative bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm p-6">
-            <h3 class="text-base font-semibold text-white mb-1">Kirim Surat ke Email</h3>
-            <p class="text-sm text-slate-400 mb-4">
-                 Masukkan alamat email tujuan, surat ini akan langsung dikirim beserta lampiran PDF-nya.
-            </p>
- 
-           <form action="{{ route('surat_keluar.send.email', $suratBaru->id) }}" method="POST">
-    @csrf
-
-    <label class="block text-sm font-medium text-slate-300 mb-1">Alamat Email</label>
-    <input type="email" name="email" required placeholder="nama@contoh.com"
-        class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4">
-
-    <p class="text-xs text-slate-500 mb-4">
-        <i class="fa-solid fa-paperclip mr-1"></i>
-        File PDF surat ini akan otomatis dilampirkan ke email tujuan.
-         <a href="{{ URL::temporarySignedRoute('surat_keluar.download.public', now()->addHours(24), ['id' => $suratBaru->id]) }}"
-       target="_blank"
-       class="text-indigo-400 hover:text-indigo-300 underline font-medium">
-        Lihat file PDF
-    </a>
-    </p>
-
-    <div class="flex justify-end gap-2 mt-2">
-        <button type="button" @click="show = false"
-            class="px-4 py-2 rounded-xl text-sm text-slate-400 hover:bg-slate-800 transition">
-            Batal
-        </button>
-        <button type="submit"
-            class="px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition">
-            Kirim
-        </button>
-    </div>
-</form>
+{{-- MODAL TAMBAH JENIS SURAT --}}
+<div x-data="modalJenisSurat()"
+     @open-modal-jenis-surat.window="openModal()"
+     x-show="isOpen" x-cloak
+     class="fixed inset-0 z-50 overflow-y-auto">
+    <div class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm transition-opacity" @click="closeModal()"></div>
+    <div class="flex min-h-full items-center justify-center p-4">
+        <div class="relative w-full max-w-md rounded-2xl bg-slate-900 border border-slate-800 p-6 shadow-2xl text-white">
+            <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-plus-circle text-emerald-400"></i> Tambah Jenis Surat Baru
+            </h3>
+            <form @submit.prevent="submitForm">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Nama Jenis Surat</label>
+                        <input type="text" x-model="nama" required placeholder="Contoh: Surat Kuasa Khusus"
+                               class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-white outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Kode Surat</label>
+                        <input type="text" x-model="kode_surat" required placeholder="Contoh: SK"
+                               class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-white outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Tipe Form Template</label>
+                        <select x-model="form_type" class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-white outline-none">
+                            <option value="umum">Surat Umum (Standard & Tabel)</option>
+                            <option value="kuasa">Surat Kuasa (Dual Penandatangan & Poin Kegiatan)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-end gap-3">
+                    <button type="button" @click="closeModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-medium">Batal</button>
+                    <button type="submit" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold">Simpan</button>
+                </div>
+            </form>
         </div>
     </div>
- 
- {{-- Modal: Kirim ke WhatsApp --}}
-<div x-data="{ show: false }"
-    @open-modal-wa-surat.window="show = true"
-    x-show="show" x-cloak
-    class="fixed inset-0 z-50 flex items-center justify-center p-4">
-
-    <div class="absolute inset-0 bg-black/60" @click="show = false"></div>
-
-    <div class="relative bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm p-6">
-        <h3 class="text-base font-semibold text-white mb-1">Kirim Surat ke WhatsApp</h3>
-        <p class="text-sm text-slate-400 mb-4">
-            Surat akan langsung dikirim otomatis beserta file PDF-nya.
-        </p>
-
-        <form action="{{ route('surat_keluar.send.whatsapp', $suratBaru->id) }}" method="POST">
-            @csrf
-
-            <label class="block text-sm font-medium text-slate-300 mb-1">Nomor WhatsApp</label>
-            <input type="text" name="nomor_wa" required placeholder="08xxxxxxxxxx"
-                class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4">
-
-            <div class="flex justify-end gap-2">
-                <button type="button" @click="show = false"
-                    class="px-4 py-2 rounded-xl text-sm text-slate-400 hover:bg-slate-800 transition">
-                    Batal
-                </button>
-                <button type="submit"
-                    class="px-4 py-2 rounded-xl bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition">
-                    Kirim
-                </button>
-            </div>
-        </form>
-    </div>
 </div>
-@endif
+
+<script>
+function modalJenisSurat() {
+    return {
+        isOpen: false,
+        nama: '',
+        kode_surat: '',
+        form_type: 'umum',
+        openModal() { this.isOpen = true; },
+        closeModal() { this.isOpen = false; },
+        async submitForm() {
+            try {
+                const res = await fetch("{{ route('jenis_surat.store') }}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                    },
+                    body: JSON.stringify({
+                        nama: this.nama,
+                        kode_surat: this.kode_surat,
+                        form_type: this.form_type
+                    })
+                });
+                if (res.ok) {
+                    window.location.reload();
+                }
+            } catch(e) { console.error(e); }
+        }
+    }
+}
+</script>
 
 @endsection
-
-@push('scripts')
-<script>
-// Pastikan modal tambah jenis surat terinisialisasi
-document.addEventListener('DOMContentLoaded', function() {
-    // Inisialisasi handler event untuk modal (Alpine sudah handle via @click)
-});
-</script>
-@endpush
-

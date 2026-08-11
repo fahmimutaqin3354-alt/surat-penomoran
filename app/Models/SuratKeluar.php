@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\User;
+use App\Models\Instansi;
 
 class SuratKeluar extends Model
 {
@@ -16,6 +17,7 @@ class SuratKeluar extends Model
         'jenis_surat',
         'kode_surat',
         'kode_divisi',
+        'instansi_id',
         'tujuan',
         'perihal',
         'isi_surat',
@@ -46,6 +48,14 @@ class SuratKeluar extends Model
     public function jenisSurat()
     {
         return $this->belongsTo(JenisSurat::class, 'jenis_surat', 'nama');
+    }
+
+    /**
+     * Relasi ke Instansi
+     */
+    public function instansi()
+    {
+        return $this->belongsTo(Instansi::class);
     }
 }
 

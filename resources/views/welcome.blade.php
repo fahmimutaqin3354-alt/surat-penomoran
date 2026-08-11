@@ -71,10 +71,32 @@
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .glass-nav {
+        /* Default Header Style (Penuh / Top 0) */
+        .glass-nav-default {
             background: rgba(4, 5, 14, 0.7);
             backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            width: 100%;
+            top: 0;
+            border-radius: 0px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Floating Navbar Style Saat Di-Scroll Ke Bawah */
+        .glass-nav-scrolled {
+            background: rgba(10, 10, 26, 0.82);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(168, 85, 247, 0.15);
+            width: 90%;
+            max-width: 1200px;
+            top: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 9999px; /* Rounded pill mengambang */
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* Solusi Teks Gradient Super Rapi & Anti-Terpotong */
@@ -116,16 +138,16 @@
         <div class="absolute bottom-[20%] left-[10%] w-[500px] h-[500px] bg-pink-900/15 rounded-full blur-[160px]"></div>
     </div>
 
-    <!-- Header Navigation -->
-    <header class="fixed top-0 inset-x-0 z-50 glass-nav">
-        <div class="max-w-7xl mx-auto px-6 lg:px-12">
-            <div class="flex items-center justify-between h-20">
-                <!-- Brand Logo (Ukuran Diperbesar) -->
+    <!-- Header Navigation (Berubah Dinamis via JS) -->
+    <header id="main-navbar" class="fixed z-50 glass-nav-default">
+        <div id="navbar-container" class="max-w-7xl mx-auto px-6 lg:px-12 transition-all duration-300">
+            <div id="navbar-inner" class="flex items-center justify-between h-20 transition-all duration-300">
+                <!-- Brand Logo -->
                 <a href="#" class="flex items-center gap-3 group">
                     <img src="{{ asset('images/microdata-logo.webp') }}" 
                          alt="Logo PT Microdata Indonesia" 
                          onerror="this.src='https://via.placeholder.com/200x60/000000/ffffff?text=MICRODATA';"
-                         class="h-12 sm:h-14 w-auto object-contain transition-transform duration-300 group-hover:scale-105">
+                         class="h-10 sm:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105">
                 </a>
 
                 <!-- Nav Menu Links -->
@@ -138,7 +160,7 @@
                 </nav>
 
                 <!-- Navigation Actions -->
-                <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-3 sm:space-x-4">
                     @auth
                         <a href="{{ url('/dashboard') }}" 
                            class="btn-purple-magenta-glow px-6 py-2.5 rounded-full text-sm font-semibold text-white transition-all transform hover:-translate-y-0.5">
@@ -146,11 +168,11 @@
                         </a>
                     @else
                         <a href="{{ route('login') }}" 
-                           class="hidden sm:inline-flex px-6 py-2.5 rounded-full text-sm font-semibold text-slate-300 btn-outline-custom transition-all">
+                           class="hidden sm:inline-flex px-5 py-2 rounded-full text-xs sm:text-sm font-semibold text-slate-300 btn-outline-custom transition-all">
                             Masuk
                         </a>
                         <a href="{{ route('register') }}" 
-                           class="btn-purple-magenta-glow px-6 py-2.5 rounded-full text-sm font-semibold text-white transition-all transform hover:-translate-y-0.5">
+                           class="btn-purple-magenta-glow px-5 py-2 sm:px-6 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold text-white transition-all transform hover:-translate-y-0.5">
                             Daftar Akun
                         </a>
                     @endauth
@@ -320,7 +342,7 @@
             <!-- Grid Baris Atas: Deskripsi & Navigasi -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-white/5">
                 
-                <!-- Col 1: Logo & Deskripsi Singkat (Ukuran Diperbesar) -->
+                <!-- Col 1: Logo & Deskripsi Singkat -->
                 <div class="lg:col-span-4 space-y-4">
                     <a href="#" class="inline-block">
                         <img src="{{ asset('images/microdata-logo.webp') }}" 
@@ -439,19 +461,16 @@
                 <p>&copy; 2026 PT Microdata Indonesia. Hak cipta dilindungi undang-undang.</p>
                 
                 <div class="flex items-center gap-4">
-                    <!-- Selector Bahasa -->
                     <button class="btn-outline-custom px-4 py-1.5 rounded-full text-xs text-slate-300 inline-flex items-center gap-2 hover:border-purple-500/50">
                         <i class="bi bi-globe"></i>
                         <span>ID - Bahasa Indonesia</span>
                         <i class="bi bi-chevron-down text-[10px]"></i>
                     </button>
                     
-                    <!-- Toggle Tema -->
                     <button class="w-8 h-8 rounded-full btn-outline-custom flex items-center justify-center text-slate-300 hover:text-purple-400 transition-colors" title="Toggle Mode">
                         <i class="bi bi-sun"></i>
                     </button>
 
-                    <!-- Social Icon (LinkedIn) -->
                     <a href="#" class="w-8 h-8 rounded-full btn-outline-custom flex items-center justify-center text-slate-300 hover:text-purple-400 transition-colors">
                         <i class="bi bi-linkedin"></i>
                     </a>
@@ -466,156 +485,167 @@
         <i class="bi bi-whatsapp"></i>
     </a>
 
-    <!-- Three.js Script untuk Animasi 3D DNA Helix -->
-    <!-- Three.js Script: Visual 3D Digital Archive & Document Network -->
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const container = document.getElementById('dna-container');
-        if (!container) return;
+    <!-- Script JavaScript untuk Floating Navbar & 3D DNA -->
+    <script>
+        // Script 1: Dynamic Scroll Floating Navbar
+        document.addEventListener('DOMContentLoaded', () => {
+            const navbar = document.getElementById('main-navbar');
+            const navInner = document.getElementById('navbar-inner');
+            const navContainer = document.getElementById('navbar-container');
 
-        const width = container.clientWidth;
-        const height = container.clientHeight;
-
-        // 1. Scene & Camera Setup
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-        camera.position.set(0, 0, 28);
-
-        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-        renderer.setSize(width, height);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        container.appendChild(renderer.domElement);
-
-        // Group Utama
-        const mainGroup = new THREE.Group();
-        scene.add(mainGroup);
-
-        // Warna Tema
-        const colorPurple = 0xa855f7;
-        const colorPink = 0xec4899;
-        const colorCyan = 0x38bdf8;
-
-        // 2. Membuat 3D Glowing Folder Base
-        const folderGroup = new THREE.Group();
-
-        // Sampul Belakang Folder
-        const backGeo = new THREE.BoxGeometry(7, 5, 0.2);
-        const glassMat = new THREE.MeshBasicMaterial({
-            color: colorPurple,
-            wireframe: true,
-            transparent: true,
-            opacity: 0.6
-        });
-        const folderBack = new THREE.Mesh(backGeo, glassMat);
-        folderGroup.add(folderBack);
-
-        // Sampul Depan Folder (Terbuka Sedikit)
-        const frontGeo = new THREE.BoxGeometry(7, 4.5, 0.2);
-        const frontMat = new THREE.MeshBasicMaterial({
-            color: colorPink,
-            wireframe: true,
-            transparent: true,
-            opacity: 0.8
-        });
-        const folderFront = new THREE.Mesh(frontGeo, frontMat);
-        folderFront.position.set(0, -0.5, 1.2);
-        folderFront.rotation.x = Math.PI / 8;
-        folderGroup.add(folderFront);
-
-        mainGroup.add(folderGroup);
-
-        // 3. Dokumen Digital yang Melayang Keluar dari Folder
-        const docsGroup = new THREE.Group();
-        const numDocs = 5;
-
-        for (let i = 0; i < numDocs; i++) {
-            const docGeo = new THREE.PlaneGeometry(3.5, 4.8);
-            const docMat = new THREE.MeshBasicMaterial({
-                color: i % 2 === 0 ? colorCyan : 0xffffff,
-                side: THREE.DoubleSide,
-                transparent: true,
-                opacity: 0.35,
-                wireframe: true
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 40) {
+                    navbar.classList.remove('glass-nav-default');
+                    navbar.classList.add('glass-nav-scrolled');
+                    navInner.classList.remove('h-20');
+                    navInner.classList.add('h-16'); // Menjadi lebih ramping saat melayang
+                    navContainer.classList.remove('px-6', 'lg:px-12');
+                    navContainer.classList.add('px-4', 'lg:px-8');
+                } else {
+                    navbar.classList.remove('glass-nav-scrolled');
+                    navbar.classList.add('glass-nav-default');
+                    navInner.classList.remove('h-16');
+                    navInner.classList.add('h-20');
+                    navContainer.classList.remove('px-4', 'lg:px-8');
+                    navContainer.classList.add('px-6', 'lg:px-12');
+                }
             });
-            const doc = new THREE.Mesh(docGeo, docMat);
-
-            // Posisi bertingkat/melayang
-            const angle = (i / numDocs) * Math.PI * 0.8 - 0.4;
-            doc.position.set(Math.sin(angle) * 3, i * 1.1 - 1, Math.cos(angle) * 2 + 0.5);
-            doc.rotation.y = angle * 0.5;
-            doc.rotation.z = (i - 2) * -0.1;
-
-            docsGroup.add(doc);
-        }
-        mainGroup.add(docsGroup);
-
-        // 4. Floating Data Particles & Nodes Network
-        const particleCount = 60;
-        const particlesGeo = new THREE.BufferGeometry();
-        const positions = new Float32Array(particleCount * 3);
-
-        for (let i = 0; i < particleCount * 3; i += 3) {
-            positions[i] = (Math.random() - 0.5) * 18;
-            positions[i + 1] = (Math.random() - 0.5) * 18;
-            positions[i + 2] = (Math.random() - 0.5) * 18;
-        }
-
-        particlesGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        const particleMat = new THREE.PointsMaterial({
-            color: colorPink,
-            size: 0.35,
-            transparent: true,
-            opacity: 0.8
         });
 
-        const particleSystem = new THREE.Points(particlesGeo, particleMat);
-        mainGroup.add(particleSystem);
+        // Script 2: Three.js Visual 3D Digital Archive & Document Network
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('dna-container');
+            if (!container) return;
 
-        // 5. Cincin Orbit Data Encrypted
-        const ringGeo = new THREE.TorusGeometry(8.5, 0.05, 16, 100);
-        const ringMat = new THREE.MeshBasicMaterial({
-            color: colorPurple,
-            transparent: true,
-            opacity: 0.4
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+
+            // 1. Scene & Camera Setup
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+            camera.position.set(0, 0, 28);
+
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(width, height);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.appendChild(renderer.domElement);
+
+            // Group Utama
+            const mainGroup = new THREE.Group();
+            scene.add(mainGroup);
+
+            // Warna Tema
+            const colorPurple = 0xa855f7;
+            const colorPink = 0xec4899;
+            const colorCyan = 0x38bdf8;
+
+            // 2. Membuat 3D Glowing Folder Base
+            const folderGroup = new THREE.Group();
+
+            // Sampul Belakang Folder
+            const backGeo = new THREE.BoxGeometry(7, 5, 0.2);
+            const glassMat = new THREE.MeshBasicMaterial({
+                color: colorPurple,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.6
+            });
+            const folderBack = new THREE.Mesh(backGeo, glassMat);
+            folderGroup.add(folderBack);
+
+            // Sampul Depan Folder
+            const frontGeo = new THREE.BoxGeometry(7, 4.5, 0.2);
+            const frontMat = new THREE.MeshBasicMaterial({
+                color: colorPink,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.8
+            });
+            const folderFront = new THREE.Mesh(frontGeo, frontMat);
+            folderFront.position.set(0, -0.5, 1.2);
+            folderFront.rotation.x = Math.PI / 8;
+            folderGroup.add(folderFront);
+
+            mainGroup.add(folderGroup);
+
+            // 3. Dokumen Digital Melayang
+            const docsGroup = new THREE.Group();
+            const numDocs = 5;
+
+            for (let i = 0; i < numDocs; i++) {
+                const docGeo = new THREE.PlaneGeometry(3.5, 4.8);
+                const docMat = new THREE.MeshBasicMaterial({
+                    color: i % 2 === 0 ? colorCyan : 0xffffff,
+                    side: THREE.DoubleSide,
+                    transparent: true,
+                    opacity: 0.35,
+                    wireframe: true
+                });
+                const doc = new THREE.Mesh(docGeo, docMat);
+
+                const angle = (i / numDocs) * Math.PI * 0.8 - 0.4;
+                doc.position.set(Math.sin(angle) * 3, i * 1.1 - 1, Math.cos(angle) * 2 + 0.5);
+                doc.rotation.y = angle * 0.5;
+                doc.rotation.z = (i - 2) * -0.1;
+
+                docsGroup.add(doc);
+            }
+            mainGroup.add(docsGroup);
+
+            // 4. Floating Data Particles
+            const particleCount = 60;
+            const particlesGeo = new THREE.BufferGeometry();
+            const positions = new Float32Array(particleCount * 3);
+
+            for (let i = 0; i < particleCount * 3; i += 3) {
+                positions[i] = (Math.random() - 0.5) * 18;
+                positions[i + 1] = (Math.random() - 0.5) * 18;
+                positions[i + 2] = (Math.random() - 0.5) * 18;
+            }
+
+            particlesGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            const particleMat = new THREE.PointsMaterial({
+                color: colorPink,
+                size: 0.35,
+                transparent: true,
+                opacity: 0.8
+            });
+
+            const particleSystem = new THREE.Points(particlesGeo, particleMat);
+            mainGroup.add(particleSystem);
+
+            // 5. Cincin Orbit
+            const ringGeo = new THREE.TorusGeometry(8.5, 0.05, 16, 100);
+            const ringMat = new THREE.MeshBasicMaterial({
+                color: colorPurple,
+                transparent: true,
+                opacity: 0.4
+            });
+            const orbitRing = new THREE.Mesh(ringGeo, ringMat);
+            orbitRing.rotation.x = Math.PI / 3;
+            mainGroup.add(orbitRing);
+
+            mainGroup.rotation.z = -Math.PI / 12;
+            mainGroup.rotation.x = Math.PI / 16;
+
+            // 6. Loop Animasi Smooth
+            function animate() {
+                requestAnimationFrame(animate);
+                mainGroup.rotation.y += 0.005;
+                orbitRing.rotation.z -= 0.003;
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            // Resize Responsive
+            window.addEventListener('resize', () => {
+                const newW = container.clientWidth;
+                const newH = container.clientHeight;
+                camera.aspect = newW / newH;
+                camera.updateProjectionMatrix();
+                renderer.setSize(newW, newH);
+            });
         });
-        const orbitRing = new THREE.Mesh(ringGeo, ringMat);
-        orbitRing.rotation.x = Math.PI / 3;
-        mainGroup.add(orbitRing);
-
-        // Kemiringan Utama Group
-        mainGroup.rotation.z = -Math.PI / 12;
-        mainGroup.rotation.x = Math.PI / 16;
-
-        // 6. Loop Animasi Smooth
-        let clock = new THREE.Clock();
-
-        function animate() {
-            requestAnimationFrame(animate);
-            const elapsedTime = clock.getElapsedTime();
-
-            // Rotasi perlahan seluruh grup
-            mainGroup.rotation.y = elapsedTime * 0.3;
-
-            // Efek melayang naik-turun (floating effect) untuk dokumen
-            docsGroup.position.y = Math.sin(elapsedTime * 1.5) * 0.4;
-            folderGroup.position.y = Math.cos(elapsedTime * 1.2) * 0.2;
-
-            // Rotasi Cincin Orbit
-            orbitRing.rotation.z = elapsedTime * -0.2;
-
-            renderer.render(scene, camera);
-        }
-        animate();
-
-        // 7. Responsive Resize Handling
-        window.addEventListener('resize', () => {
-            const newWidth = container.clientWidth;
-            const newHeight = container.clientHeight;
-            camera.aspect = newWidth / newHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(newWidth, newHeight);
-        });
-    });
-</script>
+    </script>
 </body>
 </html>
