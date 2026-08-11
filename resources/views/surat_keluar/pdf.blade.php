@@ -97,18 +97,21 @@ table{width:100%;border-collapse:collapse}
 
     <table class="ttd-table" style="margin-top:35px;">
         <tr>
+            <td width="50%" style="vertical-align:top; text-align:center; padding-bottom:8px;"></td>
+            <td width="50%" style="vertical-align:top; text-align:center; padding-bottom:8px;">
+                {{ $kotaTanggal ?: ('Bandar Lampung, ' . \Carbon\Carbon::parse($surat->tanggal_surat)->translatedFormat('d F Y')) }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="vertical-align:top; text-align:center; padding-bottom:60px;">Penerima Kuasa,</td>
+            <td width="50%" style="vertical-align:top; text-align:center; padding-bottom:60px;">Pemberi Kuasa,</td>
+        </tr>
+        <tr>
             <td width="50%" style="vertical-align:top; text-align:center;">
-                <p style="margin:0;">Penerima Kuasa,</p>
-                <div class="ttd-space"></div>
                 <p style="margin:0; font-weight:bold;"><u>{{ $penerima['nama'] ?? '-' }}</u></p>
                 <p style="margin:0; font-size:11pt;">{{ $penerima['jabatan'] ?? 'Staff' }}</p>
             </td>
             <td width="50%" style="vertical-align:top; text-align:center;">
-                <p style="margin:0 0 15px 0;">
-                    {{ $kotaTanggal ?: ('Bandar Lampung, ' . \Carbon\Carbon::parse($surat->tanggal_surat)->translatedFormat('d F Y')) }}
-                </p>
-                <p style="margin:0;">Pemberi Kuasa,</p>
-                <div class="ttd-space"></div>
                 <p style="margin:0; font-weight:bold;"><u>{{ $pemberi['nama'] ?? ($surat->penandatangan ?: '-') }}</u></p>
                 <p style="margin:0; font-size:11pt;">{{ $pemberi['jabatan'] ?? ($surat->jabatan_penandatangan ?: 'Direktur Utama') }}</p>
             </td>

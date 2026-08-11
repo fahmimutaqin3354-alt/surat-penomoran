@@ -875,11 +875,6 @@
                         <i class="fa-solid fa-eye text-emerald-400"></i>
                         Pratinjau Realtime Surat (A4)
                     </h2>
-                    <button type="button" @click="downloadPreviewPdf()"
-                            class="px-3.5 py-1.5 rounded-lg bg-emerald-600/20 text-emerald-400 hover:bg-emerald-600/30 border border-emerald-500/30 text-xs font-semibold flex items-center gap-1.5 transition">
-                        <i class="fa-solid fa-download"></i>
-                        <span>Unduh PDF</span>
-                    </button>
                 </div>
 
                 {{-- A4 Container Scroll Area --}}
@@ -945,16 +940,21 @@
                                     <div class="mt-12 text-sm">
                                         <table class="w-full text-center border-collapse">
                                             <tr>
+                                                <td class="w-1/2 align-top pb-2"></td>
+                                                <td class="w-1/2 align-top pb-2" x-text="dataKhusus.kota_tanggal || ('Bandar Lampung, ' + formatTanggal(tanggal_surat))"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="w-1/2 align-top pb-14 font-medium">Penerima Kuasa,</td>
+                                                <td class="w-1/2 align-top pb-14 font-medium">Pemberi Kuasa,</td>
+                                            </tr>
+                                            <tr>
                                                 <td class="w-1/2 align-top">
-                                                    <p class="mb-14">Penerima Kuasa,</p>
-                                                    <p class="font-bold underline uppercase" x-text="dataKhusus.penerima.nama || '(Nama Penerima)'"></p>
-                                                    <p class="text-xs text-slate-700" x-text="dataKhusus.penerima.jabatan || 'Staff'"></p>
+                                                    <p class="font-bold underline uppercase" x-text="dataKhusus.penerima.nama || '(NAMA PENERIMA)'"></p>
+                                                    <p class="text-xs text-slate-700 font-medium" x-text="dataKhusus.penerima.jabatan || 'Staff'"></p>
                                                 </td>
                                                 <td class="w-1/2 align-top">
-                                                    <p class="mb-3" x-text="dataKhusus.kota_tanggal || ('Bandar Lampung, ' + formatTanggal(tanggal_surat))"></p>
-                                                    <p class="mb-14">Pemberi Kuasa,</p>
-                                                    <p class="font-bold underline uppercase" x-text="dataKhusus.pemberi.nama || '(Nama Pemberi)'"></p>
-                                                    <p class="text-xs text-slate-700" x-text="dataKhusus.pemberi.jabatan || 'Direktur Utama'"></p>
+                                                    <p class="font-bold underline uppercase" x-text="dataKhusus.pemberi.nama || '(NAMA PEMBERI)'"></p>
+                                                    <p class="text-xs text-slate-700 font-medium" x-text="dataKhusus.pemberi.jabatan || 'Direktur Utama'"></p>
                                                 </td>
                                             </tr>
                                         </table>

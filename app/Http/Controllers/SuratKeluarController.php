@@ -492,7 +492,7 @@ public function preview($id)
 /**
  * Download PDF
  */
- public function downloadPublic($id)
+    public function downloadPublic($id)
     {
         $surat = SuratKeluar::findOrFail($id);
  
@@ -500,7 +500,10 @@ public function preview($id)
  
         $namaFile = 'Surat-' . str_replace(['/', '\\'], '-', $surat->nomor_surat) . '.pdf';
  
-      return $pdf->stream($namaFile);
+        // Simpan ke storage/app/public/pdf/
+        Storage::disk('public')->put('pdf/' . $namaFile, $pdf->output());
+
+        return $pdf->download($namaFile);
     }
 
 /**

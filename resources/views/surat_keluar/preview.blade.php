@@ -110,7 +110,7 @@
                 <i class="fa-solid fa-print"></i> Cetak Surat
             </button>
 
-            <a href="{{ route('surat_keluar.pdf', $surat->id) }}" class="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-semibold text-sm transition flex items-center gap-2 shadow-lg shadow-rose-600/30">
+            <a href="{{ route('surat_keluar.download', $surat->id) }}" class="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-semibold text-sm transition flex items-center gap-2 shadow-lg shadow-rose-600/30">
                 <i class="fa-solid fa-file-pdf"></i> Download PDF
             </a>
         </div>
@@ -197,20 +197,23 @@
             </p>
 
             {{-- DUAL SIGNATORY --}}
-            <table style="width:100%; margin-top:40px; text-align:center;">
+            <table style="width:100%; margin-top:35px; text-align:center;">
+                <tr>
+                    <td style="width:50%; vertical-align:top; padding-bottom:8px;"></td>
+                    <td style="width:50%; vertical-align:top; padding-bottom:8px;">
+                        {{ $kotaTanggal ?: ('Bandar Lampung, ' . \Carbon\Carbon::parse($surat->tanggal_surat)->translatedFormat('d F Y')) }}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:50%; vertical-align:top; padding-bottom:60px;">Penerima Kuasa,</td>
+                    <td style="width:50%; vertical-align:top; padding-bottom:60px;">Pemberi Kuasa,</td>
+                </tr>
                 <tr>
                     <td style="width:50%; vertical-align:top;">
-                        <p style="margin:0;">Penerima Kuasa,</p>
-                        <div style="height:70px;"></div>
                         <p style="margin:0; font-weight:bold;"><u>{{ $penerima['nama'] ?? '-' }}</u></p>
                         <p style="margin:0; font-size:11pt;">{{ $penerima['jabatan'] ?? 'Staff' }}</p>
                     </td>
                     <td style="width:50%; vertical-align:top;">
-                        <p style="margin:0 0 15px 0;">
-                            {{ $kotaTanggal ?: ('Bandar Lampung, ' . \Carbon\Carbon::parse($surat->tanggal_surat)->translatedFormat('d F Y')) }}
-                        </p>
-                        <p style="margin:0;">Pemberi Kuasa,</p>
-                        <div style="height:70px;"></div>
                         <p style="margin:0; font-weight:bold;"><u>{{ $pemberi['nama'] ?? ($surat->penandatangan ?: '-') }}</u></p>
                         <p style="margin:0; font-size:11pt;">{{ $pemberi['jabatan'] ?? ($surat->jabatan_penandatangan ?: 'Direktur Utama') }}</p>
                     </td>
