@@ -52,11 +52,17 @@ class SuratKeluarController extends Controller
      */
     private function buildKuasaData(Request $request)
     {
-        $isKuasa = JenisSurat::where('nama', $request->jenis_surat)
-            ->where('form_type', 'kuasa')
-            ->exists() || \Illuminate\Support\Str::contains(strtolower($request->jenis_surat), 'kuasa');
+        $tipeForm = $request->input('tipe_form');
+        if (!empty($tipeForm)) {
+            $isKuasa = ($tipeForm === 'kuasa');
+        } else {
+            $isKuasa = JenisSurat::where('nama', $request->jenis_surat)
+                ->where('form_type', 'kuasa')
+                ->exists() || \Illuminate\Support\Str::contains(strtolower($request->jenis_surat), 'kuasa');
+        }
 
         $dk = $request->input('data_khusus', []);
+        $dk['tipe_form'] = $isKuasa ? 'kuasa' : 'umum';
 
         if (!$isKuasa) {
             return [
@@ -198,9 +204,14 @@ public function nextNomor(Request $request)
  */
 public function store(Request $request)
 {
-    $isKuasa = JenisSurat::where('nama', $request->jenis_surat)
-        ->where('form_type', 'kuasa')
-        ->exists() || \Illuminate\Support\Str::contains(strtolower($request->jenis_surat), 'kuasa');
+    $tipeForm = $request->input('tipe_form');
+    if (!empty($tipeForm)) {
+        $isKuasa = ($tipeForm === 'kuasa');
+    } else {
+        $isKuasa = JenisSurat::where('nama', $request->jenis_surat)
+            ->where('form_type', 'kuasa')
+            ->exists() || \Illuminate\Support\Str::contains(strtolower($request->jenis_surat), 'kuasa');
+    }
 
     $request->validate([
         'tanggal_surat' => 'required|date',
@@ -347,9 +358,14 @@ public function update(Request $request, $id)
 {
     $surat = SuratKeluar::findOrFail($id);
 
-    $isKuasa = JenisSurat::where('nama', $request->jenis_surat)
-        ->where('form_type', 'kuasa')
-        ->exists() || \Illuminate\Support\Str::contains(strtolower($request->jenis_surat), 'kuasa');
+    $tipeForm = $request->input('tipe_form');
+    if (!empty($tipeForm)) {
+        $isKuasa = ($tipeForm === 'kuasa');
+    } else {
+        $isKuasa = JenisSurat::where('nama', $request->jenis_surat)
+            ->where('form_type', 'kuasa')
+            ->exists() || \Illuminate\Support\Str::contains(strtolower($request->jenis_surat), 'kuasa');
+    }
 
     $request->validate([
         'tanggal_surat' => 'required|date',
