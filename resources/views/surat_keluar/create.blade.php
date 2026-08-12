@@ -527,7 +527,7 @@
                         <div class="border-b border-amber-500/20 px-6 py-4 bg-amber-500/5 flex items-center justify-between">
                             <h2 class="text-base font-bold text-amber-300 flex items-center gap-2">
                                 <span class="w-6 h-6 rounded-full bg-amber-500 text-slate-950 text-xs flex items-center justify-center font-bold">2</span>
-                                Isian Surat Kuasa
+                                Isi Surat Kuasa
                             </h2>
                             <span class="text-xs bg-amber-500/20 text-amber-300 px-3 py-1 rounded-full font-medium">Surat Kuasa</span>
                         </div>
@@ -817,10 +817,10 @@
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden mb-6">
                     <div class="border-b border-slate-800 px-6 py-4 bg-slate-950/50 flex items-center justify-between">
                         <h2 class="text-base font-bold text-white flex items-center gap-2">
-                            <span class="w-6 h-6 rounded-full bg-indigo-600 text-white text-xs flex items-center justify-center font-semibold">3</span>
+
                             Penandatangan
                         </h2>
-                        <span class="text-xs text-slate-400" x-text="isKuasa ? 'Dual TTD' : 'TTD Tunggal'"></span>
+
                     </div>
 
                     <div class="p-6">

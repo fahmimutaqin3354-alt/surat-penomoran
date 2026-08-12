@@ -201,14 +201,15 @@
                        class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition mb-3">
 
                 <p class="text-xs text-slate-500 mb-4 flex items-center gap-1.5">
-                    <i class="fa-solid fa-paperclip text-slate-600"></i>
-                    File PDF surat ini akan otomatis dilampirkan.
-                    <a href="{{ URL::temporarySignedRoute('surat_keluar.download.public', now()->addHours(24), ['id' => $item->id]) }}"
-                       target="_blank"
-                       class="text-indigo-400 hover:text-indigo-300 underline font-medium ml-1">
-                        Lihat PDF
-                    </a>
-                </p>
+    <i class="fa-solid fa-paperclip text-slate-600"></i>
+    File PDF surat ini akan otomatis dilampirkan.
+
+    <a href="{{ route('surat_keluar.preview', ['id' => $item->id]) }}"
+       target="_blank"
+       class="text-indigo-400 hover:text-indigo-300 underline font-medium ml-1">
+        Lihat PDF
+    </a>
+</p>
 
                 <div class="flex justify-end gap-2">
                     <button type="button" @click="show = false"
