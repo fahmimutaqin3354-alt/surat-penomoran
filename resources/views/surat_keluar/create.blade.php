@@ -58,7 +58,20 @@
         penandatangan: @js(old('penandatangan', 'DIREKTUR UTAMA')),
         jabatan_penandatangan: @js(old('jabatan_penandatangan', 'PT Microdata Indonesia')),
 
+        tipe_form: @js(old('tipe_form', 'umum')),
         isKuasa: false,
+
+        setTipeForm(type) {
+            this.tipe_form = type;
+            this.isKuasa = (type === 'kuasa');
+            if (this.isKuasa && (!this.kode_surat || this.kode_surat === '')) {
+                this.kode_surat = 'SK';
+            }
+            if (this.isKuasa && (!this.perihal || this.perihal.trim() === '' || this.perihal === 'SURAT KELUAR')) {
+                this.perihal = 'SURAT KUASA';
+            }
+            this.fetchNextNomor();
+        },
 
         // Nomor surat preview (diisi via fetch ke server)
         nomorUrut: '...',
@@ -133,19 +146,16 @@
             if (found) {
                 this.kode_surat = found.kode_surat || '';
                 const formType = (found.form_type || '').toLowerCase();
-                this.isKuasa = (formType === 'kuasa') || val.toLowerCase().includes('kuasa');
+                if (formType === 'kuasa' || formType === 'umum') {
+                    this.setTipeForm(formType);
+                } else if (val.toLowerCase().includes('kuasa')) {
+                    this.setTipeForm('kuasa');
+                }
             } else {
                 const isK = val.toLowerCase().includes('kuasa');
-                this.isKuasa = isK;
-                if (isK && (!this.kode_surat || this.kode_surat === '')) {
-                    this.kode_surat = 'SK';
-                } else if (!isK && val === '') {
-                    this.kode_surat = '';
+                if (isK) {
+                    this.setTipeForm('kuasa');
                 }
-            }
-
-            if (this.isKuasa && (!this.perihal || this.perihal.trim() === '')) {
-                this.perihal = 'SURAT KUASA';
             }
 
             this.fetchNextNomor();
@@ -369,6 +379,48 @@
             <form action="{{ route('surat_keluar.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="surat_masuk_id" value="{{ old('surat_masuk_id', $suratMasuk->id ?? '') }}">
+                <input type="hidden" name="tipe_form" :value="tipe_form">
+
+                {{-- CARD UTAMA: PEMILIH TIPE FORM SURAT --}}
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden mb-6 p-5">
+                    <label class="block text-sm font-bold text-white mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-sliders text-indigo-400"></i>
+                        Pilih Tipe Form Pembuatan Surat <span class="text-rose-500">*</span>
+                    </label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <button type="button" @click="setTipeForm('umum')"
+                                class="p-4 rounded-xl border-2 text-left transition flex items-center justify-between cursor-pointer"
+                                :class="!isKuasa ? 'bg-indigo-600/20 border-indigo-500 text-white font-semibold shadow-lg shadow-indigo-500/10' : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:border-slate-700'">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-lg"
+                                     :class="!isKuasa ? 'bg-indigo-500 text-white' : 'bg-slate-800 text-slate-400'">
+                                    <i class="fa-solid fa-file-lines"></i>
+                                </div>
+                                <div>
+                                    <h5 class="text-sm font-bold text-white">Form Surat Umum</h5>
+                                    <p class="text-xs text-slate-400 mt-0.5">Surat standar & tabel fleksibel</p>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-circle-check text-indigo-400 text-xl" x-show="!isKuasa"></i>
+                        </button>
+
+                        <button type="button" @click="setTipeForm('kuasa')"
+                                class="p-4 rounded-xl border-2 text-left transition flex items-center justify-between cursor-pointer"
+                                :class="isKuasa ? 'bg-amber-600/20 border-amber-500 text-white font-semibold shadow-lg shadow-amber-500/10' : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:border-slate-700'">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-lg"
+                                     :class="isKuasa ? 'bg-amber-500 text-slate-950' : 'bg-slate-800 text-slate-400'">
+                                    <i class="fa-solid fa-file-signature"></i>
+                                </div>
+                                <div>
+                                    <h5 class="text-sm font-bold text-white">Form Surat Kuasa</h5>
+                                    <p class="text-xs text-slate-400 mt-0.5">Pemberi, Penerima & Dual Ttd</p>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-circle-check text-amber-400 text-xl" x-show="isKuasa"></i>
+                        </button>
+                    </div>
+                </div>
 
                 {{-- CARD 1: INFORMASI KEPALA SURAT --}}
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden mb-6">

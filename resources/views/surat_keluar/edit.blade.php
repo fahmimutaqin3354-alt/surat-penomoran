@@ -38,52 +38,66 @@
     $tableRows = $dk['table_rows'] ?? [['1', 'Item 1', '1', 'Baik']];
     $isiSetelahTabel = $dk['isi_setelah_tabel'] ?? '';
 
-    $isKuasaInitial = (isset($surat->jenisSurat) && $surat->jenisSurat->form_type === 'kuasa') 
-        || Str::contains(strtolower($surat->jenis_surat), 'kuasa')
-        || !empty($pemberi);
+    $savedTipeForm = $dk['tipe_form'] ?? null;
+    if ($savedTipeForm) {
+        $isKuasaInitial = ($savedTipeForm === 'kuasa');
+    } else {
+        $isKuasaInitial = (isset($surat->jenisSurat) && $surat->jenisSurat->form_type === 'kuasa') 
+            || Str::contains(strtolower($surat->jenis_surat), 'kuasa')
+            || !empty($pemberi['nama']);
+    }
 @endphp
 
 <div class="max-w-[1700px] mx-auto"
      x-data="{
         jenisSuratList: {{ json_encode($jenisSuratList) }},
-        nomor_surat: '{{ old('nomor_surat', $surat->nomor_surat) }}',
-        jenis_surat: '{{ old('jenis_surat', $surat->jenis_surat) }}',
-        kode_divisi: '{{ old('kode_divisi', $surat->kode_divisi ?? 'HRD') }}',
-        instansi_id: '{{ old('instansi_id', $surat->instansi_id) }}',
-        instansi_nama: '{{ $surat->instansi->nama_instansi ?? '' }}',
-        tanggal_surat: '{{ old('tanggal_surat', $surat->tanggal_surat) }}',
-        tujuan: '{{ old('tujuan', $surat->tujuan) }}',
-        perihal: '{{ old('perihal', $surat->perihal) }}',
-        isi_surat: '{{ old('isi_surat', $surat->isi_surat) }}',
-        lampiran: '{{ old('lampiran', $surat->lampiran) }}',
-        status: '{{ old('status', $surat->status) }}',
-        penandatangan: '{{ old('penandatangan', $surat->penandatangan) }}',
-        jabatan_penandatangan: '{{ old('jabatan_penandatangan', $surat->jabatan_penandatangan) }}',
+        nomor_surat: @js(old('nomor_surat', $surat->nomor_surat)),
+        jenis_surat: @js(old('jenis_surat', $surat->jenis_surat)),
+        kode_divisi: @js(old('kode_divisi', $surat->kode_divisi ?? 'HRD')),
+        instansi_id: @js((string)old('instansi_id', $surat->instansi_id)),
+        instansi_nama: @js($surat->instansi->nama_instansi ?? ''),
+        tanggal_surat: @js(old('tanggal_surat', $surat->tanggal_surat)),
+        tujuan: @js(old('tujuan', $surat->tujuan)),
+        perihal: @js(old('perihal', $surat->perihal)),
+        isi_surat: @js(old('isi_surat', $surat->isi_surat)),
+        lampiran: @js(old('lampiran', $surat->lampiran)),
+        status: @js(old('status', $surat->status)),
+        penandatangan: @js(old('penandatangan', $surat->penandatangan)),
+        jabatan_penandatangan: @js(old('jabatan_penandatangan', $surat->jabatan_penandatangan)),
 
+        tipe_form: @js($isKuasaInitial ? 'kuasa' : 'umum'),
         isKuasa: {{ $isKuasaInitial ? 'true' : 'false' }},
+
+        setTipeForm(type) {
+            this.tipe_form = type;
+            this.isKuasa = (type === 'kuasa');
+            if (this.isKuasa && (!this.perihal || this.perihal.trim() === '' || this.perihal === 'SURAT KELUAR')) {
+                this.perihal = 'SURAT KUASA';
+            }
+        },
 
         dataKhusus: {
             pemberi: {
-                nama: '{{ old('data_khusus.pemberi.nama', $pemberi['nama'] ?? '') }}',
-                jabatan: '{{ old('data_khusus.pemberi.jabatan', $pemberi['jabatan'] ?? '') }}',
-                alamat: '{{ old('data_khusus.pemberi.alamat', $pemberi['alamat'] ?? '') }}'
+                nama: @js(old('data_khusus.pemberi.nama', $pemberi['nama'] ?? '')),
+                jabatan: @js(old('data_khusus.pemberi.jabatan', $pemberi['jabatan'] ?? '')),
+                alamat: @js(old('data_khusus.pemberi.alamat', $pemberi['alamat'] ?? ''))
             },
             penerima: {
-                nama: '{{ old('data_khusus.penerima.nama', $penerima['nama'] ?? '') }}',
-                jabatan: '{{ old('data_khusus.penerima.jabatan', $penerima['jabatan'] ?? '') }}',
-                alamat: '{{ old('data_khusus.penerima.alamat', $penerima['alamat'] ?? '') }}'
+                nama: @js(old('data_khusus.penerima.nama', $penerima['nama'] ?? '')),
+                jabatan: @js(old('data_khusus.penerima.jabatan', $penerima['jabatan'] ?? '')),
+                alamat: @js(old('data_khusus.penerima.alamat', $penerima['alamat'] ?? ''))
             },
-            pembuka_maksud: '{{ old('data_khusus.pembuka_maksud', $pembukaMaksud) }}',
+            pembuka_maksud: @js(old('data_khusus.pembuka_maksud', $pembukaMaksud)),
             kegiatan_items: {{ json_encode($kegiatanItems) }},
-            lokasi_instansi: '{{ old('data_khusus.lokasi_instansi', $lokasiInstansi) }}',
-            penutup: '{{ old('data_khusus.penutup', $penutupText) }}',
-            kota_tanggal: '{{ old('data_khusus.kota_tanggal', $kotaTanggal) }}',
+            lokasi_instansi: @js(old('data_khusus.lokasi_instansi', $lokasiInstansi)),
+            penutup: @js(old('data_khusus.penutup', $penutupText)),
+            kota_tanggal: @js(old('data_khusus.kota_tanggal', $kotaTanggal)),
 
             has_table: {{ $hasTable ? 'true' : 'false' }},
-            table_title: '{{ old('data_khusus.table_title', $tableTitle) }}',
+            table_title: @js(old('data_khusus.table_title', $tableTitle)),
             table_headers: {{ json_encode($tableHeaders) }},
             table_rows: {{ json_encode($tableRows) }},
-            isi_setelah_tabel: '{{ old('data_khusus.isi_setelah_tabel', $isiSetelahTabel) }}'
+            isi_setelah_tabel: @js(old('data_khusus.isi_setelah_tabel', $isiSetelahTabel))
         },
 
         addKegiatanItem() {
@@ -127,15 +141,13 @@
         updateJenisSurat() {
             const val = this.jenis_surat || '';
             const found = Array.isArray(this.jenisSuratList) ? this.jenisSuratList.find(j => j.nama === val) : null;
-            if (found) {
+            if (found && found.form_type) {
                 const formType = (found.form_type || '').toLowerCase();
-                this.isKuasa = (formType === 'kuasa') || val.toLowerCase().includes('kuasa');
-            } else {
-                this.isKuasa = val.toLowerCase().includes('kuasa');
-            }
-
-            if (this.isKuasa && (!this.perihal || this.perihal.trim() === '')) {
-                this.perihal = 'SURAT KUASA';
+                if (formType === 'kuasa' || formType === 'umum') {
+                    this.setTipeForm(formType);
+                }
+            } else if (val.toLowerCase().includes('kuasa')) {
+                this.setTipeForm('kuasa');
             }
         },
 
@@ -204,6 +216,48 @@
             <form action="{{ route('surat_keluar.update', $surat->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
+                <input type="hidden" name="tipe_form" :value="tipe_form">
+
+                {{-- CARD UTAMA: PEMILIH TIPE FORM SURAT --}}
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden mb-6 p-5">
+                    <label class="block text-sm font-bold text-white mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-sliders text-amber-400"></i>
+                        Pilih Tipe Form Pengeditan Surat <span class="text-rose-500">*</span>
+                    </label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <button type="button" @click="setTipeForm('umum')"
+                                class="p-4 rounded-xl border-2 text-left transition flex items-center justify-between cursor-pointer"
+                                :class="!isKuasa ? 'bg-indigo-600/20 border-indigo-500 text-white font-semibold shadow-lg shadow-indigo-500/10' : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:border-slate-700'">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-lg"
+                                     :class="!isKuasa ? 'bg-indigo-500 text-white' : 'bg-slate-800 text-slate-400'">
+                                    <i class="fa-solid fa-file-lines"></i>
+                                </div>
+                                <div>
+                                    <h5 class="text-sm font-bold text-white">Form Surat Umum</h5>
+                                    <p class="text-xs text-slate-400 mt-0.5">Format standar & tabel fleksibel</p>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-circle-check text-indigo-400 text-xl" x-show="!isKuasa"></i>
+                        </button>
+
+                        <button type="button" @click="setTipeForm('kuasa')"
+                                class="p-4 rounded-xl border-2 text-left transition flex items-center justify-between cursor-pointer"
+                                :class="isKuasa ? 'bg-amber-600/20 border-amber-500 text-white font-semibold shadow-lg shadow-amber-500/10' : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:border-slate-700'">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-lg"
+                                     :class="isKuasa ? 'bg-amber-500 text-slate-950' : 'bg-slate-800 text-slate-400'">
+                                    <i class="fa-solid fa-file-signature"></i>
+                                </div>
+                                <div>
+                                    <h5 class="text-sm font-bold text-white">Form Surat Kuasa</h5>
+                                    <p class="text-xs text-slate-400 mt-0.5">Pemberi, Penerima & Dual Ttd</p>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-circle-check text-amber-400 text-xl" x-show="isKuasa"></i>
+                        </button>
+                    </div>
+                </div>
 
                 {{-- CARD 1: INFORMASI KEPALA SURAT --}}
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden mb-6">
