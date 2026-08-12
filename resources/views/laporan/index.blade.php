@@ -76,45 +76,46 @@
         </div>
     </div>
 
-    {{-- ======================= FILTER DENGAN IKON TANGGAL PUTIH ======================= --}}
-    <form method="GET" action="{{ route('laporan.index') }}" class="flex flex-wrap items-center gap-3 mb-6">
+    {{-- ======================= FILTER FORM ======================= --}}
+    <form id="formFilterLaporan" method="GET" action="{{ route('laporan.index') }}" class="flex flex-wrap items-center gap-3 mb-6">
         
         {{-- Tanggal Dari --}}
-<div class="relative min-w-[160px]">
-    <input type="date" name="dari" value="{{ request('dari', now()->startOfMonth()->format('Y-m-d')) }}"
-        class="w-full pl-3 pr-10 py-2 bg-slate-900 border border-slate-800 rounded-lg text-sm text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:outline-none [color-scheme:light] [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer">
-    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-300">
-        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 2v2M18 2v2M3 8h18M5 4h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z" />
-        </svg>
-    </div>
-</div>
+        <div class="relative min-w-[160px]">
+            <input type="date" name="dari" value="{{ request('dari', request('start_date', now()->startOfMonth()->format('Y-m-d'))) }}"
+                class="w-full pl-3 pr-10 py-2 bg-slate-900 border border-slate-800 rounded-lg text-sm text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:outline-none [color-scheme:light] [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer">
+            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-300">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 2v2M18 2v2M3 8h18M5 4h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z" />
+                </svg>
+            </div>
+        </div>
 
-<span class="text-sm text-slate-500 font-medium">s/d</span>
+        <span class="text-sm text-slate-500 font-medium">s/d</span>
 
-{{-- Tanggal Sampai --}}
-<div class="relative min-w-[160px]">
-    <input type="date" name="sampai" value="{{ request('sampai', now()->endOfMonth()->format('Y-m-d')) }}"
-        class="w-full pl-3 pr-10 py-2 bg-slate-900 border border-slate-800 rounded-lg text-sm text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:outline-none [color-scheme:light] [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer">
-    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-300">
-        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 2v2M18 2v2M3 8h18M5 4h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z" />
-        </svg>
-    </div>
-</div>
-        {{-- Select Jenis --}}
-        <select name="jenis" class="px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-sm text-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none cursor-pointer">
+        {{-- Tanggal Sampai --}}
+        <div class="relative min-w-[160px]">
+            <input type="date" name="sampai" value="{{ request('sampai', request('end_date', now()->endOfMonth()->format('Y-m-d'))) }}"
+                class="w-full pl-3 pr-10 py-2 bg-slate-900 border border-slate-800 rounded-lg text-sm text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:outline-none [color-scheme:light] [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer">
+            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-300">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 2v2M18 2v2M3 8h18M5 4h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z" />
+                </svg>
+            </div>
+        </div>
+
+        {{-- Select Jenis (Auto submit saat opsi dipilih) --}}
+        <select name="jenis" onchange="document.getElementById('formFilterLaporan').submit()" class="px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-sm text-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none cursor-pointer">
             <option value="">Semua Jenis</option>
-            <option value="masuk" @selected(request('jenis') === 'masuk')>Surat Masuk</option>
-            <option value="keluar" @selected(request('jenis') === 'keluar')>Surat Keluar</option>
+            <option value="Surat Masuk" @selected(in_array(strtolower((string)request('jenis')), ['surat masuk', 'masuk']))>Surat Masuk</option>
+            <option value="Surat Keluar" @selected(in_array(strtolower((string)request('jenis')), ['surat keluar', 'keluar']))>Surat Keluar</option>
         </select>
 
-        {{-- Select Status --}}
-        <select name="status" class="px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-sm text-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none cursor-pointer">
+        {{-- Select Status (Auto submit saat opsi dipilih) --}}
+        <select name="status" onchange="document.getElementById('formFilterLaporan').submit()" class="px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-sm text-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none cursor-pointer">
             <option value="">Semua Status</option>
-            <option value="selesai" @selected(request('status') === 'selesai')>Selesai</option>
-            <option value="proses" @selected(request('status') === 'proses')>Dalam Proses</option>
-            <option value="menunggu" @selected(request('status') === 'menunggu')>Menunggu</option>
+            <option value="Selesai" @selected(in_array(strtolower((string)request('status')), ['selesai']))>Selesai</option>
+            <option value="Dikirim" @selected(in_array(strtolower((string)request('status')), ['dikirim', 'proses']))>Dalam Proses (Dikirim)</option>
+            <option value="Draft" @selected(in_array(strtolower((string)request('status')), ['draft', 'menunggu']))>Menunggu (Draft)</option>
         </select>
 
         {{-- Tombol Filter --}}
@@ -183,7 +184,7 @@
                 Pilih file laporan yang sudah kamu unduh (PDF/Excel) untuk dilampirkan.
             </p>
 
-            <form action="{{ route('laporan.send.email') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('laporan.send.email', request()->query()) }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
                 <label class="block text-sm font-medium text-slate-300 mb-1">Alamat Email</label>
@@ -261,76 +262,92 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-
         Chart.defaults.color = '#94a3b8';
         Chart.defaults.borderColor = '#1e293b';
 
+        const chartAnimationOptions = {
+            duration: 400,
+            easing: 'easeOutQuart'
+        };
+
         // Chart Tren Surat
-        new Chart(document.getElementById('chartTren'), {
-            type: 'line',
-            data: {
-                labels: @json($labelTrenChart),
-                datasets: [
-                    {
-                        label: 'Surat Masuk',
-                        data: @json($dataTrenMasuk),
-                        borderColor: '#60a5fa',
-                        backgroundColor: '#60a5fa',
-                        tension: 0.35,
-                        pointRadius: 3,
-                    },
-                    {
-                        label: 'Surat Keluar',
-                        data: @json($dataTrenKeluar),
-                        borderColor: '#34d399',
-                        backgroundColor: '#34d399',
-                        tension: 0.35,
-                        pointRadius: 3,
-                    },
-                ],
-            },
-            options: {
-                responsive: true,
-                plugins: { legend: { position: 'top', align: 'start', labels: { boxWidth: 8, usePointStyle: true } } },
-                scales: { y: { beginAtZero: true } },
-            },
-        });
+        const ctxTren = document.getElementById('chartTren');
+        if (ctxTren) {
+            new Chart(ctxTren, {
+                type: 'line',
+                data: {
+                    labels: @json($labelTrenChart),
+                    datasets: [
+                        {
+                            label: 'Surat Masuk',
+                            data: @json($dataTrenMasuk),
+                            borderColor: '#60a5fa',
+                            backgroundColor: '#60a5fa',
+                            tension: 0.35,
+                            pointRadius: 3,
+                        },
+                        {
+                            label: 'Surat Keluar',
+                            data: @json($dataTrenKeluar),
+                            borderColor: '#34d399',
+                            backgroundColor: '#34d399',
+                            tension: 0.35,
+                            pointRadius: 3,
+                        },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    animation: chartAnimationOptions,
+                    plugins: { legend: { position: 'top', align: 'start', labels: { boxWidth: 8, usePointStyle: true } } },
+                    scales: { y: { beginAtZero: true } },
+                },
+            });
+        }
 
         // Chart Jenis Surat
-        new Chart(document.getElementById('chartJenis'), {
-            type: 'doughnut',
-            data: {
-                labels: ['Surat Masuk', 'Surat Keluar', 'Disposisi'],
-                datasets: [{
-                    data: [{{ $suratMasuk }}, {{ $suratKeluar }}, {{ $disposisi }}],
-                    backgroundColor: ['#60a5fa', '#34d399', '#a78bfa'],
-                    borderWidth: 0,
-                }],
-            },
-            options: {
-                responsive: true,
-                cutout: '65%',
-                plugins: { legend: { position: 'right', labels: { boxWidth: 8, usePointStyle: true } } },
-            },
-        });
+        const ctxJenis = document.getElementById('chartJenis');
+        if (ctxJenis) {
+            new Chart(ctxJenis, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Surat Masuk', 'Surat Keluar', 'Disposisi'],
+                    datasets: [{
+                        data: [{{ $suratMasuk }}, {{ $suratKeluar }}, {{ $disposisi }}],
+                        backgroundColor: ['#60a5fa', '#34d399', '#a78bfa'],
+                        borderWidth: 0,
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    cutout: '65%',
+                    animation: chartAnimationOptions,
+                    plugins: { legend: { position: 'right', labels: { boxWidth: 8, usePointStyle: true } } },
+                },
+            });
+        }
 
         // Chart Status Surat
-        new Chart(document.getElementById('chartStatus'), {
-            type: 'doughnut',
-            data: {
-                labels: ['Selesai', 'Dalam Proses', 'Menunggu'],
-                datasets: [{
-                    data: [{{ $selesai }}, {{ $dalamProses }}, {{ $menunggu }}],
-                    backgroundColor: ['#34d399', '#fbbf24', '#f87171'],
-                    borderWidth: 0,
-                }],
-            },
-            options: {
-                responsive: true,
-                cutout: '65%',
-                plugins: { legend: { position: 'right', labels: { boxWidth: 8, usePointStyle: true } } },
-            },
-        });
+        const ctxStatus = document.getElementById('chartStatus');
+        if (ctxStatus) {
+            new Chart(ctxStatus, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Selesai', 'Dalam Proses', 'Menunggu'],
+                    datasets: [{
+                        data: [{{ $selesai }}, {{ $dalamProses }}, {{ $menunggu }}],
+                        backgroundColor: ['#34d399', '#fbbf24', '#f87171'],
+                        borderWidth: 0,
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    cutout: '65%',
+                    animation: chartAnimationOptions,
+                    plugins: { legend: { position: 'right', labels: { boxWidth: 8, usePointStyle: true } } },
+                },
+            });
+        }
     });
 </script>
 @endpush
