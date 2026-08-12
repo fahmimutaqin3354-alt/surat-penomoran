@@ -34,6 +34,10 @@
         lampiran: '{{ old('lampiran', '') }}',
         status: '{{ old('status', 'Baru') }}',
         keterangan: '{{ old('keterangan', '') }}',
+        nama_petugas: '{{ old('nama_petugas', '') }}',
+        jabatan_petugas: '{{ old('jabatan_petugas', '') }}',
+        nama_pimpinan: '{{ old('nama_pimpinan', '') }}',
+        jabatan_pimpinan: '{{ old('jabatan_pimpinan', '') }}',
 
         updateInstansiNama(el) {
             if(el.selectedIndex >= 0) {
@@ -73,7 +77,7 @@
                 Tambah Surat Masuk
             </h1>
             <p class="text-slate-400 mt-1">
-                Isi rincian surat masuk di sebelah kiri, dokumen Lembar Agenda A4 akan ter-update secara <span class="text-indigo-400 font-semibold">Real-time</span> di sebelah kanan.
+                Form <span class="text-indigo-400 font-semibold">Surat Masuk</span> — lembar agenda A4 ter-update secara <span class="text-indigo-400 font-semibold">real-time</span>.
             </p>
         </div>
         <div class="flex items-center gap-3">
@@ -117,7 +121,7 @@
                         </div>
                     @endif
 
-                    <form action="{{ route('surat_masuk.store') }}" method="POST" enctype="multipart/form-data">
+                    <form id="form-surat-masuk" action="{{ route('surat_masuk.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -200,16 +204,6 @@
                                        class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none">
                             </div>
 
-                            {{-- Isi Ringkas --}}
-                            <div class="md:col-span-2">
-                                <label class="block text-sm font-medium text-slate-300 mb-2">
-                                    Isi Ringkas
-                                </label>
-                                <textarea name="isi_ringkas" rows="5" x-model="isi_ringkas"
-                                          placeholder="Masukkan ringkasan isi surat..."
-                                          class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
-                            </div>
-
                             {{-- Lampiran --}}
                             <div>
                                 <label class="block text-sm font-medium text-slate-300 mb-2">
@@ -233,6 +227,16 @@
                                 </select>
                             </div>
 
+                            {{-- Isi Ringkas --}}
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-slate-300 mb-2">
+                                    Isi Ringkas
+                                </label>
+                                <textarea name="isi_ringkas" rows="4" x-model="isi_ringkas"
+                                          placeholder="Masukkan ringkasan isi surat..."
+                                          class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
+                            </div>
+
                             {{-- Keterangan --}}
                             <div class="md:col-span-2">
                                 <label class="block text-sm font-medium text-slate-300 mb-2">
@@ -243,15 +247,64 @@
                                           class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
                             </div>
 
+
+
+                            {{-- Card Penandatangan --}}
+                            <div class="md:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
+                                <div class="border-b border-slate-800 px-6 py-4 bg-slate-950/50 flex items-center gap-2">
+                                    <i class="fa-solid fa-signature text-indigo-400"></i>
+                                    <h2 class="text-lg font-bold text-white">Penandatangan</h2>
+                                </div>
+                                <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                                    {{-- Petugas Agenda --}}
+                                    <div class="space-y-3">
+                                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Petugas Agenda</p>
+                                        <div>
+                                            <label class="block text-sm font-medium text-slate-300 mb-2">Nama Petugas</label>
+                                            <input type="text" name="nama_petugas" x-model="nama_petugas"
+                                                   placeholder="Nama lengkap petugas"
+                                                   form="form-surat-masuk"
+                                                   class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-slate-300 mb-2">Jabatan</label>
+                                            <input type="text" name="jabatan_petugas" x-model="jabatan_petugas"
+                                                   placeholder="Jabatan petugas"
+                                                   form="form-surat-masuk"
+                                                   class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                                        </div>
+                                    </div>
+
+                                    {{-- Pimpinan / Kepala Divisi --}}
+                                    <div class="space-y-3">
+                                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Pimpinan / Kepala Divisi</p>
+                                        <div>
+                                            <label class="block text-sm font-medium text-slate-300 mb-2">Nama Pimpinan</label>
+                                            <input type="text" name="nama_pimpinan" x-model="nama_pimpinan"
+                                                   placeholder="Nama lengkap pimpinan"
+                                                   form="form-surat-masuk"
+                                                   class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-slate-300 mb-2">Jabatan</label>
+                                            <input type="text" name="jabatan_pimpinan" x-model="jabatan_pimpinan"
+                                                   placeholder="Jabatan pimpinan"
+                                                   form="form-surat-masuk"
+                                                   class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
                             {{-- Upload File --}}
                             <div class="md:col-span-2">
                                 <label class="block text-sm font-medium text-slate-300 mb-2">
                                     Upload File Surat Fisik (PDF)
                                 </label>
                                 <input type="file" name="file_surat" accept=".pdf"
-                                       class="block w-full text-sm text-slate-300 file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-600 file:px-4 file:py-2 file:text-white hover:file:bg-indigo-700 transition cursor-pointer border border-slate-700 rounded-xl bg-slate-950 p-2">
+                                       class="block w-full text-sm text-slate-300 file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-600 file:px-4 file:py-2 file:text-white hover:file:bg-indigo-700 transition cursor-pointer border border-slate-700 rounded-xl bg-slate-950 p-2"/>
                             </div>
-
                         </div>
 
                         {{-- Action Buttons --}}
@@ -273,6 +326,8 @@
                 </div>
             </div>
 
+
+
         </div>
 
         {{-- RIGHT COLUMN: REALTIME A4 LEMBAR AGENDA PREVIEW --}}
@@ -283,11 +338,6 @@
                         <i class="fa-solid fa-eye text-emerald-400"></i>
                         Preview Agenda Surat Masuk (A4)
                     </h2>
-                    <button type="button" @click="downloadPreviewPdf()"
-                            class="px-3 py-1.5 rounded-lg bg-emerald-600/20 text-emerald-400 hover:bg-emerald-600/30 border border-emerald-500/30 text-xs font-semibold flex items-center gap-1.5 transition">
-                        <i class="fa-solid fa-download"></i>
-                        <span>Unduh PDF</span>
-                    </button>
                 </div>
 
                 {{-- A4 Container Scroll Area --}}
@@ -368,13 +418,18 @@
                         {{-- Tanda Tangan / Disposisi --}}
                         <div class="mt-8 text-xs sm:text-sm grid grid-cols-2 gap-6 text-center">
                             <div>
-                                <p class="mb-12">Diterima & Dicatat Oleh,</p>
-                                <p class="font-bold">( Petugas Agenda )</p>
+                                <p class="invisible text-xs leading-normal">placeholder</p>
+                                <p class="mb-10">Diterima &amp; Dicatat Oleh,</p>
+                                <div class="min-h-[48px]"></div>
+                                <p class="font-bold" x-text="nama_petugas || '( Petugas Agenda )'"></p>
+                                <p class="text-slate-600" x-show="jabatan_petugas" x-text="jabatan_petugas"></p>
                             </div>
                             <div>
-                                <p class="mb-1">Bandar Lampung, <span x-text="formatTanggal(tanggal_terima)"></span></p>
+                                <p class="mb-1 text-xs leading-normal">Bandar Lampung, <span x-text="formatTanggal(tanggal_terima)"></span></p>
                                 <p class="mb-10">Disetujui / Mengetahui,</p>
-                                <p class="font-bold">( Pimpinan / Kepala Divisi )</p>
+                                <div class="min-h-[48px]"></div>
+                                <p class="font-bold" x-text="nama_pimpinan || '( Pimpinan / Kepala Divisi )'"></p>
+                                <p class="text-slate-600" x-show="jabatan_pimpinan" x-text="jabatan_pimpinan"></p>
                             </div>
                         </div>
 

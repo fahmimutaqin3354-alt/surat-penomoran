@@ -320,7 +320,7 @@
                 Tambah Surat Keluar
             </h1>
             <p class="text-slate-400 mt-1">
-                Isi form otomatis untuk <span class="text-indigo-400 font-semibold">Surat Kuasa</span> atau <span class="text-emerald-400 font-semibold">Surat Umum</span>. Pratinjau surat A4 ter-update secara real-time.
+                Form <span class="text-indigo-400 font-semibold">Surat Keluar</span> — pratinjau A4 real-time.
             </p>
         </div>
         <div class="flex items-center gap-3">
@@ -347,8 +347,8 @@
                         <i :class="isKuasa ? 'fa-solid fa-file-signature' : 'fa-solid fa-file-lines'"></i>
                     </div>
                     <div>
-                        <h4 class="font-bold text-sm" x-text="isKuasa ? 'Modus Template: SURAT KUASA (Khusus Dual Penandatangan)' : 'Modus Template: SURAT UMUM (Standar Industri & Tabel Flexible)'"></h4>
-                        <p class="text-xs opacity-80" x-text="isKuasa ? 'Form mengikuti struktur dari atas ke bawah: Pemberi, Penerima, Maksud, Kegiatan, & 2 Tanda tangan' : 'Form surat standar perusahaan dengan opsi pembuat tabel fleksibel di isi surat'"></p>
+                        <h4 class="font-bold text-sm" x-text="isKuasa ? 'Surat Kuasa — Dual Penandatangan' : 'Surat Umum — Standar & Tabel Fleksibel'"></h4>
+                        <p class="text-xs opacity-80" x-text="isKuasa ? 'Pemberi → Penerima → Maksud → Kegiatan → 2 Tanda Tangan' : 'Isi surat standar dengan opsi tabel fleksibel'"></p>
                     </div>
                 </div>
             </div>
@@ -377,7 +377,6 @@
                             <span class="w-6 h-6 rounded-full bg-indigo-600 text-white text-xs flex items-center justify-center font-semibold">1</span>
                             Informasi Dasar Surat
                         </h2>
-                        <span class="text-xs text-slate-400">Pilih jenis & tanggal</span>
                     </div>
 
                     <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -464,10 +463,7 @@
                                     </option>
                                 @endforeach
                             </select>
-                            <p class="text-xs text-slate-500 mt-1.5 flex items-center gap-1.5">
-                                <i class="fa-solid fa-circle-info text-slate-600"></i>
-                                Pilihan instansi akan tampil sebagai penanda di tabel daftar surat, <strong class="text-slate-400">bukan</strong> dimasukkan ke dalam isi surat.
-                            </p>
+
                         </div>
 
                     </div>
@@ -479,9 +475,9 @@
                         <div class="border-b border-amber-500/20 px-6 py-4 bg-amber-500/5 flex items-center justify-between">
                             <h2 class="text-base font-bold text-amber-300 flex items-center gap-2">
                                 <span class="w-6 h-6 rounded-full bg-amber-500 text-slate-950 text-xs flex items-center justify-center font-bold">2</span>
-                                Form Isian Surat Kuasa (Struktur Lengkap Template)
+                                Isian Surat Kuasa
                             </h2>
-                            <span class="text-xs bg-amber-500/20 text-amber-300 px-3 py-1 rounded-full font-medium">Struktur Gambar Standard</span>
+                            <span class="text-xs bg-amber-500/20 text-amber-300 px-3 py-1 rounded-full font-medium">Surat Kuasa</span>
                         </div>
 
                         <div class="p-6 space-y-6">
@@ -490,7 +486,7 @@
                             <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-5">
                                 <h3 class="text-sm font-bold text-slate-200 mb-4 flex items-center gap-2 border-b border-slate-800 pb-2">
                                     <i class="fa-solid fa-user-tie text-amber-400"></i>
-                                    1. Data Pemberi Kuasa ("Yang bertanda tangan di bawah ini")
+                                    1. Pemberi Kuasa
                                 </h3>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
@@ -500,15 +496,15 @@
                                                class="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none">
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-medium text-slate-400 mb-1">Jabatan Pemberi Kuasa <span class="text-rose-500">*</span></label>
+                                        <label class="block text-xs font-medium text-slate-400 mb-1">Jabatan <span class="text-rose-500">*</span></label>
                                         <input type="text" name="data_khusus[pemberi][jabatan]" x-model="dataKhusus.pemberi.jabatan" required
-                                               placeholder="Contoh: Direktur PT. BEKASI TATA JAYA"
+                                               placeholder="Jabatan Pemberi Kuasa"
                                                class="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none">
                                     </div>
                                     <div class="md:col-span-2">
-                                        <label class="block text-xs font-medium text-slate-400 mb-1">Alamat Lengkap</label>
+                                        <label class="block text-xs font-medium text-slate-400 mb-1">Alamat</label>
                                         <input type="text" name="data_khusus[pemberi][alamat]" x-model="dataKhusus.pemberi.alamat"
-                                               placeholder="Contoh: Jl. Wirayuda II/G-14 RT 002 Rw 007 Cipinang Melayu Jakarta Timur"
+                                               placeholder="Alamat lengkap pemberi kuasa"
                                                class="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-white text-sm focus:ring-2 focus:ring-amber-500 outline-none">
                                     </div>
                                 </div>
@@ -518,25 +514,25 @@
                             <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-5">
                                 <h3 class="text-sm font-bold text-slate-200 mb-4 flex items-center gap-2 border-b border-slate-800 pb-2">
                                     <i class="fa-solid fa-user text-indigo-400"></i>
-                                    2. Data Penerima Kuasa ("Dengan ini memberikan kuasa kepada")
+                                    2. Penerima Kuasa
                                 </h3>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <label class="block text-xs font-medium text-slate-400 mb-1">Nama Lengkap Penerima <span class="text-rose-500">*</span></label>
+                                        <label class="block text-xs font-medium text-slate-400 mb-1">Nama Lengkap <span class="text-rose-500">*</span></label>
                                         <input type="text" name="data_khusus[penerima][nama]" x-model="dataKhusus.penerima.nama" required
-                                               placeholder="Contoh: Abdul Fitri"
+                                               placeholder="Nama penerima kuasa"
                                                class="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-white text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-medium text-slate-400 mb-1">Jabatan Penerima Kuasa <span class="text-rose-500">*</span></label>
+                                        <label class="block text-xs font-medium text-slate-400 mb-1">Jabatan <span class="text-rose-500">*</span></label>
                                         <input type="text" name="data_khusus[penerima][jabatan]" x-model="dataKhusus.penerima.jabatan" required
-                                               placeholder="Contoh: Staff / Manajer Proyek"
+                                               placeholder="Jabatan penerima kuasa"
                                                class="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-white text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
                                     </div>
                                     <div class="md:col-span-2">
-                                        <label class="block text-xs font-medium text-slate-400 mb-1">Alamat Penerima (Opsional)</label>
+                                        <label class="block text-xs font-medium text-slate-400 mb-1">Alamat (Opsional)</label>
                                         <input type="text" name="data_khusus[penerima][alamat]" x-model="dataKhusus.penerima.alamat"
-                                               placeholder="Masukkan alamat jika ada"
+                                               placeholder="Alamat penerima (jika ada)"
                                                class="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-white text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
                                     </div>
                                 </div>
@@ -546,25 +542,24 @@
                             <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-5">
                                 <h3 class="text-sm font-bold text-slate-200 mb-4 flex items-center gap-2 border-b border-slate-800 pb-2">
                                     <i class="fa-solid fa-list-check text-emerald-400"></i>
-                                    3. Maksud Kuasa & Poin-Poin Kegiatan
+                                    3. Maksud & Kegiatan
                                 </h3>
 
                                 <div class="space-y-4">
                                     <div>
-                                        <label class="block text-xs font-medium text-slate-400 mb-1">Kalimat Maksud Utama</label>
+                                        <label class="block text-xs font-medium text-slate-400 mb-1">Kalimat Maksud</label>
                                         <input type="text" name="data_khusus[pembuka_maksud]" x-model="dataKhusus.pembuka_maksud"
-                                               placeholder="Contoh: mewakili Direktur untuk melaksanakan Pembuktian Kualifikasi"
+                                               placeholder="Contoh: mewakili Direktur untuk Pembuktian Kualifikasi"
                                                class="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-white text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
-                                        <p class="text-[11px] text-slate-500 mt-1">Hasil pada surat: "Dengan ini [Kalimat Maksud Utama] dengan Kegiatan sebagai berikut :"</p>
                                     </div>
 
                                     {{-- Dynamic Kegiatan Items Builder --}}
                                     <div>
                                         <div class="flex items-center justify-between mb-2">
-                                            <label class="block text-xs font-medium text-slate-300">Daftar Poin Kegiatan / Kuasa</label>
+                                            <label class="block text-xs font-medium text-slate-300">Poin Kegiatan</label>
                                             <button type="button" @click="addKegiatanItem()"
                                                     class="text-xs bg-emerald-600/20 text-emerald-400 hover:bg-emerald-600/30 border border-emerald-500/30 px-3 py-1 rounded-lg font-semibold flex items-center gap-1 transition">
-                                                <i class="fa-solid fa-plus"></i> Tambah Poin
+                                                <i class="fa-solid fa-plus"></i> Tambah
                                             </button>
                                         </div>
 
@@ -574,7 +569,7 @@
                                                     <span class="w-7 h-9 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 flex items-center justify-center font-bold text-xs shrink-0" x-text="(idx + 1) + '.'"></span>
                                                     <input type="text" :name="'data_khusus[kegiatan_items][' + idx + ']'"
                                                            x-model="dataKhusus.kegiatan_items[idx]"
-                                                           placeholder="Contoh: Monitoring Evaluasi Dan pelaporan Pembangunan Infrastruktur Pedesaan wilayah 3"
+                                                           placeholder="Isi poin kegiatan..."
                                                            class="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-2 text-white text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
                                                     <button type="button" @click="removeKegiatanItem(idx)"
                                                             class="p-2 rounded-xl bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/30 shrink-0 transition"
@@ -587,11 +582,10 @@
                                     </div>
 
                                     <div>
-                                        <label class="block text-xs font-medium text-slate-400 mb-1">Target Dinas / Instansi / Lokasi Kegiatan</label>
+                                        <label class="block text-xs font-medium text-slate-400 mb-1">Target Instansi / Lokasi</label>
                                         <input type="text" name="data_khusus[lokasi_instansi]" x-model="dataKhusus.lokasi_instansi"
-                                               placeholder="Contoh: Dinas Bina Marga Dan Pengelolaan Sumber Daya Air Kabupaten Bekasi"
+                                               placeholder="Nama dinas / instansi tujuan"
                                                class="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-white text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
-                                        <p class="text-[11px] text-slate-500 mt-1">Hasil pada surat: "pada [Target Dinas / Instansi]" di bawah daftar kegiatan</p>
                                     </div>
                                 </div>
                             </div>
@@ -600,17 +594,17 @@
                             <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-5">
                                 <h3 class="text-sm font-bold text-slate-200 mb-4 flex items-center gap-2 border-b border-slate-800 pb-2">
                                     <i class="fa-solid fa-location-dot text-rose-400"></i>
-                                    4. Penutup & Lokasi / Tanggal Pengesahan
+                                    4. Penutup & Pengesahan
                                 </h3>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div class="md:col-span-2">
-                                        <label class="block text-xs font-medium text-slate-400 mb-1">Kalimat Penutup Surat Kuasa</label>
+                                        <label class="block text-xs font-medium text-slate-400 mb-1">Kalimat Penutup</label>
                                         <input type="text" name="data_khusus[penutup]" x-model="dataKhusus.penutup"
                                                placeholder="Demikian Surat Kuasa ini dibuat untuk dipergunakan sebagaimana mestinya."
                                                class="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-white text-sm focus:ring-2 focus:ring-rose-500 outline-none">
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-medium text-slate-400 mb-1">Kota & Tanggal Ttd (Sisi Kanan Atas Ttd)</label>
+                                        <label class="block text-xs font-medium text-slate-400 mb-1">Kota & Tanggal TTD</label>
                                         <input type="text" name="data_khusus[kota_tanggal]" x-model="dataKhusus.kota_tanggal"
                                                placeholder="Contoh: Bekasi, 03 Mei 2016"
                                                class="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-white text-sm focus:ring-2 focus:ring-rose-500 outline-none">
@@ -628,9 +622,9 @@
                         <div class="border-b border-slate-800 px-6 py-4 bg-slate-950/50 flex items-center justify-between">
                             <h2 class="text-base font-bold text-white flex items-center gap-2">
                                 <span class="w-6 h-6 rounded-full bg-indigo-600 text-white text-xs flex items-center justify-center font-semibold">2</span>
-                                Isi Konten Surat Umum & Builder Tabel Fleksibel
+                                Isi Surat & Tabel
                             </h2>
-                            <span class="text-xs bg-indigo-500/20 text-indigo-300 px-3 py-1 rounded-full font-medium">Standard Perusahaan</span>
+                            <span class="text-xs bg-indigo-500/20 text-indigo-300 px-3 py-1 rounded-full font-medium">Surat Umum</span>
                         </div>
 
                         <div class="p-6 space-y-5">
@@ -638,30 +632,30 @@
                             {{-- Tujuan Penerima Detail --}}
                             <div>
                                 <label class="block text-sm font-medium text-slate-300 mb-2">
-                                    Tujuan Penerima Detail (Yth.) <span class="text-rose-500">*</span>
+                                    Tujuan (Yth.) <span class="text-rose-500">*</span>
                                 </label>
                                 <input type="text" name="tujuan" x-model="tujuan" required
-                                       placeholder="Contoh: Kepada Yth. Bapak / Ibu Pimpinan PT Jaya Abadi"
+                                       placeholder="Contoh: Kepada Yth. Pimpinan PT Jaya Abadi"
                                        class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none">
                             </div>
 
                             {{-- Perihal --}}
                             <div>
                                 <label class="block text-sm font-medium text-slate-300 mb-2">
-                                    Perihal Surat <span class="text-rose-500">*</span>
+                                    Perihal <span class="text-rose-500">*</span>
                                 </label>
                                 <input type="text" name="perihal" x-model="perihal" required
-                                       placeholder="Masukkan perihal surat (misal: Undangan Rapat / Permohonan Izin)"
+                                       placeholder="Perihal surat"
                                        class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none">
                             </div>
 
                             {{-- Isi Utama Surat --}}
                             <div>
                                 <label class="block text-sm font-medium text-slate-300 mb-2">
-                                    Isi Utama / Paragraf Pembuka Surat <span class="text-rose-500">*</span>
+                                    Isi Surat <span class="text-rose-500">*</span>
                                 </label>
                                 <textarea name="isi_surat" rows="6" x-model="isi_surat" required
-                                          placeholder="Tuliskan isi surat lengkap di sini..."
+                                          placeholder="Tuliskan isi surat di sini..."
                                           class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
                             </div>
 
@@ -674,27 +668,27 @@
                                                class="w-5 h-5 rounded border-slate-700 bg-slate-900 text-indigo-600 focus:ring-indigo-500">
                                         <label for="has_table_check" class="font-bold text-sm text-slate-200 cursor-pointer flex items-center gap-2">
                                             <i class="fa-solid fa-table text-indigo-400"></i>
-                                            Sertakan Tabel Data Fleksibel Dalam Surat
+                                            Sertakan Tabel Dalam Surat
                                         </label>
                                     </div>
-                                    <span class="text-xs bg-indigo-500/10 text-indigo-400 px-2.5 py-1 rounded-lg border border-indigo-500/20 font-medium">Fitur Opsional</span>
+                                    <span class="text-xs bg-indigo-500/10 text-indigo-400 px-2.5 py-1 rounded-lg border border-indigo-500/20 font-medium">Opsional</span>
                                 </div>
 
                                 <div x-show="dataKhusus.has_table" x-cloak class="space-y-4 pt-2">
                                     <div>
-                                        <label class="block text-xs font-medium text-slate-400 mb-1">Judul Tabel / Pengantar (Opsional)</label>
+                                        <label class="block text-xs font-medium text-slate-400 mb-1">Judul Tabel (Opsional)</label>
                                         <input type="text" name="data_khusus[table_title]" x-model="dataKhusus.table_title"
-                                               placeholder="Contoh: Berikut daftar rincian barang yang dipesan:"
+                                               placeholder="Pengantar tabel, misal: Berikut rinciannya:"
                                                class="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-2 text-white text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
                                     </div>
 
                                     {{-- Headers Configurator --}}
                                     <div>
                                         <div class="flex items-center justify-between mb-2">
-                                            <label class="block text-xs font-medium text-slate-300">Kolom Header Tabel</label>
+                                            <label class="block text-xs font-medium text-slate-300">Header Kolom</label>
                                             <button type="button" @click="addTableHeader()"
                                                     class="text-xs bg-indigo-600/20 text-indigo-400 hover:bg-indigo-600/30 border border-indigo-500/30 px-3 py-1 rounded-lg font-semibold flex items-center gap-1">
-                                                <i class="fa-solid fa-plus"></i> Tambah Kolom
+                                                <i class="fa-solid fa-plus"></i> Tambah
                                             </button>
                                         </div>
                                         <div class="flex flex-wrap gap-2">
@@ -715,10 +709,10 @@
                                     {{-- Rows Configurator --}}
                                     <div>
                                         <div class="flex items-center justify-between mb-2">
-                                            <label class="block text-xs font-medium text-slate-300">Baris Data Tabel</label>
+                                            <label class="block text-xs font-medium text-slate-300">Baris Data</label>
                                             <button type="button" @click="addTableRow()"
                                                     class="text-xs bg-emerald-600/20 text-emerald-400 hover:bg-emerald-600/30 border border-emerald-500/30 px-3 py-1 rounded-lg font-semibold flex items-center gap-1">
-                                                <i class="fa-solid fa-plus"></i> Tambah Baris Data
+                                                <i class="fa-solid fa-plus"></i> Tambah Baris
                                             </button>
                                         </div>
 
@@ -755,9 +749,9 @@
                                     </div>
 
                                     <div>
-                                        <label class="block text-xs font-medium text-slate-400 mb-1">Paragraf Penjelas Setelah Tabel (Opsional)</label>
+                                        <label class="block text-xs font-medium text-slate-400 mb-1">Teks Setelah Tabel (Opsional)</label>
                                         <textarea name="data_khusus[isi_setelah_tabel]" rows="2" x-model="dataKhusus.isi_setelah_tabel"
-                                                  placeholder="Tulis penjelasan lanjutan setelah tabel jika ada..."
+                                                  placeholder="Penjelasan lanjutan setelah tabel..."
                                                   class="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-2 text-white text-sm focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
                                     </div>
                                 </div>
@@ -772,9 +766,9 @@
                     <div class="border-b border-slate-800 px-6 py-4 bg-slate-950/50 flex items-center justify-between">
                         <h2 class="text-base font-bold text-white flex items-center gap-2">
                             <span class="w-6 h-6 rounded-full bg-indigo-600 text-white text-xs flex items-center justify-center font-semibold">3</span>
-                            Pengesahan & Penandatangan
+                            Penandatangan
                         </h2>
-                        <span class="text-xs text-slate-400" x-text="isKuasa ? '2 Penandatangan (Dual)' : '1 Penandatangan Utama'"></span>
+                        <span class="text-xs text-slate-400" x-text="isKuasa ? 'Dual TTD' : 'TTD Tunggal'"></span>
                     </div>
 
                     <div class="p-6">

@@ -41,6 +41,10 @@ class SuratMasuk extends Model
         'file_surat',
         'keterangan',
         'status',
+        'nama_petugas',
+        'jabatan_petugas',
+        'nama_pimpinan',
+        'jabatan_pimpinan',
     ];
 
     /**
