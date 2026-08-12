@@ -247,6 +247,54 @@
                                           class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-amber-500 outline-none"></textarea>
                             </div>
 
+                           {{-- Card Penandatangan --}}
+                            <div class="md:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
+                                <div class="border-b border-slate-800 px-6 py-4 bg-slate-950/50 flex items-center gap-2">
+                                    <i class="fa-solid fa-signature text-indigo-400"></i>
+                                    <h2 class="text-lg font-bold text-white">Penandatangan</h2>
+                                </div>
+                                <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                                    {{-- Petugas Agenda --}}
+                                    <div class="space-y-3">
+                                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Petugas Agenda</p>
+                                        <div>
+                                            <label class="block text-sm font-medium text-slate-300 mb-2">Nama Petugas</label>
+                                            <input type="text" name="nama_petugas" x-model="nama_petugas"
+                                                   placeholder="Nama lengkap petugas"
+                                                   form="form-surat-masuk"
+                                                   class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-slate-300 mb-2">Jabatan</label>
+                                            <input type="text" name="jabatan_petugas" x-model="jabatan_petugas"
+                                                   placeholder="Jabatan petugas"
+                                                   form="form-surat-masuk"
+                                                   class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                                        </div>
+                                    </div>
+
+                                    {{-- Pimpinan / Kepala Divisi --}}
+                                    <div class="space-y-3">
+                                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Pimpinan / Kepala Divisi</p>
+                                        <div>
+                                            <label class="block text-sm font-medium text-slate-300 mb-2">Nama Pimpinan</label>
+                                            <input type="text" name="nama_pimpinan" x-model="nama_pimpinan"
+                                                   placeholder="Nama lengkap pimpinan"
+                                                   form="form-surat-masuk"
+                                                   class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-slate-300 mb-2">Jabatan</label>
+                                            <input type="text" name="jabatan_pimpinan" x-model="jabatan_pimpinan"
+                                                   placeholder="Jabatan pimpinan"
+                                                   form="form-surat-masuk"
+                                                   class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
                             {{-- Upload File --}}
                             <div class="md:col-span-2">
                                 <label class="block text-sm font-medium text-slate-300 mb-2">
@@ -282,54 +330,7 @@
                 </div>
             </div>
 
-            {{-- Card Penandatangan --}}
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
-                <div class="border-b border-slate-800 px-6 py-4 bg-slate-950/50 flex items-center gap-2">
-                    <i class="fa-solid fa-signature text-amber-400"></i>
-                    <h2 class="text-lg font-bold text-white">Penandatangan</h2>
-                </div>
-                <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-5">
 
-                    {{-- Petugas Agenda --}}
-                    <div class="space-y-3">
-                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Petugas Agenda</p>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-300 mb-2">Nama Petugas</label>
-                            <input type="text" name="nama_petugas" x-model="nama_petugas"
-                                   placeholder="Nama lengkap petugas"
-                                   form="form-surat-masuk"
-                                   class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-amber-500 outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-300 mb-2">Jabatan</label>
-                            <input type="text" name="jabatan_petugas" x-model="jabatan_petugas"
-                                   placeholder="Jabatan petugas"
-                                   form="form-surat-masuk"
-                                   class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-amber-500 outline-none">
-                        </div>
-                    </div>
-
-                    {{-- Pimpinan / Kepala Divisi --}}
-                    <div class="space-y-3">
-                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Pimpinan / Kepala Divisi</p>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-300 mb-2">Nama Pimpinan</label>
-                            <input type="text" name="nama_pimpinan" x-model="nama_pimpinan"
-                                   placeholder="Nama lengkap pimpinan"
-                                   form="form-surat-masuk"
-                                   class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-amber-500 outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-300 mb-2">Jabatan</label>
-                            <input type="text" name="jabatan_pimpinan" x-model="jabatan_pimpinan"
-                                   placeholder="Jabatan pimpinan"
-                                   form="form-surat-masuk"
-                                   class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-amber-500 outline-none">
-                        </div>
-                    </div>
-
-                </div>
-            </div>
 
         </div>
 
