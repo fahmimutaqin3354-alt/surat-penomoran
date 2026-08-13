@@ -1125,7 +1125,7 @@
                     <div>
                         <label class="block text-xs font-medium text-slate-400 mb-1">Kode Surat</label>
                         <input type="text" x-model="kode_surat" required placeholder="Contoh: SK"
-                               class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-white outline-none">
+                               class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-white uppercase outline-none">
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-slate-400 mb-1">Tipe Form Template</label>
@@ -1134,6 +1134,12 @@
                             <option value="kuasa">Surat Kuasa (Dual Penandatangan & Poin Kegiatan)</option>
                         </select>
                     </div>
+                    <template x-if="errorMessage">
+                        <div class="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-medium flex items-center gap-2">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            <span x-text="errorMessage"></span>
+                        </div>
+                    </template>
                 </div>
                 <div class="mt-6 flex justify-end gap-3">
                     <button type="button" @click="closeModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-medium">Batal</button>
@@ -1151,14 +1157,23 @@ function modalJenisSurat() {
         nama: '',
         kode_surat: '',
         form_type: 'umum',
-        openModal() { this.isOpen = true; },
-        closeModal() { this.isOpen = false; },
+        errorMessage: '',
+        openModal() {
+            this.isOpen = true;
+            this.errorMessage = '';
+        },
+        closeModal() {
+            this.isOpen = false;
+            this.errorMessage = '';
+        },
         async submitForm() {
+            this.errorMessage = '';
             try {
                 const res = await fetch("{{ route('jenis_surat.store') }}", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
+                        "Accept": "application/json",
                         "X-CSRF-TOKEN": "{{ csrf_token() }}"
                     },
                     body: JSON.stringify({
@@ -1167,10 +1182,56 @@ function modalJenisSurat() {
                         form_type: this.form_type
                     })
                 });
-                if (res.ok) {
-                    window.location.reload();
+
+                const data = await res.json();
+
+                if (res.ok && data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: data.message || 'Jenis surat berhasil ditambahkan.',
+                        background: '#0f172a',
+                        color: '#f8fafc',
+                        confirmButtonColor: '#6366f1'
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    let msg = 'Gagal menambahkan jenis surat.';
+                    if (data.errors) {
+                        if (data.errors.kode_surat) {
+                            msg = data.errors.kode_surat[0];
+                        } else if (data.errors.nama) {
+                            msg = data.errors.nama[0];
+                        } else {
+                            msg = Object.values(data.errors).flat().join('\n');
+                        }
+                    } else if (data.message) {
+                        msg = data.message;
+                    }
+
+                    this.errorMessage = msg;
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal Simpan!',
+                        text: msg,
+                        background: '#0f172a',
+                        color: '#f8fafc',
+                        confirmButtonColor: '#e11d48'
+                    });
                 }
-            } catch(e) { console.error(e); }
+            } catch(e) {
+                console.error(e);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Kesalahan Sistem',
+                    text: 'Terjadi kesalahan saat menghubungkan ke server.',
+                    background: '#0f172a',
+                    color: '#f8fafc',
+                    confirmButtonColor: '#e11d48'
+                });
+            }
         }
     }
 }

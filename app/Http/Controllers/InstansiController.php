@@ -66,6 +66,6 @@ class InstansiController extends Controller
 
         return redirect()
             ->route('instansi.index')
-            ->with('success', 'Data instansi berhasil dihapus.');
+            ->with('success', 'Data instansi berhasil dipindahkan ke tempat sampah.');
     }
 }

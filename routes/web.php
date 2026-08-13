@@ -75,6 +75,10 @@ Route::get('/arsip/export', [ArsipController::class, 'ekspor'])->name('arsip.exp
     Route::get('/laporan/unduh-publik', [LaporanController::class, 'exportPdfPublic'])
     ->name('laporan.export.pdf.public')
     ->middleware('signed');
+    // Jenis Surat
+    Route::post('/jenis_surat/store', [JenisSuratController::class, 'store'])
+        ->name('jenis_surat.store');
+    Route::resource('jenis_surat', JenisSuratController::class)->except(['create', 'store']);
 
      // RecycleBin
     Route::get('/recycle-bin', [RecycleBinController::class, 'index'])->name('recycle-bin.index');
@@ -82,15 +86,16 @@ Route::get('/arsip/export', [ArsipController::class, 'ekspor'])->name('arsip.exp
     Route::post('/recycle-bin/surat-keluar/{id}/restore', [RecycleBinController::class, 'restoreSuratKeluar'])->name('recycle-bin.restore.keluar');
     Route::post('/recycle-bin/surat-masuk/{id}/restore', [RecycleBinController::class, 'restoreSuratMasuk'])->name('recycle-bin.restore.masuk');
     Route::post('/recycle-bin/arsip/{id}/restore', [RecycleBinController::class, 'restoreArsip'])->name('recycle-bin.restore.arsip');
+    Route::post('/recycle-bin/instansi/{id}/restore', [RecycleBinController::class, 'restoreInstansi'])->name('recycle-bin.restore.instansi');
+    Route::post('/recycle-bin/jenis-surat/{id}/restore', [RecycleBinController::class, 'restoreJenisSurat'])->name('recycle-bin.restore.jenis_surat');
 
     Route::delete('/recycle-bin/surat-keluar/{id}/force', [RecycleBinController::class, 'forceDeleteSuratKeluar'])->name('recycle-bin.force.keluar');
     Route::delete('/recycle-bin/surat-masuk/{id}/force', [RecycleBinController::class, 'forceDeleteSuratMasuk'])->name('recycle-bin.force.masuk');
     Route::delete('/recycle-bin/arsip/{id}/force', [RecycleBinController::class, 'forceDeleteArsip'])->name('recycle-bin.force.arsip');
-
-
-
-
+    Route::delete('/recycle-bin/instansi/{id}/force', [RecycleBinController::class, 'forceDeleteInstansi'])->name('recycle-bin.force.instansi');
+    Route::delete('/recycle-bin/jenis-surat/{id}/force', [RecycleBinController::class, 'forceDeleteJenisSurat'])->name('recycle-bin.force.jenis_surat');
 
 });
 
 require __DIR__.'/auth.php';
+
