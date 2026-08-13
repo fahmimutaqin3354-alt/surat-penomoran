@@ -1115,17 +1115,34 @@
             <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
                 <i class="fa-solid fa-plus-circle text-emerald-400"></i> Tambah Jenis Surat Baru
             </h3>
+
+            {{-- Error Alert --}}
+            <div x-show="errors.length > 0" x-cloak
+                 class="mb-4 rounded-xl bg-rose-950/60 border border-rose-700 px-4 py-3 text-sm text-rose-300">
+                <p class="font-semibold mb-1 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-exclamation"></i> Gagal menyimpan:
+                </p>
+                <ul class="list-disc list-inside space-y-0.5">
+                    <template x-for="err in errors" :key="err">
+                        <li x-text="err"></li>
+                    </template>
+                </ul>
+            </div>
+
             <form @submit.prevent="submitForm">
                 <div class="space-y-4">
                     <div>
                         <label class="block text-xs font-medium text-slate-400 mb-1">Nama Jenis Surat</label>
-                        <input type="text" x-model="nama" required placeholder="Contoh: Surat Kuasa Khusus"
-                               class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-white outline-none">
+                        <input type="text" x-model="nama" required placeholder="Contoh: Surat Pengantar"
+                               :class="fieldHasError('nama') ? 'border-rose-500' : 'border-slate-700'"
+                               class="w-full rounded-xl border bg-slate-950 px-4 py-2.5 text-white outline-none focus:ring-2 focus:ring-emerald-500">
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-slate-400 mb-1">Kode Surat</label>
-                        <input type="text" x-model="kode_surat" required placeholder="Contoh: SK"
-                               class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-white outline-none">
+                        <input type="text" x-model="kode_surat" required placeholder="Contoh: SPen"
+                               :class="fieldHasError('kode_surat') ? 'border-rose-500' : 'border-slate-700'"
+                               class="w-full rounded-xl border bg-slate-950 px-4 py-2.5 text-white uppercase outline-none focus:ring-2 focus:ring-emerald-500">
+                        <p class="text-xs text-slate-500 mt-1">Kode harus unik. Cek dropdown agar tidak konflik dengan kode yang sudah ada.</p>
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-slate-400 mb-1">Tipe Form Template</label>
@@ -1137,7 +1154,11 @@
                 </div>
                 <div class="mt-6 flex justify-end gap-3">
                     <button type="button" @click="closeModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-medium">Batal</button>
-                    <button type="submit" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold">Simpan</button>
+                    <button type="submit" :disabled="isLoading"
+                            class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold flex items-center gap-2 disabled:opacity-60">
+                        <i class="fa-solid fa-spinner fa-spin" x-show="isLoading"></i>
+                        <span x-text="isLoading ? 'Menyimpan...' : 'Simpan'"></span>
+                    </button>
                 </div>
             </form>
         </div>
@@ -1148,12 +1169,34 @@
 function modalJenisSurat() {
     return {
         isOpen: false,
+        isLoading: false,
         nama: '',
         kode_surat: '',
         form_type: 'umum',
-        openModal() { this.isOpen = true; },
-        closeModal() { this.isOpen = false; },
+        errors: [],
+        errorFields: {},
+
+        openModal() {
+            this.isOpen = true;
+            this.errors = [];
+            this.errorFields = {};
+            this.nama = '';
+            this.kode_surat = '';
+            this.form_type = 'umum';
+        },
+        closeModal() {
+            this.isOpen = false;
+            this.errors = [];
+        },
+        fieldHasError(field) {
+            return this.errorFields[field] !== undefined;
+        },
+
         async submitForm() {
+            this.isLoading = true;
+            this.errors = [];
+            this.errorFields = {};
+
             try {
                 const res = await fetch("{{ route('jenis_surat.store') }}", {
                     method: "POST",
@@ -1167,10 +1210,38 @@ function modalJenisSurat() {
                         form_type: this.form_type
                     })
                 });
-                if (res.ok) {
-                    window.location.reload();
+
+                const json = await res.json();
+
+                if (res.ok && json.success) {
+                    // Tambah option baru ke dropdown tanpa reload
+                    const selectEl = document.getElementById('jenis_surat');
+                    if (selectEl) {
+                        const newOption = document.createElement('option');
+                        newOption.value = json.data.nama;
+                        newOption.setAttribute('data-kode', json.data.kode_surat);
+                        newOption.setAttribute('data-form', json.data.form_type);
+                        newOption.text = json.data.nama + ' (' + json.data.kode_surat + ')';
+                        selectEl.appendChild(newOption);
+
+                        // Auto-pilih jenis surat yang baru
+                        selectEl.value = json.data.nama;
+                        selectEl.dispatchEvent(new Event('change'));
+                    }
+                    this.closeModal();
+                } else if (res.status === 422 && json.errors) {
+                    // Tampilkan error validasi dari Laravel
+                    this.errorFields = json.errors;
+                    this.errors = Object.values(json.errors).flat();
+                } else {
+                    this.errors = [json.message || 'Terjadi kesalahan. Silakan coba lagi.'];
                 }
-            } catch(e) { console.error(e); }
+            } catch(e) {
+                console.error(e);
+                this.errors = ['Terjadi kesalahan koneksi. Silakan coba lagi.'];
+            } finally {
+                this.isLoading = false;
+            }
         }
     }
 }
