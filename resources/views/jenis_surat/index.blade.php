@@ -58,7 +58,6 @@
                         <th>Kode Surat</th>
                         <th>Nama Jenis Surat</th>
                         <th>Tipe Form</th>
-                        <th>Template</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -82,9 +81,6 @@
                                     Umum
                                 </span>
                             @endif
-                        </td>
-                        <td class="text-slate-400 max-w-xs">
-                            <span title="{{ $item->template }}">{{ $item->template ? Str::limit($item->template, 40) : '—' }}</span>
                         </td>
                         <td class="text-center">
                             <div class="flex items-center justify-center gap-2">
@@ -147,9 +143,9 @@ $(document).ready(function () {
         searching: true,
         info: true,
         columnDefs: [
-            { orderable: false, targets: [0, 5] },
-            { className: 'text-center', targets: [0, 5] },
-            { className: 'text-left', targets: [1, 2, 3, 4] },
+            { orderable: false, targets: [0, 4] },
+            { className: 'text-center', targets: [0, 4] },
+            { className: 'text-left', targets: [1, 2, 3] },
         ],
         language: {
             search: '🔍 Cari:',

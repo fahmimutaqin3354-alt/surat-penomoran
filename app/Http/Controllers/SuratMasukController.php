@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Arsip;
 use App\Models\Instansi;
+use App\Models\JenisSurat;
 use App\Models\SuratMasuk;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -53,12 +54,14 @@ class SuratMasukController extends Controller
 
     $nomorAgenda = 'AGD-' . str_pad($angka, 4, '0', STR_PAD_LEFT);
 
-   $instansis = Instansi::orderBy('nama_instansi')->get();
+    $instansis = Instansi::orderBy('nama_instansi')->get();
+    $jenisSurats = JenisSurat::orderBy('nama')->get();
 
-return view('surat_masuk.create', compact(
-    'nomorAgenda',
-    'instansis'
-));
+    return view('surat_masuk.create', compact(
+        'nomorAgenda',
+        'instansis',
+        'jenisSurats'
+    ));
 }
 /**
  * Simpan surat masuk
@@ -186,10 +189,12 @@ public function edit($id)
     $surat = SuratMasuk::findOrFail($id);
 
     $instansis = Instansi::orderBy('nama_instansi')->get();
+    $jenisSurats = JenisSurat::orderBy('nama')->get();
 
     return view('surat_masuk.edit', compact(
         'surat',
-        'instansis'
+        'instansis',
+        'jenisSurats'
     ));
 }
 /**
