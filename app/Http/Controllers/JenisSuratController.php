@@ -46,9 +46,12 @@ class JenisSuratController extends Controller
         ]);
 
         return response()->json([
-            'success' => true,
-            'message' => 'Jenis surat berhasil ditambahkan.',
-            'data' => $jenis,
+            'success'    => true,
+            'message'    => 'Jenis surat berhasil ditambahkan.',
+            'id'         => $jenis->id,
+            'nama'       => $jenis->nama,
+            'kode_surat' => $jenis->kode_surat,
+            'form_type'  => $jenis->form_type,
         ]);
     }
 

@@ -381,46 +381,7 @@
                 <input type="hidden" name="surat_masuk_id" value="{{ old('surat_masuk_id', $suratMasuk->id ?? '') }}">
                 <input type="hidden" name="tipe_form" :value="tipe_form">
 
-                {{-- CARD UTAMA: PEMILIH TIPE FORM SURAT --}}
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden mb-6 p-5">
-                    <label class="block text-sm font-bold text-white mb-3 flex items-center gap-2">
-                        <i class="fa-solid fa-sliders text-indigo-400"></i>
-                        Pilih Tipe Form Pembuatan Surat <span class="text-rose-500">*</span>
-                    </label>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <button type="button" @click="setTipeForm('umum')"
-                                class="p-4 rounded-xl border-2 text-left transition flex items-center justify-between cursor-pointer"
-                                :class="!isKuasa ? 'bg-indigo-600/20 border-indigo-500 text-white font-semibold shadow-lg shadow-indigo-500/10' : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:border-slate-700'">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-lg"
-                                     :class="!isKuasa ? 'bg-indigo-500 text-white' : 'bg-slate-800 text-slate-400'">
-                                    <i class="fa-solid fa-file-lines"></i>
-                                </div>
-                                <div>
-                                    <h5 class="text-sm font-bold text-white">Form Surat Umum</h5>
-                                    <p class="text-xs text-slate-400 mt-0.5">Surat standar & tabel fleksibel</p>
-                                </div>
-                            </div>
-                            <i class="fa-solid fa-circle-check text-indigo-400 text-xl" x-show="!isKuasa"></i>
-                        </button>
 
-                        <button type="button" @click="setTipeForm('kuasa')"
-                                class="p-4 rounded-xl border-2 text-left transition flex items-center justify-between cursor-pointer"
-                                :class="isKuasa ? 'bg-amber-600/20 border-amber-500 text-white font-semibold shadow-lg shadow-amber-500/10' : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:border-slate-700'">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-lg"
-                                     :class="isKuasa ? 'bg-amber-500 text-slate-950' : 'bg-slate-800 text-slate-400'">
-                                    <i class="fa-solid fa-file-signature"></i>
-                                </div>
-                                <div>
-                                    <h5 class="text-sm font-bold text-white">Form Surat Kuasa</h5>
-                                    <p class="text-xs text-slate-400 mt-0.5">Pemberi, Penerima & Dual Ttd</p>
-                                </div>
-                            </div>
-                            <i class="fa-solid fa-circle-check text-amber-400 text-xl" x-show="isKuasa"></i>
-                        </button>
-                    </div>
-                </div>
 
                 {{-- CARD 1: INFORMASI KEPALA SURAT --}}
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden mb-6">
@@ -925,10 +886,10 @@
 
                 {{-- A4 Container Scroll Area --}}
                 <div class="p-6 bg-slate-950 max-h-[85vh] overflow-y-auto flex justify-center">
-                    <div id="surat-keluar-preview-paper" class="a4-paper p-10 text-slate-900 relative text-sm sm:text-base leading-relaxed">
+                    <div id="surat-keluar-preview-paper" class="a4-paper p-10 text-slate-900 relative text-sm sm:text-base leading-relaxed flex flex-col">
 
                         {{-- Kop Surat Header --}}
-                        <div class="mb-6 border-b-2 border-black pb-3">
+                        <div>
                             <img src="{{ asset('image/kop-surat.png') }}" alt="Kop Surat" class="w-full h-auto block"
                                  onerror="this.style.display='none'; document.getElementById('kop-fallback').style.display='block';">
                             <div id="kop-fallback" style="display:none;" class="text-center font-bold text-lg border-b-2 border-black pb-2">
@@ -943,7 +904,7 @@
                         <template x-if="isKuasa">
                             <div>
                                 <div class="text-center my-4">
-                                    <h2 class="font-bold text-lg uppercase underline tracking-wider">SURAT KUASA</h2>
+                                    <h2 class="font-bold text-lg">SURAT KUASA</h2>
                                     <p class="text-sm mt-1">No : <span x-text="previewNomor"></span></p>
                                 </div>
 
@@ -1016,7 +977,7 @@
                         <template x-if="!isKuasa">
                             <div>
                                 <div class="text-center my-4">
-                                    <h2 class="font-bold text-lg uppercase underline tracking-wider" x-text="jenis_surat ? jenis_surat.toUpperCase() : 'SURAT KELUAR'"></h2>
+                                    <h2 class="font-bold text-lg" x-text="jenis_surat ? jenis_surat.toUpperCase() : 'SURAT KELUAR'"></h2>
                                 </div>
 
                                 <div class="text-right my-4 text-sm font-medium">
@@ -1091,9 +1052,9 @@
                         </template>
 
                         {{-- Footer --}}
-                        <div class="mt-16 pt-3 border-t border-slate-300 text-center text-[10px] text-slate-500">
-                            Dokumen ini dibuat melalui <strong>Sistem Arsip Surat PT Microdata Indonesia</strong>
-                        </div>
+<div class="mt-auto pt-3 border-t border-slate-300 text-center text-[10px] text-slate-500">
+    Dokumen ini dibuat melalui <strong>Sistem Arsip Surat PT Microdata Indonesia</strong>
+</div>
 
                     </div>
                 </div>

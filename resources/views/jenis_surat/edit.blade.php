@@ -80,18 +80,6 @@
                 @enderror
             </div>
 
-            {{-- Template (Opsional) --}}
-            <div>
-                <label for="template" class="block text-sm font-medium text-slate-300 mb-2">
-                    Template / Catatan Tambahan (Opsional)
-                </label>
-                <textarea name="template"
-                          id="template"
-                          rows="3"
-                          class="w-full px-4 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700/80 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all text-sm"
-                          placeholder="Tambahkan informasi atau template bawaan jenis surat...">{{ old('template', $jenisSurat->template) }}</textarea>
-            </div>
-
             {{-- Action Buttons --}}
             <div class="pt-4 flex items-center justify-end gap-3 border-t border-slate-800/80">
                 <a href="{{ route('jenis_surat.index') }}"

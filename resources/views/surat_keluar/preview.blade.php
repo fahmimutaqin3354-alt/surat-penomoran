@@ -38,16 +38,18 @@
             align-items: center;
         }
 
-        .paper {
-            width: 210mm;
-            min-height: 297mm;
-            background: white;
-            margin: 0 auto 50px auto;
-            padding: 20mm;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
-            line-height: 1.5;
-            font-size: 12pt;
-        }
+       .paper {
+    width: 210mm;
+    min-height: 297mm;
+    background: white;
+    margin: 0 auto 50px auto;
+    padding: 20mm 20mm 5mm 20mm;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+    line-height: 1.5;
+    font-size: 12pt;
+    display: flex;
+    flex-direction: column;
+}
 
         table {
             width: 100%;
@@ -117,9 +119,9 @@
     </div>
 
     {{-- KERTAS A4 PREVIEW --}}
-    <div class="paper">
+   <div class="paper" style="display:flex; flex-direction:column;">
         {{-- Kop Surat --}}
-        <div style="margin-bottom: 20px;" class="border-b-2 border-black pb-3">
+        <div style="margin-bottom: 20px;">
             <img src="{{ asset('image/kop-surat.png') }}" alt="Kop Surat" style="width:100%; height:auto; display:block;"
                  onerror="this.style.display='none'; document.getElementById('kop-fallback').style.display='block';">
             <div id="kop-fallback" style="display:none;" class="text-center font-bold text-lg border-b-2 border-black pb-2">
@@ -130,7 +132,7 @@
 
         @php
             $dk = $surat->data_khusus ?? [];
-            $isKuasa = (isset($surat->jenisSurat) && $surat->jenisSurat->form_type === 'kuasa') 
+            $isKuasa = (isset($surat->jenisSurat) && $surat->jenisSurat->form_type === 'kuasa')
                 || Str::contains(strtolower($surat->jenis_surat), 'kuasa')
                 || !empty($dk['pemberi']);
         @endphp
@@ -140,8 +142,8 @@
                 $pemberi = $dk['pemberi'] ?? [];
                 $penerima = $dk['penerima'] ?? [];
                 $pembukaMaksud = $dk['pembuka_maksud'] ?? ($dk['maksud'] ?? 'mewakili Direktur untuk melaksanakan Pembuktian Kualifikasi');
-                $kegiatanItems = is_array($dk['kegiatan_items'] ?? null) 
-                    ? array_values(array_filter($dk['kegiatan_items'])) 
+                $kegiatanItems = is_array($dk['kegiatan_items'] ?? null)
+                    ? array_values(array_filter($dk['kegiatan_items']))
                     : (is_array($dk['kegiatan'] ?? null) ? $dk['kegiatan'] : []);
                 $lokasiInstansi = $dk['lokasi_instansi'] ?? '';
                 $penutupText = $dk['penutup'] ?? 'Demikian Surat Kuasa ini dibuat untuk dipergunakan sebagaimana mestinya.';
@@ -150,7 +152,7 @@
 
             {{-- SURAT KUASA HEADER --}}
             <div style="text-align:center; margin: 15px 0 20px 0;">
-                <h2 style="font-size:16pt; font-weight:bold; text-decoration:underline; text-transform:uppercase; margin:0;">
+                <h2 style="font-size:16pt; font-weight:bold;text-transform:uppercase; margin:0;">
                     SURAT KUASA
                 </h2>
                 <p style="margin:4px 0 0 0; font-size:12pt;">No : {{ $surat->nomor_surat }}</p>
@@ -176,7 +178,7 @@
                 <p style="margin-bottom:6px;">
                     Dengan ini {{ $pembukaMaksud }} dengan Kegiatan sebagai berikut :
                 </p>
-                
+
                 @if(count($kegiatanItems) > 0)
                     <ol style="margin-top:4px; margin-bottom:10px; padding-left:30px;">
                         @foreach($kegiatanItems as $item)
@@ -222,7 +224,7 @@
         @else
             {{-- SURAT UMUM HEADER --}}
             <div style="text-align:center; margin-bottom:20px;">
-                <h2 style="font-size:16pt; font-weight:bold; text-transform:uppercase; text-decoration:underline; margin:0;">
+                <h2 style="font-size:16pt; font-weight:bold; text-transform:uppercase;margin:0;">
                     {{ strtoupper($surat->jenis_surat ?: 'SURAT KELUAR') }}
                 </h2>
             </div>
@@ -296,10 +298,10 @@
             </div>
         @endif
 
-        {{-- FOOTER --}}
-        <div style="margin-top:50px; border-top:1px solid #ccc; padding-top:8px; text-align:center; color:#666; font-size:9pt;">
-            Dokumen ini dibuat melalui <strong>Sistem Arsip Surat PT Microdata Indonesia</strong>
-        </div>
+       {{-- FOOTER --}}
+<div style="margin-top:auto; border-top:1px solid #ccc; padding-top:8px; text-align:center; color:#666; font-size:9pt;">
+    Dokumen ini dibuat melalui <strong>Sistem Arsip Surat PT Microdata Indonesia</strong>
+</div>
     </div>
 
 </body>
