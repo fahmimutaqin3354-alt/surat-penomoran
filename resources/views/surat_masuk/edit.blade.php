@@ -12,15 +12,16 @@
         opacity: 0.9 !important;
     }
     .a4-paper {
-        width: 100%;
-        max-width: 210mm;
-        min-height: 297mm;
-        background: #ffffff !important;
-        color: #000000 !important;
-        font-family: "Times New Roman", Times, serif;
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
-        box-sizing: border-box;
-    }
+    width: 100%;
+    max-width: 210mm;
+    min-height: 297mm;
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-family: "Times New Roman", Times, serif;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    box-sizing: border-box;
+    position: relative;
+}
     /* Override Tailwind dark mode inside preview */
     .a4-paper,
     .a4-paper *,
@@ -95,11 +96,16 @@
         </div>
     </div>
 
-    {{-- Grid Layout Split Screen --}}
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    {{-- Resizable Split Container --}}
+    <div class="flex flex-col lg:flex-row items-start relative w-full gap-0"
+         x-data="resizableSplit('split_pos_surat_masuk', 50)"
+         x-ref="splitContainer"
+         :class="{ 'select-none': isDragging }">
 
         {{-- LEFT COLUMN: FORM INPUTS --}}
-        <div class="lg:col-span-6 space-y-6">
+        <div class="w-full shrink-0 space-y-6"
+             :style="isDesktop ? { width: leftWidth + '%' } : {}"
+             style="min-width: 320px;">
 
             <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
                 <div class="border-b border-slate-800 px-6 py-4 bg-slate-950/50 flex items-center justify-between">
@@ -341,8 +347,30 @@
 
         </div>
 
+        {{-- SPLITTER / DIVIDER BAR --}}
+        <div class="hidden lg:flex items-center justify-center shrink-0 group relative z-20 cursor-col-resize select-none mx-2 self-stretch min-h-[500px]"
+             style="width: 16px;"
+             @mousedown="startDrag($event)"
+             @touchstart="startTouchDrag($event)"
+             @dblclick="resetSplit()"
+             title="Tarik ke kiri atau kanan untuk mengatur ukuran panel (Klik 2x untuk reset 50:50)">
+
+            {{-- Vertical line --}}
+            <div class="w-1 h-full rounded-full transition-colors duration-200"
+                 :class="isDragging ? 'bg-amber-500 shadow-lg shadow-amber-500/50 ring-2 ring-amber-500/30' : 'bg-slate-800/80 group-hover:bg-amber-500/70'"></div>
+
+            {{-- Center Grip Pill Handle --}}
+            <div class="sticky top-1/2 -translate-y-1/2 w-6 h-12 rounded-xl border flex flex-col items-center justify-center gap-1 shadow-lg transition-all duration-200 backdrop-blur-md"
+                 :class="isDragging ? 'bg-amber-600 border-amber-400 text-white scale-110 shadow-amber-500/30 ring-2 ring-amber-400/40' : 'bg-slate-900/90 border-slate-700/80 text-slate-400 group-hover:bg-slate-800 group-hover:text-amber-300 group-hover:border-amber-500/60'">
+                <div class="w-1 h-1 rounded-full bg-current"></div>
+                <div class="w-1 h-1 rounded-full bg-current"></div>
+                <div class="w-1 h-1 rounded-full bg-current"></div>
+            </div>
+        </div>
+
         {{-- RIGHT COLUMN: REALTIME A4 LEMBAR AGENDA PREVIEW --}}
-        <div class="lg:col-span-6 lg:sticky lg:top-20">
+        <div class="w-full lg:flex-1 min-w-0 shrink-0 lg:sticky lg:top-20 mt-6 lg:mt-0"
+             style="min-width: 320px;">
             <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden">
                 <div class="border-b border-slate-800 px-6 py-4 bg-slate-950/80 flex flex-wrap items-center justify-between gap-3">
                     <h2 class="text-lg font-bold text-white flex items-center gap-2">
@@ -370,7 +398,7 @@
                     <div id="surat-masuk-preview-paper" class="a4-paper p-8 text-slate-900 relative text-sm sm:text-base">
 
                         {{-- Kop Surat Header --}}
-                        <div class="mb-3 border-b-2 border-black pb-2">
+                        <div>
                             <img src="{{ asset('image/kop-surat.png') }}" alt="Kop Surat" class="w-full h-auto block"
                                  onerror="this.style.display='none'; document.getElementById('kop-fallback-sm').style.display='block';">
                             <div id="kop-fallback-sm" style="display:none;" class="text-center font-bold text-lg border-b-2 border-black pb-2">
@@ -459,10 +487,19 @@
                         </div>
 
                         {{-- Footer --}}
-                        <div class="mt-8 pt-2 border-t border-slate-300 text-center text-[10px] text-slate-500">
-                            Dokumen ini dibuat melalui <strong>Sistem Arsip Surat PT Microdata Indonesia</strong>
+                       <div style="
+                        position: absolute;
+                        left: 20mm;
+                        right: 20mm;
+                        bottom: 5mm;
+                        border-top: 1px solid #ccc;
+                        padding-top: 8px;
+                        text-align: center;
+                        color: #666;
+                        font-size: 9pt;
+                                        ">
+                        Dokumen ini dibuat melalui <strong>Sistem Arsip Surat PT Microdata Indonesia</strong>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -476,6 +513,107 @@
 
 @push('scripts')
 <script>
+function resizableSplit(storageKey = 'split_pos_default', defaultPercent = 50) {
+    return {
+        isDragging: false,
+        leftWidth: defaultPercent,
+        isDesktop: typeof window !== 'undefined' ? window.innerWidth >= 1024 : true,
+        storageKey: storageKey,
+
+        init() {
+            try {
+                const saved = localStorage.getItem(this.storageKey);
+                if (saved !== null) {
+                    const parsed = parseFloat(saved);
+                    if (!isNaN(parsed) && parsed >= 25 && parsed <= 75) {
+                        this.leftWidth = parsed;
+                    }
+                }
+            } catch(e) {}
+
+            const onResize = () => {
+                this.isDesktop = window.innerWidth >= 1024;
+            };
+            window.addEventListener('resize', onResize);
+        },
+
+        startDrag(e) {
+            if (!this.isDesktop) return;
+            e.preventDefault();
+            this.isDragging = true;
+            document.body.style.cursor = 'col-resize';
+            document.body.style.userSelect = 'none';
+
+            const onMouseMove = (moveEvent) => {
+                if (!this.isDragging) return;
+                this.updateWidth(moveEvent.clientX);
+            };
+
+            const onMouseUp = () => {
+                this.isDragging = false;
+                document.body.style.cursor = '';
+                document.body.style.userSelect = '';
+                try {
+                    localStorage.setItem(this.storageKey, this.leftWidth);
+                } catch(e) {}
+                window.removeEventListener('mousemove', onMouseMove);
+                window.removeEventListener('mouseup', onMouseUp);
+            };
+
+            window.addEventListener('mousemove', onMouseMove);
+            window.addEventListener('mouseup', onMouseUp);
+        },
+
+        startTouchDrag(e) {
+            if (!this.isDesktop) return;
+            if (e.touches.length !== 1) return;
+            this.isDragging = true;
+
+            const onTouchMove = (moveEvent) => {
+                if (!this.isDragging || moveEvent.touches.length !== 1) return;
+                moveEvent.preventDefault();
+                this.updateWidth(moveEvent.touches[0].clientX);
+            };
+
+            const onTouchEnd = () => {
+                this.isDragging = false;
+                try {
+                    localStorage.setItem(this.storageKey, this.leftWidth);
+                } catch(e) {}
+                window.removeEventListener('touchmove', onTouchMove);
+                window.removeEventListener('touchend', onTouchEnd);
+            };
+
+            window.addEventListener('touchmove', onTouchMove, { passive: false });
+            window.addEventListener('touchend', onTouchEnd);
+        },
+
+        updateWidth(clientX) {
+            const container = this.$refs.splitContainer;
+            if (!container) return;
+            const rect = container.getBoundingClientRect();
+            const relativeX = clientX - rect.left;
+            let percent = (relativeX / rect.width) * 100;
+
+            const minPx = 320;
+            const minPercent = Math.max(25, (minPx / rect.width) * 100);
+            const maxPercent = Math.min(75, 100 - (minPx / rect.width) * 100);
+
+            if (percent < minPercent) percent = minPercent;
+            if (percent > maxPercent) percent = maxPercent;
+
+            this.leftWidth = Math.round(percent * 10) / 10;
+        },
+
+        resetSplit() {
+            this.leftWidth = defaultPercent;
+            try {
+                localStorage.setItem(this.storageKey, this.leftWidth);
+            } catch(e) {}
+        }
+    };
+}
+
 function suratMasukEditForm() {
     return {
         nomor_agenda: '{{ old('nomor_agenda', $surat->nomor_agenda) }}',

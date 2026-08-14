@@ -42,7 +42,7 @@
     if ($savedTipeForm) {
         $isKuasaInitial = ($savedTipeForm === 'kuasa');
     } else {
-        $isKuasaInitial = (isset($surat->jenisSurat) && $surat->jenisSurat->form_type === 'kuasa') 
+        $isKuasaInitial = (isset($surat->jenisSurat) && $surat->jenisSurat->form_type === 'kuasa')
             || Str::contains(strtolower($surat->jenis_surat), 'kuasa')
             || !empty($pemberi['nama']);
     }
@@ -193,11 +193,16 @@
         </div>
     </div>
 
-    {{-- Grid Split Screen --}}
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    {{-- Resizable Split Container --}}
+    <div class="flex flex-col lg:flex-row items-start relative w-full gap-0"
+         x-data="resizableSplit('split_pos_surat_keluar', 50)"
+         x-ref="splitContainer"
+         :class="{ 'select-none': isDragging }">
 
         {{-- LEFT COLUMN: FORM EDIT --}}
-        <div class="lg:col-span-6 space-y-6">
+        <div class="w-full shrink-0 space-y-6"
+             :style="isDesktop ? { width: leftWidth + '%' } : {}"
+             style="min-width: 320px;">
 
             <div class="p-4 rounded-2xl border transition-all duration-300 flex items-center justify-between"
                  :class="isKuasa ? 'bg-amber-500/10 border-amber-500/30 text-amber-300' : 'bg-indigo-500/10 border-indigo-500/30 text-indigo-300'">
@@ -654,8 +659,30 @@
 
         </div>
 
+        {{-- SPLITTER / DIVIDER BAR --}}
+        <div class="hidden lg:flex items-center justify-center shrink-0 group relative z-20 cursor-col-resize select-none mx-2 self-stretch min-h-[500px]"
+             style="width: 16px;"
+             @mousedown="startDrag($event)"
+             @touchstart="startTouchDrag($event)"
+             @dblclick="resetSplit()"
+             title="Tarik ke kiri atau kanan untuk mengatur ukuran panel (Klik 2x untuk reset 50:50)">
+
+            {{-- Vertical line --}}
+            <div class="w-1 h-full rounded-full transition-colors duration-200"
+                 :class="isDragging ? 'bg-amber-500 shadow-lg shadow-amber-500/50 ring-2 ring-amber-500/30' : 'bg-slate-800/80 group-hover:bg-amber-500/70'"></div>
+
+            {{-- Center Grip Pill Handle --}}
+            <div class="sticky top-1/2 -translate-y-1/2 w-6 h-12 rounded-xl border flex flex-col items-center justify-center gap-1 shadow-lg transition-all duration-200 backdrop-blur-md"
+                 :class="isDragging ? 'bg-amber-600 border-amber-400 text-white scale-110 shadow-amber-500/30 ring-2 ring-amber-400/40' : 'bg-slate-900/90 border-slate-700/80 text-slate-400 group-hover:bg-slate-800 group-hover:text-amber-300 group-hover:border-amber-500/60'">
+                <div class="w-1 h-1 rounded-full bg-current"></div>
+                <div class="w-1 h-1 rounded-full bg-current"></div>
+                <div class="w-1 h-1 rounded-full bg-current"></div>
+            </div>
+        </div>
+
         {{-- RIGHT COLUMN: REALTIME A4 LETTER PREVIEW --}}
-        <div class="lg:col-span-6 lg:sticky lg:top-20">
+        <div class="w-full lg:flex-1 min-w-0 shrink-0 lg:sticky lg:top-20 mt-6 lg:mt-0"
+             style="min-width: 320px;">
             <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden">
                 <div class="border-b border-slate-800 px-6 py-4 bg-slate-950/80 flex items-center justify-between">
                     <h2 class="text-base font-bold text-white flex items-center gap-2">
@@ -668,7 +695,7 @@
                     <div id="surat-keluar-preview-paper" class="a4-paper p-10 text-slate-900 relative text-sm sm:text-base leading-relaxed">
 
                         {{-- Kop Surat Header --}}
-                        <div class="mb-6 border-b-2 border-black pb-3">
+                        <div>
                             <img src="{{ asset('image/kop-surat.png') }}" alt="Kop Surat" class="w-full h-auto block"
                                  onerror="this.style.display='none'; document.getElementById('kop-fallback').style.display='block';">
                             <div id="kop-fallback" style="display:none;" class="text-center font-bold text-lg border-b-2 border-black pb-2">
@@ -681,7 +708,7 @@
                         <template x-if="isKuasa">
                             <div>
                                 <div class="text-center my-4">
-                                    <h2 class="font-bold text-lg uppercase underline tracking-wider">SURAT KUASA</h2>
+                                    <h2 class="font-bold text-lg">SURAT KUASA</h2>
                                     <p class="text-sm mt-1">No : <span x-text="nomor_surat"></span></p>
                                 </div>
 
@@ -837,3 +864,108 @@
 </div>
 
 @endsection
+
+@push('scripts')
+<script>
+function resizableSplit(storageKey = 'split_pos_default', defaultPercent = 50) {
+    return {
+        isDragging: false,
+        leftWidth: defaultPercent,
+        isDesktop: typeof window !== 'undefined' ? window.innerWidth >= 1024 : true,
+        storageKey: storageKey,
+
+        init() {
+            try {
+                const saved = localStorage.getItem(this.storageKey);
+                if (saved !== null) {
+                    const parsed = parseFloat(saved);
+                    if (!isNaN(parsed) && parsed >= 25 && parsed <= 75) {
+                        this.leftWidth = parsed;
+                    }
+                }
+            } catch(e) {}
+
+            const onResize = () => {
+                this.isDesktop = window.innerWidth >= 1024;
+            };
+            window.addEventListener('resize', onResize);
+        },
+
+        startDrag(e) {
+            if (!this.isDesktop) return;
+            e.preventDefault();
+            this.isDragging = true;
+            document.body.style.cursor = 'col-resize';
+            document.body.style.userSelect = 'none';
+
+            const onMouseMove = (moveEvent) => {
+                if (!this.isDragging) return;
+                this.updateWidth(moveEvent.clientX);
+            };
+
+            const onMouseUp = () => {
+                this.isDragging = false;
+                document.body.style.cursor = '';
+                document.body.style.userSelect = '';
+                try {
+                    localStorage.setItem(this.storageKey, this.leftWidth);
+                } catch(e) {}
+                window.removeEventListener('mousemove', onMouseMove);
+                window.removeEventListener('mouseup', onMouseUp);
+            };
+
+            window.addEventListener('mousemove', onMouseMove);
+            window.addEventListener('mouseup', onMouseUp);
+        },
+
+        startTouchDrag(e) {
+            if (!this.isDesktop) return;
+            if (e.touches.length !== 1) return;
+            this.isDragging = true;
+
+            const onTouchMove = (moveEvent) => {
+                if (!this.isDragging || moveEvent.touches.length !== 1) return;
+                moveEvent.preventDefault();
+                this.updateWidth(moveEvent.touches[0].clientX);
+            };
+
+            const onTouchEnd = () => {
+                this.isDragging = false;
+                try {
+                    localStorage.setItem(this.storageKey, this.leftWidth);
+                } catch(e) {}
+                window.removeEventListener('touchmove', onTouchMove);
+                window.removeEventListener('touchend', onTouchEnd);
+            };
+
+            window.addEventListener('touchmove', onTouchMove, { passive: false });
+            window.addEventListener('touchend', onTouchEnd);
+        },
+
+        updateWidth(clientX) {
+            const container = this.$refs.splitContainer;
+            if (!container) return;
+            const rect = container.getBoundingClientRect();
+            const relativeX = clientX - rect.left;
+            let percent = (relativeX / rect.width) * 100;
+
+            const minPx = 320;
+            const minPercent = Math.max(25, (minPx / rect.width) * 100);
+            const maxPercent = Math.min(75, 100 - (minPx / rect.width) * 100);
+
+            if (percent < minPercent) percent = minPercent;
+            if (percent > maxPercent) percent = maxPercent;
+
+            this.leftWidth = Math.round(percent * 10) / 10;
+        },
+
+        resetSplit() {
+            this.leftWidth = defaultPercent;
+            try {
+                localStorage.setItem(this.storageKey, this.leftWidth);
+            } catch(e) {}
+        }
+    };
+}
+</script>
+@endpush
