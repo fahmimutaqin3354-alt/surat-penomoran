@@ -524,8 +524,8 @@ Project ini dikembangkan secara kolaboratif oleh:
 | Nama |
 |------|
 | **Fahmi Mutaqin** |
-| **Riyan** |
-| **Angga** |
+| **Riyan Aditya** |
+| **Zulfakar Anggara Dinata** |
 
 ---
 
