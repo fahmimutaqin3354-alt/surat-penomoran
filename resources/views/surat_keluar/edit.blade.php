@@ -850,9 +850,20 @@
                             </div>
                         </template>
 
-                        <div class="mt-16 pt-3 border-t border-slate-300 text-center text-[10px] text-slate-500">
-                            Dokumen ini dibuat melalui <strong>Sistem Arsip Surat PT Microdata Indonesia</strong>
-                        </div>
+                        {{-- Footer --}}
+<div style="
+    position: absolute;
+    left: 20mm;
+    right: 20mm;
+    bottom: 5mm;
+    border-top: 1px solid #ccc;
+    padding-top: 8px;
+    text-align: center;
+    color: #666;
+    font-size: 9pt;
+">
+    Dokumen ini dibuat melalui <strong>Sistem Arsip Surat PT Microdata Indonesia</strong>
+</div>
 
                     </div>
                 </div>
