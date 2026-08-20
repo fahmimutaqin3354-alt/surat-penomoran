@@ -66,11 +66,11 @@ class SuratMasuk extends Model
     }
 
     /**
-     * Relasi ke Instansi (Asal pengirim surat)
+     * Relasi ke Instansi (Asal pengirim surat - tetap terbaca walau masuk sampah)
      */
     public function instansi(): BelongsTo
     {
-        return $this->belongsTo(Instansi::class, 'instansi_id');
+        return $this->belongsTo(Instansi::class, 'instansi_id')->withTrashed();
     }
 
     /**

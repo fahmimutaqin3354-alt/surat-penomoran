@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -12,11 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('surat_keluars', function (Blueprint $table) {
-            $table->foreignId('instansi_id')
-                ->nullable()
-                ->after('id')
-                ->constrained('instansis')
-                ->onDelete('set null');
+            $table->dropForeign(['instansi_id']);
+
+            $table->foreign('instansi_id')
+                  ->references('id')
+                  ->on('instansis')
+                  ->onDelete('set null');
         });
     }
 
@@ -27,7 +28,11 @@ return new class extends Migration
     {
         Schema::table('surat_keluars', function (Blueprint $table) {
             $table->dropForeign(['instansi_id']);
-            $table->dropColumn('instansi_id');
+
+            $table->foreign('instansi_id')
+                  ->references('id')
+                  ->on('instansis')
+                  ->onDelete('cascade');
         });
     }
 };

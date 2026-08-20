@@ -78,9 +78,12 @@
 
                         <td class="px-6 py-4">
                             @if($item->instansi)
-                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-medium">
-                                    <i class="fa-solid fa-building text-indigo-400 text-[10px]"></i>
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg {{ $item->instansi->trashed() ? 'bg-amber-500/10 border-amber-500/20 text-amber-300' : 'bg-indigo-500/10 border-indigo-500/20 text-indigo-300' }} border text-xs font-medium" title="{{ $item->instansi->trashed() ? 'Instansi berada di tempat sampah' : '' }}">
+                                    <i class="fa-solid {{ $item->instansi->trashed() ? 'fa-trash-can text-amber-400' : 'fa-building text-indigo-400' }} text-[10px]"></i>
                                     {{ $item->instansi->nama_instansi }}
+                                    @if($item->instansi->trashed())
+                                        <span class="text-[10px] opacity-75 font-normal">(Dihapus)</span>
+                                    @endif
                                 </span>
                             @else
                                 <span class="text-slate-600 text-xs italic">—</span>

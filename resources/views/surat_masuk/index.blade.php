@@ -76,8 +76,18 @@
                             {{ \Carbon\Carbon::parse($item->tanggal_surat)->format('d-m-Y') }}
                         </td>
 
-                        <td class="text-slate-300">
-                            {{ Str::limit($item->instansi->nama_instansi ?? '-', 30) }}
+                        <td class="px-6 py-4">
+                            @if($item->instansi)
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg {{ $item->instansi->trashed() ? 'bg-amber-500/10 border-amber-500/20 text-amber-300' : 'bg-indigo-500/10 border-indigo-500/20 text-indigo-300' }} border text-xs font-medium" title="{{ $item->instansi->trashed() ? 'Instansi berada di tempat sampah' : '' }}">
+                                    <i class="fa-solid {{ $item->instansi->trashed() ? 'fa-trash-can text-amber-400' : 'fa-building text-indigo-400' }} text-[10px]"></i>
+                                    {{ Str::limit($item->instansi->nama_instansi, 30) }}
+                                    @if($item->instansi->trashed())
+                                        <span class="text-[10px] opacity-75 font-normal">(Dihapus)</span>
+                                    @endif
+                                </span>
+                            @else
+                                <span class="text-slate-600 text-xs italic">—</span>
+                            @endif
                         </td>
 
                         <td class="text-slate-300">

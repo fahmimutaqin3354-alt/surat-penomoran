@@ -20,9 +20,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::post('/laporan/kirim-email', [LaporanController::class, 'sendEmail'])
-    ->name('laporan.send.email');
 
+
+     // Instansi
    Route::resource('instansi', InstansiController::class);
 
     // Surat Masuk
@@ -45,23 +45,24 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/surat_keluar/{id}/preview', [SuratKeluarController::class, 'preview'])
         ->name('surat_keluar.preview');
     Route::get( '/surat_keluar/{id}/pdf', [SuratKeluarController::class, 'downloadPublic']
-)->name('surat_keluar.pdf');
+        )->name('surat_keluar.pdf');
     Route::get('/surat_keluar/{id}/download', [SuratKeluarController::class, 'downloadAndSave'])
         ->name('surat_keluar.download');
 
-Route::get('/surat_keluar/{id}/unduh-publik', [SuratKeluarController::class, 'downloadPublic'])
-    ->name('surat_keluar.download.public')
+    Route::get('/surat_keluar/{id}/unduh-publik', [SuratKeluarController::class, 'downloadPublic'])
+        ->name('surat_keluar.download.public')
     ->middleware('signed');
+
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-  // Arsip Surat
-Route::get('/arsip', [ArsipController::class, 'index'])->name('arsip.index');
-Route::get('/arsip/{id}', [ArsipController::class, 'show'])->name('arsip.show');
-Route::delete('/arsip/{id}', [ArsipController::class, 'destroy'])->name('arsip.destroy');
-Route::get('/arsip/export', [ArsipController::class, 'ekspor'])->name('arsip.export');
+    // Arsip Surat
+    Route::get('/arsip', [ArsipController::class, 'index'])->name('arsip.index');
+    Route::get('/arsip/{id}', [ArsipController::class, 'show'])->name('arsip.show');
+    Route::delete('/arsip/{id}', [ArsipController::class, 'destroy'])->name('arsip.destroy');
+    Route::get('/arsip/export', [ArsipController::class, 'ekspor'])->name('arsip.export');
 
     // Pengaturan Akun
     Route::get('/akun', [AccountController::class, 'edit'])->name('akun.index');
@@ -70,11 +71,14 @@ Route::get('/arsip/export', [ArsipController::class, 'ekspor'])->name('arsip.exp
 
     // Laporan
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+    Route::post('/laporan/kirim-email', [LaporanController::class, 'sendEmail'])
+        ->name('laporan.send.email');
     Route::get('/laporan/export-pdf', [LaporanController::class, 'exportPdf'])->name('laporan.export.pdf');
     Route::get('/laporan/export-excel', [LaporanController::class, 'exportExcel'])->name('laporan.export.excel');
     Route::get('/laporan/unduh-publik', [LaporanController::class, 'exportPdfPublic'])
-    ->name('laporan.export.pdf.public')
+        ->name('laporan.export.pdf.public')
     ->middleware('signed');
+
     // Jenis Surat
     Route::post('/jenis_surat/store', [JenisSuratController::class, 'store'])
         ->name('jenis_surat.store');
