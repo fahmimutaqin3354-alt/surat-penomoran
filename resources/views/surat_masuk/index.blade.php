@@ -7,18 +7,18 @@
 <div class="space-y-4">
 
     {{-- Header --}}
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 sm:p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl">
         <div>
-            <h1 class="text-2xl font-extrabold text-white tracking-tight flex items-center gap-3">
-                <span class="w-9 h-9 rounded-xl bg-cyan-600/20 border border-cyan-500/30 flex items-center justify-center">
-                    <i class="fa-solid fa-inbox text-cyan-400 text-sm"></i>
+            <h1 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight flex items-center gap-2.5 sm:gap-3">
+                <span class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-cyan-600/20 border border-cyan-500/30 flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-inbox text-cyan-400 text-xs sm:text-sm"></i>
                 </span>
                 Data Surat Masuk
             </h1>
-            <p class="text-slate-400 text-sm mt-1 ml-12">Kelola seluruh data surat masuk PT Microdata Indonesia.</p>
+            <p class="text-slate-400 text-xs sm:text-sm mt-1 ml-10 sm:ml-12">Kelola seluruh data surat masuk PT Microdata Indonesia.</p>
         </div>
         <a href="{{ route('surat_masuk.create') }}"
-           class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white text-sm font-semibold shadow-lg shadow-indigo-500/25 transition-all duration-200 whitespace-nowrap">
+           class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white text-sm font-semibold shadow-lg shadow-indigo-500/25 transition-all duration-200 whitespace-nowrap w-full sm:w-auto">
             <i class="fa-solid fa-plus text-xs"></i>
             <span>Tambah Surat</span>
         </a>
@@ -26,15 +26,15 @@
 
     {{-- Peringatan surat di tempat sampah --}}
     @if($jumlahDihapus > 0)
-    <div class="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 flex items-center justify-between gap-4">
+    <div class="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div class="flex items-center gap-3">
-            <i class="fa-solid fa-trash-can text-amber-400"></i>
-            <p class="text-sm text-amber-300">
+            <i class="fa-solid fa-trash-can text-amber-400 shrink-0"></i>
+            <p class="text-xs sm:text-sm text-amber-300">
                 Ada <span class="font-semibold">{{ $jumlahDihapus }} surat masuk</span> yang sudah dihapus dan menunggu di tempat sampah.
             </p>
         </div>
         <a href="{{ route('recycle-bin.index') }}"
-           class="text-sm font-semibold text-amber-400 hover:text-amber-300 whitespace-nowrap transition-colors">
+           class="text-xs sm:text-sm font-semibold text-amber-400 hover:text-amber-300 whitespace-nowrap transition-colors self-end sm:self-auto">
             Lihat Tempat Sampah →
         </a>
     </div>
@@ -42,7 +42,7 @@
 
     {{-- Table Card --}}
     <div class="rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl overflow-hidden">
-        <div class="px-6 py-3.5 border-b border-slate-800/80 flex items-center justify-between">
+        <div class="px-4 sm:px-6 py-3.5 border-b border-slate-800/80 flex items-center justify-between">
             <h2 class="text-sm font-semibold text-slate-300 flex items-center gap-2">
                 <i class="fa-solid fa-table-list text-cyan-400"></i>
                 Daftar Surat Masuk

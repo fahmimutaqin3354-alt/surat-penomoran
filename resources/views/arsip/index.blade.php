@@ -7,17 +7,17 @@
 <div class="space-y-4">
 
     {{-- Header --}}
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 sm:p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl">
         <div>
-            <h1 class="text-2xl font-extrabold text-white tracking-tight flex items-center gap-3">
-                <span class="w-9 h-9 rounded-xl bg-emerald-600/20 border border-emerald-500/30 flex items-center justify-center">
-                    <i class="fa-solid fa-box-archive text-emerald-400 text-sm"></i>
+            <h1 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight flex items-center gap-2.5 sm:gap-3">
+                <span class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-emerald-600/20 border border-emerald-500/30 flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-box-archive text-emerald-400 text-xs sm:text-sm"></i>
                 </span>
                 Arsip Surat
             </h1>
-            <p class="text-slate-400 text-sm mt-1 ml-12">Seluruh surat masuk dan surat keluar secara otomatis masuk ke arsip.</p>
+            <p class="text-slate-400 text-xs sm:text-sm mt-1 ml-10 sm:ml-12">Seluruh surat masuk dan surat keluar secara otomatis masuk ke arsip.</p>
         </div>
-        <span class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-semibold">
+        <span class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs sm:text-sm font-semibold self-start sm:self-auto">
             <i class="fa-solid fa-circle-check text-xs"></i>
             Arsip Otomatis
         </span>
@@ -32,44 +32,49 @@
     @endif
 
     {{-- Filter Bar --}}
-    <div class="flex flex-wrap items-center gap-3 p-4 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl">
-        <div class="flex items-center gap-2 text-slate-400 text-xs font-semibold uppercase tracking-wider mr-2">
+    <div class="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 p-4 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl">
+        <div class="flex items-center gap-2 text-slate-400 text-xs font-semibold uppercase tracking-wider">
             <i class="fa-solid fa-filter"></i>
             Filter:
         </div>
-        {{-- Diubah value-nya agar cocok dengan teks yang dirender di tabel (Masuk / Keluar) --}}
-        <select id="filterJenis"
-                class="bg-slate-950 border border-slate-700 rounded-xl px-4 py-2 text-sm text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition cursor-pointer">
-            <option value="">Semua Jenis</option>
-            <option value="Masuk">Surat Masuk</option>
-            <option value="Keluar">Surat Keluar</option>
-        </select>
+        
+        <div class="grid grid-cols-1 sm:flex sm:flex-wrap items-center gap-2.5 flex-1">
+            {{-- Diubah value-nya agar cocok dengan teks yang dirender di tabel (Masuk / Keluar) --}}
+            <select id="filterJenis"
+                    class="bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition cursor-pointer w-full sm:w-auto">
+                <option value="">Semua Jenis</option>
+                <option value="Masuk">Surat Masuk</option>
+                <option value="Keluar">Surat Keluar</option>
+            </select>
 
-        <select id="filterStatus"
-                class="bg-slate-950 border border-slate-700 rounded-xl px-4 py-2 text-sm text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition cursor-pointer">
-            <option value="">Semua Status</option>
-            <option value="Baru">Baru</option>
-            <option value="Diproses">Diproses</option>
-            <option value="Draft">Draft</option>
-            <option value="Dikirim">Dikirim</option>
-            <option value="Selesai">Selesai</option>
-        </select>
+            <select id="filterStatus"
+                    class="bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition cursor-pointer w-full sm:w-auto">
+                <option value="">Semua Status</option>
+                <option value="Baru">Baru</option>
+                <option value="Diproses">Diproses</option>
+                <option value="Draft">Draft</option>
+                <option value="Dikirim">Dikirim</option>
+                <option value="Selesai">Selesai</option>
+            </select>
 
-        <button id="resetFilter"
-                class="px-4 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 text-white text-sm font-semibold transition-all duration-150 flex items-center gap-2">
-            <i class="fa-solid fa-rotate-left text-xs"></i>
-            Reset
-        </button>
+            <button id="resetFilter"
+                    class="px-4 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 text-white text-xs sm:text-sm font-semibold transition-all duration-150 flex items-center justify-center gap-2 w-full sm:w-auto">
+                <i class="fa-solid fa-rotate-left text-xs"></i>
+                Reset
+            </button>
+        </div>
 
-        <div class="ml-auto flex items-center gap-2 text-slate-500 text-xs">
-            <i class="fa-solid fa-database text-slate-600"></i>
-            Total: <span class="text-slate-300 font-semibold">{{ count($arsipSurat) }}</span> arsip
+        <div class="w-full sm:w-auto sm:ml-auto flex items-center justify-between sm:justify-start gap-2 text-slate-500 text-xs pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-800">
+            <span class="flex items-center gap-1.5">
+                <i class="fa-solid fa-database text-slate-600"></i>
+                Total: <span class="text-slate-300 font-semibold">{{ count($arsipSurat) }}</span> arsip
+            </span>
         </div>
     </div>
 
     {{-- Table Card --}}
     <div class="rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl overflow-hidden">
-        <div class="px-6 py-3.5 border-b border-slate-800/80 flex items-center gap-2">
+        <div class="px-4 sm:px-6 py-3.5 border-b border-slate-800/80 flex items-center gap-2">
             <i class="fa-solid fa-table-list text-emerald-400"></i>
             <h2 class="text-sm font-semibold text-slate-300">Daftar Arsip Surat</h2>
         </div>

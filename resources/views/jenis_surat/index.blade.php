@@ -2,37 +2,28 @@
 
 @section('title', 'Data Jenis Surat')
 
-@push('styles')
-<style>
-    #tableJenisSurat_wrapper .dt-search input,
-    #tableJenisSurat_wrapper .dataTables_filter input {
-        min-width: 240px;
-    }
-</style>
-@endpush
-
 @section('content')
 <div class="space-y-4">
 
     {{-- Header --}}
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 sm:p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl">
         <div>
-            <h1 class="text-2xl font-extrabold text-white tracking-tight flex items-center gap-3">
-                <span class="w-9 h-9 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center">
-                    <i class="fa-solid fa-tags text-indigo-400 text-sm"></i>
+            <h1 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight flex items-center gap-2.5 sm:gap-3">
+                <span class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-tags text-indigo-400 text-xs sm:text-sm"></i>
                 </span>
                 Data Jenis Surat
             </h1>
-            <p class="text-slate-400 text-sm mt-1 ml-12">Kelola master jenis surat dan pengkodean pada sistem.</p>
+            <p class="text-slate-400 text-xs sm:text-sm mt-1 ml-10 sm:ml-12">Kelola master jenis surat dan pengkodean pada sistem.</p>
         </div>
     </div>
 
     {{-- Alert Info Tambah Data via Form Surat Keluar --}}
     <div class="p-4 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-start gap-3">
-        <i class="fa-solid fa-circle-info text-indigo-400 text-lg mt-0.5"></i>
+        <i class="fa-solid fa-circle-info text-indigo-400 text-base sm:text-lg mt-0.5 shrink-0"></i>
         <div class="text-xs text-indigo-200 space-y-1">
-            <p class="font-semibold text-sm">Informasi Penambahan Jenis Surat</p>
-            <p class="text-slate-300">
+            <p class="font-semibold text-xs sm:text-sm">Informasi Penambahan Jenis Surat</p>
+            <p class="text-slate-300 text-xs sm:text-sm leading-relaxed">
                 Data Jenis Surat ditambahkan secara interaktif dari form input <span class="font-semibold text-white">Surat Keluar</span>. Pada halaman ini Anda dapat mengedit dan menghapus data jenis surat yang telah terdaftar.
             </p>
         </div>
@@ -40,7 +31,7 @@
 
     {{-- Table Card --}}
     <div class="rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl overflow-hidden">
-        <div class="px-6 py-3.5 border-b border-slate-800/80 flex items-center justify-between">
+        <div class="px-4 sm:px-6 py-3.5 border-b border-slate-800/80 flex items-center justify-between">
             <h2 class="text-sm font-semibold text-slate-300 flex items-center gap-2">
                 <i class="fa-solid fa-table-cells text-indigo-400"></i>
                 Daftar Jenis Surat

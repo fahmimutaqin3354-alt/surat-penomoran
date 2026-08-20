@@ -4,61 +4,45 @@
 
 @section('content')
 
-<div class="px-4 py-6">
+<div class="space-y-4">
 
     {{-- Header --}}
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 sm:p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl">
 
         <div>
 
-            <h4 class="text-3xl font-bold text-white">
+            <h4 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight flex items-center gap-2.5 sm:gap-3">
+                <span class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-emerald-600/20 border border-emerald-500/30 flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-box-archive text-emerald-400 text-xs sm:text-sm"></i>
+                </span>
                 Detail Arsip Surat
             </h4>
 
-            <p class="text-slate-400 mt-1">
+            <p class="text-slate-400 text-xs sm:text-sm mt-1 ml-10 sm:ml-12">
                 Informasi lengkap arsip surat PT Microdata Indonesia.
             </p>
 
         </div>
 
         <a href="{{ route('arsip.index') }}"
-            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-white transition">
-
-            <svg xmlns="http://www.w3.org/2000/svg"
-                class="w-5 h-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor">
-
-                <path stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M15 19l-7-7 7-7" />
-
-            </svg>
-
-            Kembali
-
+            class="inline-flex items-center justify-center gap-2 px-5 py-2.5 sm:py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs sm:text-sm font-semibold border border-slate-700 transition-all duration-200 w-full sm:w-auto">
+            <i class="fa-solid fa-arrow-left text-xs"></i>
+            Kembali ke Arsip
         </a>
 
     </div>
 
     {{-- Card --}}
-    <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+    <div class="rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl overflow-hidden">
 
         {{-- Header Card --}}
-        <div class="px-6 py-5 border-b border-slate-800">
-
-            <h5 class="text-xl font-semibold text-white">
-
-                Informasi Surat
-
-            </h5>
-
+        <div class="px-4 sm:px-6 py-4 border-b border-slate-800 flex items-center gap-2">
+            <i class="fa-solid fa-circle-info text-emerald-400"></i>
+            <h5 class="text-sm sm:text-base font-semibold text-slate-200">Informasi Surat</h5>
         </div>
 
         {{-- Isi --}}
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 p-4 sm:p-6">
 
             {{-- Nomor Surat --}}
             <div>

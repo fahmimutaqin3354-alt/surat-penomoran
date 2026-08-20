@@ -77,19 +77,19 @@
 <div class="max-w-[1600px] mx-auto" x-data="suratMasukEditForm()">
 
     {{-- Header --}}
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-            <h1 class="text-3xl font-bold text-white flex items-center gap-3">
+            <h1 class="text-2xl sm:text-3xl font-bold text-white flex items-center gap-2.5 sm:gap-3">
                 <i class="fa-solid fa-pen-to-square text-amber-500"></i>
                 Edit Surat Masuk
             </h1>
-            <p class="text-slate-400 mt-1">
+            <p class="text-slate-400 text-xs sm:text-sm mt-1">
                 Edit data surat masuk — preview A4 ter-update secara <span class="text-amber-400 font-semibold">real-time</span>.
             </p>
         </div>
         <div class="flex items-center gap-3">
             <a href="{{ route('surat_masuk.index') }}"
-               class="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold transition inline-flex items-center gap-2 border border-slate-700">
+               class="w-full sm:w-auto px-5 py-2.5 sm:py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs sm:text-sm font-semibold transition inline-flex items-center justify-center gap-2 border border-slate-700">
                 <i class="fa-solid fa-arrow-left"></i>
                 <span>Kembali</span>
             </a>
@@ -104,8 +104,7 @@
 
         {{-- LEFT COLUMN: FORM INPUTS --}}
         <div class="w-full shrink-0 space-y-6"
-             :style="isDesktop ? { width: leftWidth + '%' } : {}"
-             style="min-width: 320px;">
+             :style="isDesktop ? { width: leftWidth + '%', minWidth: '320px' } : { width: '100%' }">
 
             <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
                 <div class="border-b border-slate-800 px-6 py-4 bg-slate-950/50 flex items-center justify-between">
@@ -370,32 +369,32 @@
 
         {{-- RIGHT COLUMN: REALTIME A4 LEMBAR AGENDA PREVIEW --}}
         <div class="w-full lg:flex-1 min-w-0 shrink-0 lg:sticky lg:top-20 mt-6 lg:mt-0"
-             style="min-width: 320px;">
+             :style="isDesktop ? { minWidth: '320px' } : { width: '100%' }">
             <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden">
-                <div class="border-b border-slate-800 px-6 py-4 bg-slate-950/80 flex flex-wrap items-center justify-between gap-3">
-                    <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                <div class="border-b border-slate-800 px-4 sm:px-6 py-4 bg-slate-950/80 flex flex-wrap items-center justify-between gap-3">
+                    <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
                         <i class="fa-solid fa-eye text-emerald-400"></i>
-                        <span>Preview Agenda Surat Masuk (A4)</span>
+                        <span>Preview Agenda (A4)</span>
                     </h2>
                     <div class="flex items-center gap-2">
                         {{-- Cetak Surat --}}
                         <button type="button" @click="printPreview()"
-                                class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 text-sm font-semibold transition-all duration-200">
-                            <i class="fa-solid fa-print"></i>
-                            <span>Cetak Surat</span>
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 text-xs sm:text-sm font-semibold transition-all duration-200">
+                            <i class="fa-solid fa-print text-xs"></i>
+                            <span>Cetak</span>
                         </button>
                         {{-- Unduh PDF --}}
                         <button type="button" @click="downloadPreviewPdf()"
-                                class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-600/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 text-sm font-semibold transition-all duration-200">
-                            <i class="fa-solid fa-file-pdf"></i>
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-emerald-600/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 text-xs sm:text-sm font-semibold transition-all duration-200">
+                            <i class="fa-solid fa-file-pdf text-xs"></i>
                             <span>Unduh PDF</span>
                         </button>
                     </div>
                 </div>
 
                 {{-- A4 Container Scroll Area --}}
-                <div class="p-4 sm:p-6 bg-slate-950 max-h-[85vh] overflow-y-auto flex justify-center">
-                    <div id="surat-masuk-preview-paper" class="a4-paper p-8 text-slate-900 relative text-sm sm:text-base">
+                <div class="p-2 sm:p-6 bg-slate-950 max-h-[85vh] overflow-x-auto overflow-y-auto flex justify-center -webkit-overflow-scrolling-touch">
+                    <div id="surat-masuk-preview-paper" class="a4-paper p-4 sm:p-8 text-slate-900 relative text-xs sm:text-sm md:text-base">
 
                         {{-- Kop Surat Header --}}
                         <div>

@@ -323,19 +323,19 @@
     @endif
 
     {{-- Header --}}
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-            <h1 class="text-3xl font-bold text-white flex items-center gap-3">
+            <h1 class="text-2xl sm:text-3xl font-bold text-white flex items-center gap-2.5 sm:gap-3">
                 <i class="fa-solid fa-paper-plane text-indigo-500"></i>
                 Tambah Surat Keluar
             </h1>
-            <p class="text-slate-400 mt-1">
+            <p class="text-slate-400 text-xs sm:text-sm mt-1">
                 Form <span class="text-indigo-400 font-semibold">Surat Keluar</span> — pratinjau A4 real-time.
             </p>
         </div>
         <div class="flex items-center gap-3">
             <a href="{{ route('surat_keluar.index') }}"
-               class="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold transition inline-flex items-center gap-2 border border-slate-700">
+               class="w-full sm:w-auto px-5 py-2.5 sm:py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs sm:text-sm font-semibold transition inline-flex items-center justify-center gap-2 border border-slate-700">
                 <i class="fa-solid fa-arrow-left"></i>
                 <span>Kembali</span>
             </a>
@@ -350,8 +350,7 @@
 
         {{-- LEFT COLUMN: FORM INPUTS --}}
         <div class="w-full shrink-0 space-y-6"
-             :style="isDesktop ? { width: leftWidth + '%' } : {}"
-             style="min-width: 320px;">
+             :style="isDesktop ? { width: leftWidth + '%', minWidth: '320px' } : { width: '100%' }">
 
             {{-- Mode Indicator Card --}}
             <div class="p-4 rounded-2xl border transition-all duration-300 flex items-center justify-between"
@@ -864,12 +863,12 @@
                 {{-- Submit Buttons --}}
                 <div class="flex flex-col sm:flex-row gap-3">
                     <button type="submit"
-                            class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-indigo-600 hover:bg-indigo-700 rounded-xl text-white font-bold transition cursor-pointer shadow-lg shadow-indigo-600/30 text-base">
+                            class="inline-flex items-center justify-center gap-2 px-8 py-3.5 sm:py-4 bg-indigo-600 hover:bg-indigo-700 rounded-xl text-white font-bold transition cursor-pointer shadow-lg shadow-indigo-600/30 text-sm sm:text-base w-full sm:w-auto">
                         <i class="fa-solid fa-floppy-disk"></i>
                         <span>Simpan Surat Keluar</span>
                     </button>
                     <button type="reset"
-                            class="inline-flex items-center justify-center gap-2 px-6 py-4 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-semibold transition border border-slate-700">
+                            class="inline-flex items-center justify-center gap-2 px-6 py-3.5 sm:py-4 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-semibold transition border border-slate-700 text-sm sm:text-base w-full sm:w-auto">
                         <i class="fa-solid fa-rotate-left"></i>
                         <span>Reset Form</span>
                     </button>
@@ -902,18 +901,18 @@
 
         {{-- RIGHT COLUMN: REALTIME A4 LETTER PREVIEW --}}
         <div class="w-full lg:flex-1 min-w-0 shrink-0 lg:sticky lg:top-20 mt-6 lg:mt-0"
-             style="min-width: 320px;">
+             :style="isDesktop ? { minWidth: '320px' } : { width: '100%' }">
             <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden">
-                <div class="border-b border-slate-800 px-6 py-4 bg-slate-950/80 flex items-center justify-between">
-                    <h2 class="text-base font-bold text-white flex items-center gap-2">
+                <div class="border-b border-slate-800 px-4 sm:px-6 py-4 bg-slate-950/80 flex items-center justify-between">
+                    <h2 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
                         <i class="fa-solid fa-eye text-emerald-400"></i>
-                        Pratinjau Realtime Surat (A4)
+                        <span>Pratinjau Surat (A4)</span>
                     </h2>
                 </div>
 
                 {{-- A4 Container Scroll Area --}}
-                <div class="p-6 bg-slate-950 max-h-[85vh] overflow-y-auto flex justify-center">
-                    <div id="surat-keluar-preview-paper" class="a4-paper p-10 text-slate-900 relative text-sm sm:text-base leading-relaxed flex flex-col">
+                <div class="p-2 sm:p-6 bg-slate-950 max-h-[85vh] overflow-x-auto overflow-y-auto flex justify-center -webkit-overflow-scrolling-touch">
+                    <div id="surat-keluar-preview-paper" class="a4-paper p-4 sm:p-10 text-slate-900 relative text-xs sm:text-sm md:text-base leading-relaxed flex flex-col">
 
                         {{-- Kop Surat Header --}}
                         <div>

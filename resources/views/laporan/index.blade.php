@@ -3,51 +3,51 @@
 @section('title', 'Laporan')
 
 @section('content')
-<div class="p-6 bg-slate-950 min-h-screen">
+<div class="space-y-6">
 
     {{-- ======================= BREADCRUMB ======================= --}}
-    <nav class="flex items-center gap-2 text-sm text-slate-500 mb-4">
+    <nav class="flex items-center gap-2 text-xs sm:text-sm text-slate-500">
         <a href="{{ route('laporan.index') }}" class="hover:text-slate-300 transition">Laporan</a>
         <span>/</span>
         <span class="text-slate-300 font-medium">Dashboard</span>
     </nav>
 
     {{-- ======================= HEADER + AKSI ======================= --}}
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <h1 class="text-2xl font-semibold text-white">Laporan</h1>
-            <p class="text-sm text-slate-400 mt-1">Ringkasan dan laporan aktivitas persuratan</p>
+            <h1 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Laporan Persuratan</h1>
+            <p class="text-xs sm:text-sm text-slate-400 mt-1">Ringkasan dan laporan aktivitas persuratan digital.</p>
         </div>
 
         <div class="flex items-center gap-3">
             {{-- ============ DROPDOWN EKSPOR (Email / WhatsApp) ============ --}}
-            <div class="relative" x-data="{ open: false }" @click.outside="open = false">
+            <div class="relative w-full sm:w-auto" x-data="{ open: false }" @click.outside="open = false">
                 <button type="button" @click="open = !open"
-                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 focus:outline-none transition">
+                    class="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-4 py-2.5 rounded-xl bg-indigo-600 text-white text-xs sm:text-sm font-semibold hover:bg-indigo-500 focus:outline-none transition shadow-lg shadow-indigo-600/25">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3" />
                     </svg>
-                    Ekspor Laporan
+                    <span>Ekspor Laporan</span>
                     <svg class="w-3.5 h-3.5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                     </svg>
                 </button>
 
                 <div x-show="open" x-cloak
-                    class="absolute right-0 mt-2 w-52 bg-slate-900 border border-slate-800 rounded-lg shadow-lg z-10 overflow-hidden py-1">
+                    class="absolute right-0 mt-2 w-56 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl z-30 overflow-hidden py-1">
 
                     <p class="px-4 pt-2 pb-1 text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Unduh</p>
 
                     <a href="{{ route('laporan.export.pdf', request()->query()) }}"
-                        class="flex items-center gap-2 px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 transition">
-                        <svg class="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        class="flex items-center gap-2.5 px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                        <svg class="w-4 h-4 text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                         </svg>
                         Unduh PDF
                     </a>
                     <a href="{{ route('laporan.export.excel', request()->query()) }}"
-                        class="flex items-center gap-2 px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 transition">
-                        <svg class="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        class="flex items-center gap-2.5 px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                        <svg class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                         </svg>
                         Unduh Excel
@@ -58,15 +58,15 @@
                     <p class="px-4 pt-2 pb-1 text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Kirim</p>
 
                     <button type="button" @click="$dispatch('open-modal-email'); open = false"
-                        class="flex items-center gap-2 w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 transition">
-                        <svg class="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        class="flex items-center gap-2.5 w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                        <svg class="w-4 h-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
                         </svg>
                         Kirim ke Email
                     </button>
                     <button type="button" @click="$dispatch('open-modal-wa'); open = false"
-                        class="flex items-center gap-2 w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 transition">
-                        <svg class="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        class="flex items-center gap-2.5 w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                        <svg class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
                         </svg>
                         Kirim ke WhatsApp
@@ -77,55 +77,60 @@
     </div>
 
     {{-- ======================= FILTER FORM ======================= --}}
-    <form id="formFilterLaporan" method="GET" action="{{ route('laporan.index') }}" class="flex flex-wrap items-center gap-3 mb-6">
+    <form id="formFilterLaporan" method="GET" action="{{ route('laporan.index') }}" class="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 p-4 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl">
         
-        {{-- Tanggal Dari --}}
-        <div class="relative min-w-[160px]">
-            <input type="date" name="dari" value="{{ request('dari', request('start_date', now()->startOfMonth()->format('Y-m-d'))) }}"
-                class="w-full pl-3 pr-10 py-2 bg-slate-900 border border-slate-800 rounded-lg text-sm text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:outline-none [color-scheme:light] [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer">
-            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-300">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 2v2M18 2v2M3 8h18M5 4h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z" />
-                </svg>
+        <div class="flex items-center gap-2 flex-1 min-w-0">
+            {{-- Tanggal Dari --}}
+            <div class="relative flex-1 min-w-0">
+                <input type="date" name="dari" value="{{ request('dari', request('start_date', now()->startOfMonth()->format('Y-m-d'))) }}"
+                    class="w-full pl-3 pr-8 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs sm:text-sm text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:outline-none [color-scheme:light] [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer">
+                <div class="absolute inset-y-0 right-0 flex items-center pr-2.5 pointer-events-none text-slate-400">
+                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 2v2M18 2v2M3 8h18M5 4h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z" />
+                    </svg>
+                </div>
+            </div>
+
+            <span class="text-xs sm:text-sm text-slate-500 font-medium shrink-0">s/d</span>
+
+            {{-- Tanggal Sampai --}}
+            <div class="relative flex-1 min-w-0">
+                <input type="date" name="sampai" value="{{ request('sampai', request('end_date', now()->endOfMonth()->format('Y-m-d'))) }}"
+                    class="w-full pl-3 pr-8 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs sm:text-sm text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:outline-none [color-scheme:light] [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer">
+                <div class="absolute inset-y-0 right-0 flex items-center pr-2.5 pointer-events-none text-slate-400">
+                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 2v2M18 2v2M3 8h18M5 4h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z" />
+                    </svg>
+                </div>
             </div>
         </div>
 
-        <span class="text-sm text-slate-500 font-medium">s/d</span>
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+            {{-- Select Jenis (Auto submit saat opsi dipilih) --}}
+            <select name="jenis" onchange="document.getElementById('formFilterLaporan').submit()" class="px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs sm:text-sm text-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none cursor-pointer w-full sm:w-auto">
+                <option value="">Semua Jenis</option>
+                <option value="Surat Masuk" @selected(in_array(strtolower((string)request('jenis')), ['surat masuk', 'masuk']))>Surat Masuk</option>
+                <option value="Surat Keluar" @selected(in_array(strtolower((string)request('jenis')), ['surat keluar', 'keluar']))>Surat Keluar</option>
+            </select>
 
-        {{-- Tanggal Sampai --}}
-        <div class="relative min-w-[160px]">
-            <input type="date" name="sampai" value="{{ request('sampai', request('end_date', now()->endOfMonth()->format('Y-m-d'))) }}"
-                class="w-full pl-3 pr-10 py-2 bg-slate-900 border border-slate-800 rounded-lg text-sm text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:outline-none [color-scheme:light] [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer">
-            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-300">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 2v2M18 2v2M3 8h18M5 4h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z" />
-                </svg>
-            </div>
+            {{-- Select Status (Auto submit saat opsi dipilih) --}}
+            <select name="status" onchange="document.getElementById('formFilterLaporan').submit()" class="px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs sm:text-sm text-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none cursor-pointer w-full sm:w-auto">
+                <option value="">Semua Status</option>
+                <option value="Selesai" @selected(in_array(strtolower((string)request('status')), ['selesai']))>Selesai</option>
+                <option value="Dikirim" @selected(in_array(strtolower((string)request('status')), ['dikirim', 'proses']))>Dalam Proses (Dikirim)</option>
+                <option value="Draft" @selected(in_array(strtolower((string)request('status')), ['draft', 'menunggu']))>Menunggu (Draft)</option>
+            </select>
+
+            {{-- Tombol Filter --}}
+            <button type="submit" class="px-4 py-2 rounded-xl bg-indigo-600 text-white text-xs sm:text-sm font-semibold hover:bg-indigo-500 transition shadow-sm w-full sm:w-auto flex items-center justify-center gap-1.5">
+                <i class="fa-solid fa-filter text-xs"></i>
+                <span>Filter</span>
+            </button>
         </div>
-
-        {{-- Select Jenis (Auto submit saat opsi dipilih) --}}
-        <select name="jenis" onchange="document.getElementById('formFilterLaporan').submit()" class="px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-sm text-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none cursor-pointer">
-            <option value="">Semua Jenis</option>
-            <option value="Surat Masuk" @selected(in_array(strtolower((string)request('jenis')), ['surat masuk', 'masuk']))>Surat Masuk</option>
-            <option value="Surat Keluar" @selected(in_array(strtolower((string)request('jenis')), ['surat keluar', 'keluar']))>Surat Keluar</option>
-        </select>
-
-        {{-- Select Status (Auto submit saat opsi dipilih) --}}
-        <select name="status" onchange="document.getElementById('formFilterLaporan').submit()" class="px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-sm text-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none cursor-pointer">
-            <option value="">Semua Status</option>
-            <option value="Selesai" @selected(in_array(strtolower((string)request('status')), ['selesai']))>Selesai</option>
-            <option value="Dikirim" @selected(in_array(strtolower((string)request('status')), ['dikirim', 'proses']))>Dalam Proses (Dikirim)</option>
-            <option value="Draft" @selected(in_array(strtolower((string)request('status')), ['draft', 'menunggu']))>Menunggu (Draft)</option>
-        </select>
-
-        {{-- Tombol Filter --}}
-        <button type="submit" class="px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition shadow-sm">
-            Filter
-        </button>
     </form>
 
     {{-- ======================= STAT CARDS ======================= --}}
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-6">
         @php
             $stats = [
                 ['label' => 'Total Surat', 'value' => $totalSurat, 'color' => 'text-indigo-400'],

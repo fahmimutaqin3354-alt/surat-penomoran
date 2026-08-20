@@ -51,7 +51,9 @@ href="https://cdn.datatables.net/searchpanes/2.3.2/css/searchPanes.dataTables.cs
 .dataTables_wrapper, .dt-container {
     color: #cbd5e1;
     font-size: 0.875rem;
-    padding: 0.75rem 1.25rem 1.25rem 1.25rem;
+    padding: 0.75rem 1rem 1.25rem 1rem;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 /* Reset DataTables v2 layout row margins to remove excess gap */
@@ -61,10 +63,14 @@ div.dt-container div.dt-layout-row {
     align-items: center;
     width: 100%;
     margin: 0.25rem 0 !important;
+    gap: 0.75rem;
 }
 
 div.dt-container div.dt-layout-row.dt-layout-table {
     margin: 0.25rem 0 !important;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
 }
 
 /* Top Controls Header Bar */
@@ -86,10 +92,10 @@ div.dt-container div.dt-layout-row.dt-layout-table {
 .dt-container .dt-search label {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
     color: #94a3b8;
     font-weight: 600;
-    font-size: 0.875rem;
+    font-size: 0.85rem;
 }
 
 /* Search Field */
@@ -99,10 +105,11 @@ div.dt-container div.dt-layout-row.dt-layout-table {
     color: #f8fafc !important;
     border: 1px solid #334155 !important; /* slate-700 */
     border-radius: 0.75rem !important;
-    padding: 0.4rem 1rem !important;
-    font-size: 0.875rem !important;
+    padding: 0.4rem 0.85rem !important;
+    font-size: 0.85rem !important;
     outline: none !important;
     transition: all 0.2s ease-in-out;
+    max-width: 100%;
 }
 
 .dataTables_wrapper .dataTables_filter input:focus,
@@ -119,7 +126,7 @@ div.dt-container div.dt-layout-row.dt-layout-table {
     border: 1px solid #334155 !important;
     border-radius: 0.75rem !important;
     padding: 0.35rem 0.75rem !important;
-    font-size: 0.875rem !important;
+    font-size: 0.85rem !important;
     outline: none !important;
     cursor: pointer;
 }
@@ -147,13 +154,14 @@ table.dataTable thead th {
     font-size: 0.75rem !important;
     letter-spacing: 0.05em;
     border-bottom: 1px solid #334155 !important;
-    padding: 0.75rem 1rem !important;
+    padding: 0.75rem 0.85rem !important;
+    white-space: nowrap;
 }
 
 table.dataTable tbody td {
     background-color: transparent !important;
     color: #cbd5e1;
-    padding: 0.75rem 1rem !important;
+    padding: 0.75rem 0.85rem !important;
     border-bottom: 1px solid #1e293b !important;
     vertical-align: middle;
 }
@@ -171,7 +179,7 @@ table.dataTable tbody tr:hover {
 .dt-container .dt-info {
     color: #94a3b8 !important;
     font-size: 0.85rem !important;
-    padding-top: 1rem !important;
+    padding-top: 0.75rem !important;
     float: left;
 }
 
@@ -182,6 +190,7 @@ table.dataTable tbody tr:hover {
     display: flex;
     align-items: center;
     gap: 0.25rem;
+    flex-wrap: wrap;
 }
 
 .dataTables_wrapper .dataTables_paginate .paginate_button,
@@ -191,8 +200,8 @@ table.dataTable tbody tr:hover {
     border-radius: 0.6rem !important;
     border: 1px solid #334155 !important;
     margin: 0 2px !important;
-    padding: 0.4rem 0.85rem !important;
-    font-size: 0.85rem !important;
+    padding: 0.35rem 0.75rem !important;
+    font-size: 0.8rem !important;
     font-weight: 600 !important;
     cursor: pointer !important;
     transition: all 0.2s ease-in-out;
@@ -227,6 +236,58 @@ table.dataTable tbody tr:hover {
     clear: both;
     display: table;
 }
+
+/* Mobile Responsiveness for DataTables */
+@media (max-width: 640px) {
+    .dataTables_wrapper, .dt-container {
+        padding: 0.5rem 0.5rem 1rem 0.5rem;
+    }
+
+    div.dt-container div.dt-layout-row {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 0.6rem !important;
+    }
+
+    .dataTables_wrapper .dataTables_length,
+    .dt-container .dt-length,
+    .dataTables_wrapper .dataTables_filter,
+    .dt-container .dt-search,
+    .dataTables_wrapper .dataTables_info,
+    .dt-container .dt-info,
+    .dataTables_wrapper .dataTables_paginate,
+    .dt-container .dt-paging {
+        float: none !important;
+        width: 100% !important;
+        justify-content: center !important;
+        text-align: center !important;
+    }
+
+    .dataTables_wrapper .dataTables_length label,
+    .dt-container .dt-length label,
+    .dataTables_wrapper .dataTables_filter label,
+    .dt-container .dt-search label {
+        width: 100% !important;
+        justify-content: space-between !important;
+    }
+
+    .dataTables_wrapper .dataTables_filter input,
+    .dt-container .dt-search input {
+        flex: 1;
+        width: auto !important;
+        min-width: 0 !important;
+    }
+
+    .dt-container .dt-paging {
+        justify-content: center !important;
+        gap: 0.2rem !important;
+    }
+}
+
+/* Smooth Touch Scrolling */
+.overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+}
 </style>
 
 <!-- SweetAlert2 -->
@@ -237,29 +298,29 @@ table.dataTable tbody tr:hover {
 <body class="bg-slate-950 text-slate-100 font-sans antialiased selection:bg-indigo-500 selection:text-white min-h-screen">
 
     <!-- Top Navbar -->
-    <header class="fixed top-0 left-0 right-0 h-16 bg-slate-900/80 backdrop-blur-md border-b border-slate-800/80 z-40 flex items-center justify-between px-4 md:px-6">
-        <div class="flex items-center gap-3">
+    <header class="fixed top-0 left-0 right-0 h-16 bg-slate-900/80 backdrop-blur-md border-b border-slate-800/80 z-40 flex items-center justify-between px-3 sm:px-6">
+        <div class="flex items-center gap-2.5 sm:gap-3">
             <!-- Sidebar Toggle Button (Mobile) -->
-            <button id="toggleSidebar" aria-label="Toggle Navigation" class="md:hidden text-slate-400 hover:text-white p-2 rounded-lg hover:bg-slate-800/60 transition">
+            <button id="toggleSidebar" aria-label="Toggle Navigation" class="md:hidden text-slate-400 hover:text-white p-2 rounded-lg hover:bg-slate-800/60 transition focus:outline-none">
                 <i class="fa-solid fa-bars text-lg"></i>
             </button>
 
-            <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5">
-                <i class="fa-solid fa-box-archive text-indigo-500 text-xl"></i>
-                <span class="font-bold text-lg tracking-tight text-white hidden sm:inline">Sistem Arsip Surat</span>
+            <a href="{{ route('dashboard') }}" class="flex items-center gap-2 sm:gap-2.5">
+                <i class="fa-solid fa-box-archive text-indigo-500 text-lg sm:text-xl"></i>
+                <span class="font-bold text-base sm:text-lg tracking-tight text-white inline-block">Sistem Arsip</span>
             </a>
         </div>
 
         <!-- User Profile Dropdown / Logout -->
-        <div class="flex items-center gap-4">
-            <div class="flex items-center gap-3 bg-slate-800/50 border border-slate-700/50 px-3 py-1.5 rounded-full">
-                <div class="w-7 h-7 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center font-bold text-xs uppercase">
+        <div class="flex items-center gap-2 sm:gap-4">
+            <div class="flex items-center gap-2 sm:gap-3 bg-slate-800/50 border border-slate-700/50 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full">
+                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center font-bold text-xs uppercase shrink-0">
                     {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}
                 </div>
-                <span class="text-sm font-medium text-slate-200 hidden xs:inline">{{ Auth::user()->name ?? 'User' }}</span>
+                <span class="text-xs sm:text-sm font-medium text-slate-200 hidden sm:inline max-w-[120px] sm:max-w-[160px] truncate">{{ Auth::user()->name ?? 'User' }}</span>
                 <form method="POST" action="{{ route('logout') }}" class="inline">
                     @csrf
-                    <button type="submit" title="Logout" class="text-slate-400 hover:text-rose-400 transition-colors ml-1 p-1">
+                    <button type="submit" title="Logout" class="text-slate-400 hover:text-rose-400 transition-colors p-1">
                         <i class="fa-solid fa-right-from-bracket text-xs"></i>
                     </button>
                 </form>
@@ -268,7 +329,7 @@ table.dataTable tbody tr:hover {
     </header>
 
     <!-- Overlay Backdrop for Mobile Sidebar -->
-    <div id="sidebarBackdrop" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-30 hidden md:hidden transition-opacity"></div>
+    <div id="sidebarBackdrop" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-30 hidden md:hidden transition-opacity"></div>
 
     <!-- Sidebar Navigation -->
     <aside id="sidebar" class="fixed top-16 left-0 bottom-0 w-64 bg-slate-900/90 backdrop-blur-xl border-r border-slate-800/80 z-30 transition-transform -translate-x-full md:translate-x-0 overflow-y-auto">
@@ -382,8 +443,8 @@ table.dataTable tbody tr:hover {
 
 
     <!-- Main Content Container -->
-    <main class="pt-20 pb-10 md:pl-64 transition-all">
-        <div class="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <main class="pt-20 pb-10 md:pl-64 transition-all w-full min-h-screen overflow-x-hidden">
+        <div class="px-3 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
             @yield('content')
         </div>
     </main>
@@ -394,10 +455,27 @@ table.dataTable tbody tr:hover {
         const sidebar = document.getElementById('sidebar');
         const backdrop = document.getElementById('sidebarBackdrop');
 
-        function toggleMenu() {
+        function openMenu() {
             if (sidebar && backdrop) {
-                sidebar.classList.toggle('-translate-x-full');
-                backdrop.classList.toggle('hidden');
+                sidebar.classList.remove('-translate-x-full');
+                backdrop.classList.remove('hidden');
+                document.body.classList.add('overflow-hidden', 'md:overflow-auto');
+            }
+        }
+
+        function closeMenu() {
+            if (sidebar && backdrop) {
+                sidebar.classList.add('-translate-x-full');
+                backdrop.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden', 'md:overflow-auto');
+            }
+        }
+
+        function toggleMenu() {
+            if (sidebar && sidebar.classList.contains('-translate-x-full')) {
+                openMenu();
+            } else {
+                closeMenu();
             }
         }
 
@@ -406,8 +484,27 @@ table.dataTable tbody tr:hover {
         }
 
         if (backdrop) {
-            backdrop.addEventListener('click', toggleMenu);
+            backdrop.addEventListener('click', closeMenu);
         }
+
+        // Close sidebar on mobile when clicking nav links
+        if (sidebar) {
+            const navLinks = sidebar.querySelectorAll('a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth < 768) {
+                        closeMenu();
+                    }
+                });
+            });
+        }
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && window.innerWidth < 768) {
+                closeMenu();
+            }
+        });
     </script>
 
     <!-- Flash Alert Handler (SweetAlert2) -->
