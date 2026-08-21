@@ -12,12 +12,36 @@
     }
     [x-cloak] { display: none !important; }
     .a4-paper {
-        width: 100%;
-        min-height: 297mm;
-        background: white;
-        color: #000;
-        font-family: "Times New Roman", Times, serif;
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    height: 297mm;
+    min-height: 297mm;
+    max-height: 297mm;
+
+    box-sizing: border-box;
+
+    background: white;
+    color: #000;
+    font-family: "Times New Roman", Times, serif;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+}
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: #020617;
+        border-radius: 8px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #334155;
+        border-radius: 8px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #6366f1;
     }
 </style>
 
@@ -53,6 +77,7 @@
         jenisSuratList: {{ json_encode($jenisSuratList) }},
         nomor_surat: @js(old('nomor_surat', $surat->nomor_surat)),
         jenis_surat: @js(old('jenis_surat', $surat->jenis_surat)),
+        kode_surat: @js($surat->jenisSurat->kode_surat ?? ''),
         kode_divisi: @js(old('kode_divisi', $surat->kode_divisi ?? 'HRD')),
         instansi_id: @js((string)old('instansi_id', $surat->instansi_id)),
         instansi_nama: @js($surat->instansi->nama_instansi ?? ''),
@@ -141,13 +166,35 @@
         updateJenisSurat() {
             const val = this.jenis_surat || '';
             const found = Array.isArray(this.jenisSuratList) ? this.jenisSuratList.find(j => j.nama === val) : null;
-            if (found && found.form_type) {
+            if (found) {
+                this.kode_surat = found.kode_surat || '';
                 const formType = (found.form_type || '').toLowerCase();
                 if (formType === 'kuasa' || formType === 'umum') {
                     this.setTipeForm(formType);
+                } else if (val.toLowerCase().includes('kuasa')) {
+                    this.setTipeForm('kuasa');
                 }
             } else if (val.toLowerCase().includes('kuasa')) {
                 this.setTipeForm('kuasa');
+            }
+            this.fetchNextNomor();
+        },
+
+        async fetchNextNomor() {
+            const kode = this.kode_surat || 'SK';
+            const div  = this.kode_divisi || 'HRD';
+            const tgl  = this.tanggal_surat || '';
+            try {
+                const res = await fetch(
+                    `{{ route('surat_keluar.next_nomor') }}?kode_surat=${encodeURIComponent(kode)}&kode_divisi=${encodeURIComponent(div)}&tanggal_surat=${encodeURIComponent(tgl)}`,
+                    { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' } }
+                );
+                if (res.ok) {
+                    const data = await res.json();
+                    this.nomor_surat = data.nomor ?? this.nomor_surat;
+                }
+            } catch(e) {
+                // Fallback bila fetch gagal — biarkan nomor lama
             }
         },
 
@@ -161,17 +208,62 @@
         },
 
         downloadPreviewPdf() {
-            const element = document.getElementById('surat-keluar-preview-paper');
-            const opt = {
-                margin: [10, 10, 10, 10],
-                filename: 'Surat_Keluar_Edit_Preview.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true, logging: false },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-            html2pdf().set(opt).from(element).save();
+    const element = document.getElementById('surat-keluar-preview-paper');
+
+    const opt = {
+        margin: 0,
+
+        filename: 'Surat_Keluar_Preview.pdf',
+
+        image: {
+            type: 'jpeg',
+            quality: 0.98
+        },
+
+        html2canvas: {
+            scale: 2,
+            useCORS: true,
+            logging: false,
+            scrollX: 0,
+            scrollY: 0
+        },
+
+        jsPDF: {
+            unit: 'mm',
+            format: 'a4',
+            orientation: 'portrait'
+        },
+
+        pagebreak: {
+            mode: ['avoid-all']
         }
-     }">
+    };
+
+    html2pdf()
+        .set(opt)
+        .from(element)
+        .save();
+},
+
+        get divisiLabel() {
+            const map = {
+                'HRD'    : 'HRD',
+                'DIR-I'  : 'Direktur I',
+                'DIR-II' : 'Direktur II',
+                'DIR-III': 'Direktur III',
+                'KOM'    : 'Komisaris',
+                'IT'     : 'IT & Software',
+                'OPS'    : 'Operasional'
+            };
+            return map[this.kode_divisi] || this.kode_divisi || 'HRD';
+        }
+     }"
+     x-init="$nextTick(() => {
+         $watch('jenis_surat', () => updateJenisSurat());
+         $watch('kode_divisi', () => fetchNextNomor());
+         $watch('tanggal_surat', () => fetchNextNomor());
+         updateJenisSurat();
+     })">
 
     {{-- Header --}}
     <div class="flex items-center justify-between mb-6">
@@ -193,18 +285,19 @@
         </div>
     </div>
 
-    {{-- Resizable Split Container --}}
-    <div class="flex flex-col lg:flex-row items-start relative w-full gap-0"
+    {{-- Resizable Split Container (Equal Height with Independent Scrolling) --}}
+    <div class="flex flex-col lg:flex-row items-stretch relative w-full gap-0 lg:h-[calc(100vh-8rem)] lg:min-h-[600px]"
          x-data="resizableSplit('split_pos_surat_keluar', 50)"
          x-ref="splitContainer"
          :class="{ 'select-none': isDragging }">
 
-        {{-- LEFT COLUMN: FORM EDIT --}}
-        <div class="w-full shrink-0 space-y-6"
-             :style="isDesktop ? { width: leftWidth + '%' } : {}"
-             style="min-width: 320px;">
+        {{-- LEFT COLUMN: FORM EDIT (Independent Scroll) --}}
+        <div class="w-full shrink-0 flex flex-col lg:h-full lg:overflow-hidden"
+             :style="isDesktop ? { width: leftWidth + '%', minWidth: '320px' } : { width: '100%' }">
 
-            <div class="p-4 rounded-2xl border transition-all duration-300 flex items-center justify-between"
+            <div class="flex-1 lg:overflow-y-auto custom-scrollbar space-y-6 pr-0 lg:pr-2">
+
+                <div class="p-4 rounded-2xl border transition-all duration-300 flex items-center justify-between"
                  :class="isKuasa ? 'bg-amber-500/10 border-amber-500/30 text-amber-300' : 'bg-indigo-500/10 border-indigo-500/30 text-indigo-300'">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-lg"
@@ -222,6 +315,7 @@
                 @csrf
                 @method('PUT')
                 <input type="hidden" name="tipe_form" :value="tipe_form">
+                <input type="hidden" name="nomor_surat" :value="nomor_surat">
 
                 {{-- CARD UTAMA: PEMILIH TIPE FORM SURAT --}}
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden mb-6 p-5">
@@ -281,7 +375,7 @@
                             <label class="block text-sm font-medium text-slate-300 mb-2">
                                 Jenis Surat <span class="text-rose-500">*</span>
                             </label>
-                            <select name="jenis_surat" required x-model="jenis_surat" @change="updateJenisSurat()"
+                            <select name="jenis_surat" required x-model="jenis_surat"
                                     class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:ring-2 focus:ring-amber-500 outline-none">
                                 <option value="">-- Pilih Jenis Surat --</option>
                                 @foreach($jenisSuratList as $jenis)
@@ -304,6 +398,8 @@
                                 <option value="HRD">HRD</option>
                                 <option value="DIR-I">Direktur I</option>
                                 <option value="DIR-II">Direktur II</option>
+                                <option value="DIR-III">Direktur III</option>
+                                <option value="KOM">Komisaris</option>
                                 <option value="IT">IT & Software</option>
                                 <option value="OPS">Operasional</option>
                             </select>
@@ -657,6 +753,8 @@
 
             </form>
 
+            </div>
+
         </div>
 
         {{-- SPLITTER / DIVIDER BAR --}}
@@ -680,20 +778,28 @@
             </div>
         </div>
 
-        {{-- RIGHT COLUMN: REALTIME A4 LETTER PREVIEW --}}
-        <div class="w-full lg:flex-1 min-w-0 shrink-0 lg:sticky lg:top-20 mt-6 lg:mt-0"
-             style="min-width: 320px;">
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden">
-                <div class="border-b border-slate-800 px-6 py-4 bg-slate-950/80 flex items-center justify-between">
+        {{-- RIGHT COLUMN: REALTIME A4 LETTER PREVIEW (Independent Scroll) --}}
+        <div class="w-full lg:flex-1 min-w-0 shrink-0 mt-6 lg:mt-0 flex flex-col lg:h-full lg:overflow-hidden"
+             :style="isDesktop ? { minWidth: '320px' } : { width: '100%' }">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col flex-1 lg:h-full">
+                <div class="border-b border-slate-800 px-4 sm:px-6 py-3.5 bg-slate-950/80 flex flex-wrap items-center justify-between gap-3 shrink-0">
                     <h2 class="text-base font-bold text-white flex items-center gap-2">
                         <i class="fa-solid fa-eye text-emerald-400"></i>
-                        Pratinjau Realtime Surat (A4)
+                        <span>Pratinjau Realtime Surat (A4)</span>
                     </h2>
+                    <div class="flex items-center gap-2">
+                        <button type="button" @click="downloadPreviewPdf()"
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-emerald-600/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer">
+                            <i class="fa-solid fa-file-pdf text-xs"></i>
+                            <span>Unduh PDF</span>
+                        </button>
+                    </div>
                 </div>
 
-                <div class="p-6 bg-slate-950 max-h-[85vh] overflow-y-auto flex justify-center">
-                    <div id="surat-keluar-preview-paper" class="a4-paper p-10 text-slate-900 relative text-sm sm:text-base leading-relaxed">
-
+                {{-- A4 Container Scroll Area --}}
+                <div class="custom-scrollbar p-3 sm:p-6 bg-slate-950 flex-1 overflow-x-auto overflow-y-auto flex justify-center -webkit-overflow-scrolling-touch">
+                   <div id="surat-keluar-preview-paper"
+     class="a4-paper w-full p-6 sm:p-10 text-slate-900 relative text-xs sm:text-sm md:text-base leading-relaxed shrink-0">
                         {{-- Kop Surat Header --}}
                         <div>
                             <img src="{{ asset('image/kop-surat.png') }}" alt="Kop Surat" class="w-full h-auto block"
@@ -765,6 +871,7 @@
                                                 <td class="w-1/2 align-top">
                                                     <p class="font-bold underline uppercase" x-text="dataKhusus.pemberi.nama || '(NAMA PEMBERI)'"></p>
                                                     <p class="text-xs text-slate-700 font-medium" x-text="dataKhusus.pemberi.jabatan || 'Direktur Utama'"></p>
+                                                    <p class="text-xs text-slate-600" x-text="'Divisi: ' + divisiLabel"></p>
                                                 </td>
                                             </tr>
                                         </table>
@@ -840,6 +947,7 @@
                                     <div class="w-64 text-center">
                                         <p>Hormat kami,</p>
                                         <p class="font-semibold">PT Microdata Indonesia</p>
+                                        <p class="text-xs text-slate-600" x-text="'Divisi: ' + divisiLabel"></p>
                                         <div class="h-20 flex items-center justify-center text-slate-400 text-xs italic">
                                             ( Tanda Tangan & Stempel )
                                         </div>
@@ -850,7 +958,8 @@
                             </div>
                         </template>
 
-                        <div class="mt-16 pt-3 border-t border-slate-300 text-center text-[10px] text-slate-500">
+                        {{-- Footer --}}
+                        <div class="mt-auto pt-6 border-t border-slate-300 text-center text-[10px] text-slate-500">
                             Dokumen ini dibuat melalui <strong>Sistem Arsip Surat PT Microdata Indonesia</strong>
                         </div>
 

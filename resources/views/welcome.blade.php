@@ -58,7 +58,7 @@
         /* Grid Pattern Background */
         .bg-tech-grid {
             background-size: 40px 40px;
-            background-image: 
+            background-image:
                 linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
                 linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
         }
@@ -144,8 +144,8 @@
             <div id="navbar-inner" class="flex items-center justify-between h-20 transition-all duration-300">
                 <!-- Brand Logo -->
                 <a href="#" class="flex items-center gap-3 group">
-                    <img src="{{ asset('images/microdata-logo.webp') }}" 
-                         alt="Logo PT Microdata Indonesia" 
+                    <img src="{{ asset('images/microdata-logo.webp') }}"
+                         alt="Logo PT Microdata Indonesia"
                          onerror="this.src='https://via.placeholder.com/200x60/000000/ffffff?text=MICRODATA';"
                          class="h-10 sm:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105">
                 </a>
@@ -155,23 +155,21 @@
                     <a href="#" class="hover:text-purple-400 transition-colors">Beranda</a>
                     <a href="#fitur" class="hover:text-purple-400 transition-colors">Fitur Utama</a>
                     <a href="#tentang" class="hover:text-purple-400 transition-colors">Tentang</a>
-                    <a href="#" class="hover:text-purple-400 transition-colors">Portofolio</a>
-                    <a href="#" class="hover:text-purple-400 transition-colors">Kontak</a>
                 </nav>
 
                 <!-- Navigation Actions -->
                 <div class="flex items-center space-x-3 sm:space-x-4">
                     @auth
-                        <a href="{{ url('/dashboard') }}" 
+                        <a href="{{ url('/dashboard') }}"
                            class="btn-purple-magenta-glow px-6 py-2.5 rounded-full text-sm font-semibold text-white transition-all transform hover:-translate-y-0.5">
                             Dashboard
                         </a>
                     @else
-                        <a href="{{ route('login') }}" 
+                        <a href="{{ route('login') }}"
                            class="hidden sm:inline-flex px-5 py-2 rounded-full text-xs sm:text-sm font-semibold text-slate-300 btn-outline-custom transition-all">
                             Masuk
                         </a>
-                        <a href="{{ route('register') }}" 
+                        <a href="{{ route('register') }}"
                            class="btn-purple-magenta-glow px-5 py-2 sm:px-6 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold text-white transition-all transform hover:-translate-y-0.5">
                             Daftar Akun
                         </a>
@@ -188,10 +186,10 @@
         <section class="pt-32 pb-16 lg:pt-40 lg:pb-24 min-h-screen flex items-center">
             <div class="max-w-7xl mx-auto px-6 lg:px-12 w-full">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-                    
+
                     <!-- Hero Left Content -->
                     <div class="lg:col-span-6 space-y-6 text-center lg:text-left z-20">
-                        
+
                         <!-- Top Tagline Badge -->
                         <div class="inline-flex items-center px-4 py-1.5 rounded-full bg-purple-950/50 border border-purple-500/30 text-purple-300 text-xs font-semibold tracking-wider">
                             MICRODATA INDONESIA
@@ -209,12 +207,12 @@
 
                         <!-- Action Buttons -->
                         <div class="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-4">
-                            <a href="{{ route('login') }}" 
+                            <a href="{{ route('login') }}"
                                class="btn-purple-magenta-glow px-7 py-3.5 rounded-full font-bold text-white text-sm tracking-wide flex items-center gap-2.5 transition-all transform hover:-translate-y-0.5">
                                 <span>Akses Sistem Sekarang</span>
                                 <i class="bi bi-arrow-right text-base"></i>
                             </a>
-                            <a href="{{ route('login') }}" 
+                            <a href="{{ route('login') }}"
                                class="px-7 py-3.5 rounded-full font-semibold text-slate-300 text-sm btn-outline-custom transition-all">
                                 Masuk
                             </a>
@@ -240,7 +238,7 @@
 
                     <!-- Hero Right Visual (3D DNA & Glowing Rings) -->
                     <div class="lg:col-span-6 relative flex items-center justify-center min-h-[420px] sm:min-h-[500px]">
-                        
+
                         <!-- Glowing Halo Orbit Rings -->
                         <div class="absolute w-[340px] h-[340px] sm:w-[460px] sm:h-[460px] rounded-full border border-purple-500/20 animate-spin-slow pointer-events-none"></div>
                         <div class="absolute w-[300px] h-[300px] sm:w-[400px] sm:h-[400px] rounded-full border border-dashed border-pink-500/20 animate-spin-reverse pointer-events-none"></div>
@@ -262,7 +260,7 @@
         <!-- Features Section -->
         <section id="fitur" class="py-24 relative border-t border-white/5 bg-black/20">
             <div class="max-w-7xl mx-auto px-6 lg:px-12">
-                
+
                 <div class="text-center max-w-2xl mx-auto mb-16">
                     <span class="text-xs font-bold text-pink-400 uppercase tracking-widest block mb-2">— MODUL UTAMA</span>
                     <h2 class="font-heading text-3xl sm:text-4xl font-extrabold text-white">Fitur Unggulan Sistem</h2>
@@ -270,7 +268,7 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    
+
                     <!-- Card 1 -->
                     <div class="glass-panel p-8 rounded-2xl relative group hover:border-purple-500/40 transition-all duration-300 hover:-translate-y-1">
                         <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center text-xl mb-6 group-hover:bg-purple-500 group-hover:text-black transition-all">
@@ -338,15 +336,15 @@
     <!-- Footer Section -->
     <footer class="bg-[#020308] border-t border-white/5 pt-16 pb-12 text-slate-400 relative z-10 text-sm font-sans">
         <div class="max-w-7xl mx-auto px-6 lg:px-12">
-            
+
             <!-- Grid Baris Atas: Deskripsi & Navigasi -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-white/5">
-                
+
                 <!-- Col 1: Logo & Deskripsi Singkat -->
                 <div class="lg:col-span-4 space-y-4">
                     <a href="#" class="inline-block">
-                        <img src="{{ asset('images/microdata-logo.webp') }}" 
-                             alt="Logo PT Microdata Indonesia" 
+                        <img src="{{ asset('images/microdata-logo.webp') }}"
+                             alt="Logo PT Microdata Indonesia"
                              onerror="this.src='https://via.placeholder.com/200x60/000000/ffffff?text=MICRODATA';"
                              class="h-10 sm:h-12 w-auto object-contain">
                     </a>
@@ -418,7 +416,7 @@
             <!-- Bagian Tengah: Lokasi Kantor Kami -->
             <div class="py-10 border-b border-white/5">
                 <h4 class="text-xs font-bold text-slate-200 uppercase tracking-widest font-heading mb-6">KANTOR KAMI</h4>
-                
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Card Kantor Jakarta -->
                     <div class="glass-panel p-6 rounded-2xl border border-white/5 hover:border-purple-500/30 transition-all flex items-start gap-4">
@@ -430,7 +428,7 @@
                             <p class="text-slate-400 leading-relaxed">
                                 Jl. Cempaka Putih Barat 26 No.25a, RT.7/RW.3, Cemp. Putih Bar., Kec. Cemp. Putih, Kota Jakarta Pusat, Daerah Khusus Ibukota Jakarta 10520
                             </p>
-                            <a href="https://maps.google.com" target="_blank" class="inline-flex items-center gap-1 text-purple-400 hover:text-pink-400 font-semibold pt-2 transition-colors">
+                            <a href="https://maps.app.goo.gl/HGTExSjtHN11TBpi6" target="_blank" class="inline-flex items-center gap-1 text-purple-400 hover:text-pink-400 font-semibold pt-2 transition-colors">
                                 <span>Google Maps</span>
                                 <i class="bi bi-arrow-up-right text-[10px]"></i>
                             </a>
@@ -447,7 +445,7 @@
                             <p class="text-slate-400 leading-relaxed">
                                 Jl. Endro Suratmin No.52d, Way Dadi, Kec. Sukarame, Kota Bandar Lampung, Lampung 35131
                             </p>
-                            <a href="https://maps.google.com" target="_blank" class="inline-flex items-center gap-1 text-purple-400 hover:text-pink-400 font-semibold pt-2 transition-colors">
+                            <a href="https://maps.app.goo.gl/HGTExSjtHN11TBpi6" target="_blank" class="inline-flex items-center gap-1 text-purple-400 hover:text-pink-400 font-semibold pt-2 transition-colors">
                                 <span>Google Maps</span>
                                 <i class="bi bi-arrow-up-right text-[10px]"></i>
                             </a>
@@ -459,14 +457,14 @@
             <!-- Baris Bawah: Copyright & Navigasi Bahasa/Sosmed -->
             <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
                 <p>&copy; 2026 PT Microdata Indonesia. Hak cipta dilindungi undang-undang.</p>
-                
+
                 <div class="flex items-center gap-4">
                     <button class="btn-outline-custom px-4 py-1.5 rounded-full text-xs text-slate-300 inline-flex items-center gap-2 hover:border-purple-500/50">
                         <i class="bi bi-globe"></i>
                         <span>ID - Bahasa Indonesia</span>
                         <i class="bi bi-chevron-down text-[10px]"></i>
                     </button>
-                    
+
                     <button class="w-8 h-8 rounded-full btn-outline-custom flex items-center justify-center text-slate-300 hover:text-purple-400 transition-colors" title="Toggle Mode">
                         <i class="bi bi-sun"></i>
                     </button>

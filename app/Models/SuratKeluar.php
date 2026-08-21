@@ -52,11 +52,11 @@ class SuratKeluar extends Model
     }
 
     /**
-     * Relasi ke Instansi
+     * Relasi ke Instansi (tetap terbaca walau instansi dihapus/masuk sampah)
      */
     public function instansi()
     {
-        return $this->belongsTo(Instansi::class);
+        return $this->belongsTo(Instansi::class)->withTrashed();
     }
 }
 

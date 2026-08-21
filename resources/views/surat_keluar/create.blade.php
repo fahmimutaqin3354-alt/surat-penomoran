@@ -31,13 +31,37 @@
         opacity: 0.9 !important;
     }
     [x-cloak] { display: none !important; }
-    .a4-paper {
-        width: 100%;
-        min-height: 297mm;
-        background: white;
-        color: #000;
-        font-family: "Times New Roman", Times, serif;
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+  .a4-paper {
+    width: 100%;
+    height: 297mm;
+    min-height: 297mm;
+    max-height: 297mm;
+
+    box-sizing: border-box;
+
+    background: white;
+    color: #000;
+    font-family: "Times New Roman", Times, serif;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+}
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: #020617;
+        border-radius: 8px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #334155;
+        border-radius: 8px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #6366f1;
     }
 </style>
 
@@ -195,17 +219,43 @@
             return this.nomorUrut;
         },
 
-        downloadPreviewPdf() {
-            const element = document.getElementById('surat-keluar-preview-paper');
-            const opt = {
-                margin: [10, 10, 10, 10],
-                filename: 'Surat_Keluar_Preview.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true, logging: false },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-            html2pdf().set(opt).from(element).save();
+       downloadPreviewPdf() {
+    const element = document.getElementById('surat-keluar-preview-paper');
+
+    const opt = {
+        margin: 0,
+
+        filename: 'Surat_Keluar_Preview.pdf',
+
+        image: {
+            type: 'jpeg',
+            quality: 0.98
+        },
+
+        html2canvas: {
+            scale: 2,
+            useCORS: true,
+            logging: false,
+            scrollX: 0,
+            scrollY: 0
+        },
+
+        jsPDF: {
+            unit: 'mm',
+            format: 'a4',
+            orientation: 'portrait'
+        },
+
+        pagebreak: {
+            mode: ['avoid-all']
         }
+    };
+
+    html2pdf()
+        .set(opt)
+        .from(element)
+        .save();
+}
      }"
      x-init="$nextTick(() => {
         $watch('jenis_surat', () => updateJenisSurat());
@@ -323,38 +373,39 @@
     @endif
 
     {{-- Header --}}
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-            <h1 class="text-3xl font-bold text-white flex items-center gap-3">
+            <h1 class="text-2xl sm:text-3xl font-bold text-white flex items-center gap-2.5 sm:gap-3">
                 <i class="fa-solid fa-paper-plane text-indigo-500"></i>
                 Tambah Surat Keluar
             </h1>
-            <p class="text-slate-400 mt-1">
+            <p class="text-slate-400 text-xs sm:text-sm mt-1">
                 Form <span class="text-indigo-400 font-semibold">Surat Keluar</span> — pratinjau A4 real-time.
             </p>
         </div>
         <div class="flex items-center gap-3">
             <a href="{{ route('surat_keluar.index') }}"
-               class="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold transition inline-flex items-center gap-2 border border-slate-700">
+               class="w-full sm:w-auto px-5 py-2.5 sm:py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs sm:text-sm font-semibold transition inline-flex items-center justify-center gap-2 border border-slate-700">
                 <i class="fa-solid fa-arrow-left"></i>
                 <span>Kembali</span>
             </a>
         </div>
     </div>
 
-    {{-- Resizable Split Container --}}
-    <div class="flex flex-col lg:flex-row items-start relative w-full gap-0"
+    {{-- Resizable Split Container (Equal Height with Independent Scrolling) --}}
+    <div class="flex flex-col lg:flex-row items-stretch relative w-full gap-0 lg:h-[calc(100vh-8rem)] lg:min-h-[600px]"
          x-data="resizableSplit('split_pos_surat_keluar', 50)"
          x-ref="splitContainer"
          :class="{ 'select-none': isDragging }">
 
-        {{-- LEFT COLUMN: FORM INPUTS --}}
-        <div class="w-full shrink-0 space-y-6"
-             :style="isDesktop ? { width: leftWidth + '%' } : {}"
-             style="min-width: 320px;">
+        {{-- LEFT COLUMN: FORM INPUTS (Independent Scroll) --}}
+        <div class="w-full shrink-0 flex flex-col lg:h-full lg:overflow-hidden"
+             :style="isDesktop ? { width: leftWidth + '%', minWidth: '320px' } : { width: '100%' }">
 
-            {{-- Mode Indicator Card --}}
-            <div class="p-4 rounded-2xl border transition-all duration-300 flex items-center justify-between"
+            <div class="flex-1 lg:overflow-y-auto custom-scrollbar space-y-6 pr-0 lg:pr-2">
+
+                {{-- Mode Indicator Card --}}
+                <div class="p-4 rounded-2xl border transition-all duration-300 flex items-center justify-between"
                  :class="isKuasa ? 'bg-amber-500/10 border-amber-500/30 text-amber-300' : 'bg-indigo-500/10 border-indigo-500/30 text-indigo-300'">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-lg"
@@ -448,6 +499,8 @@
                                 <option value="HRD">HRD</option>
                                 <option value="DIR-I">Direktur I</option>
                                 <option value="DIR-II">Direktur II</option>
+                                <option value="DIR-III">Direktur III</option>
+                                <option value="KOM">Komisaris</option>
                                 <option value="IT">IT & Software</option>
                                 <option value="OPS">Operasional</option>
                             </select>
@@ -864,18 +917,20 @@
                 {{-- Submit Buttons --}}
                 <div class="flex flex-col sm:flex-row gap-3">
                     <button type="submit"
-                            class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-indigo-600 hover:bg-indigo-700 rounded-xl text-white font-bold transition cursor-pointer shadow-lg shadow-indigo-600/30 text-base">
+                            class="inline-flex items-center justify-center gap-2 px-8 py-3.5 sm:py-4 bg-indigo-600 hover:bg-indigo-700 rounded-xl text-white font-bold transition cursor-pointer shadow-lg shadow-indigo-600/30 text-sm sm:text-base w-full sm:w-auto">
                         <i class="fa-solid fa-floppy-disk"></i>
                         <span>Simpan Surat Keluar</span>
                     </button>
                     <button type="reset"
-                            class="inline-flex items-center justify-center gap-2 px-6 py-4 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-semibold transition border border-slate-700">
+                            class="inline-flex items-center justify-center gap-2 px-6 py-3.5 sm:py-4 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-semibold transition border border-slate-700 text-sm sm:text-base w-full sm:w-auto">
                         <i class="fa-solid fa-rotate-left"></i>
                         <span>Reset Form</span>
                     </button>
                 </div>
 
             </form>
+
+            </div>
 
         </div>
 
@@ -900,21 +955,28 @@
             </div>
         </div>
 
-        {{-- RIGHT COLUMN: REALTIME A4 LETTER PREVIEW --}}
-        <div class="w-full lg:flex-1 min-w-0 shrink-0 lg:sticky lg:top-20 mt-6 lg:mt-0"
-             style="min-width: 320px;">
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden">
-                <div class="border-b border-slate-800 px-6 py-4 bg-slate-950/80 flex items-center justify-between">
-                    <h2 class="text-base font-bold text-white flex items-center gap-2">
+        {{-- RIGHT COLUMN: REALTIME A4 LETTER PREVIEW (Independent Scroll) --}}
+        <div class="w-full lg:flex-1 min-w-0 shrink-0 mt-6 lg:mt-0 flex flex-col lg:h-full lg:overflow-hidden"
+             :style="isDesktop ? { minWidth: '320px' } : { width: '100%' }">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col flex-1 lg:h-full">
+                <div class="border-b border-slate-800 px-4 sm:px-6 py-3.5 bg-slate-950/80 flex flex-wrap items-center justify-between gap-3 shrink-0">
+                    <h2 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
                         <i class="fa-solid fa-eye text-emerald-400"></i>
-                        Pratinjau Realtime Surat (A4)
+                        <span>Pratinjau Surat (A4)</span>
                     </h2>
+                    <div class="flex items-center gap-2">
+                        <button type="button" @click="downloadPreviewPdf()"
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-emerald-600/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer">
+                            <i class="fa-solid fa-file-pdf text-xs"></i>
+                            <span>Unduh PDF</span>
+                        </button>
+                    </div>
                 </div>
 
                 {{-- A4 Container Scroll Area --}}
-                <div class="p-6 bg-slate-950 max-h-[85vh] overflow-y-auto flex justify-center">
-                    <div id="surat-keluar-preview-paper" class="a4-paper p-10 text-slate-900 relative text-sm sm:text-base leading-relaxed flex flex-col">
-
+                <div class="custom-scrollbar p-3 sm:p-6 bg-slate-950 flex-1 overflow-x-auto overflow-y-auto flex justify-center -webkit-overflow-scrolling-touch">
+                   <div id="surat-keluar-preview-paper"
+     class="a4-paper w-full p-6 sm:p-10 text-slate-900 relative text-xs sm:text-sm md:text-base leading-relaxed shrink-0">
                         {{-- Kop Surat Header --}}
                         <div>
                             <img src="{{ asset('image/kop-surat.png') }}" alt="Kop Surat" class="w-full h-auto block"

@@ -369,19 +369,20 @@ public function update(Request $request, $id)
 
     $request->validate([
         'tanggal_surat' => 'required|date',
-        'jenis_surat' => 'required|string|max:100',
-        'kode_surat' => 'nullable|string|max:10',
-        'kode_divisi' => 'required|string|max:20',
-        'instansi_id' => 'nullable|exists:instansis,id',
-        'tujuan' => $isKuasa ? 'nullable|string|max:255' : 'required|string|max:255',
-        'perihal' => $isKuasa ? 'nullable|string|max:255' : 'required|string|max:255',
-        'isi_surat' => $isKuasa ? 'nullable|string' : 'required|string',
-        'data_khusus' => $isKuasa ? 'required|array' : 'nullable|array',
-        'lampiran' => 'nullable|string|max:255',
+        'nomor_surat'   => 'nullable|string|max:100',
+        'jenis_surat'   => 'required|string|max:100',
+        'kode_surat'    => 'nullable|string|max:10',
+        'kode_divisi'   => 'required|string|max:20',
+        'instansi_id'   => 'nullable|exists:instansis,id',
+        'tujuan'        => $isKuasa ? 'nullable|string|max:255' : 'required|string|max:255',
+        'perihal'       => $isKuasa ? 'nullable|string|max:255' : 'required|string|max:255',
+        'isi_surat'     => $isKuasa ? 'nullable|string' : 'required|string',
+        'data_khusus'   => $isKuasa ? 'required|array' : 'nullable|array',
+        'lampiran'      => 'nullable|string|max:255',
         'penandatangan' => $isKuasa ? 'nullable|string|max:255' : 'required|string|max:255',
         'jabatan_penandatangan' => $isKuasa ? 'nullable|string|max:255' : 'required|string|max:255',
-        'status' => 'required|in:Draft,Dikirim,Selesai',
-        'file_surat' => 'nullable|mimes:pdf|max:2048',
+        'status'        => 'required|in:Draft,Dikirim,Selesai',
+        'file_surat'    => 'nullable|mimes:pdf|max:2048',
     ]);
 
     // Kumpulkan data khusus (misal data Surat Kuasa)
@@ -416,6 +417,8 @@ public function update(Request $request, $id)
     $surat->update([
 
         'tanggal_surat' => $request->tanggal_surat,
+
+        'nomor_surat' => $request->filled('nomor_surat') ? $request->nomor_surat : $surat->nomor_surat,
 
         'jenis_surat' => $request->jenis_surat,
 

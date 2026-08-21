@@ -2,31 +2,22 @@
 
 @section('title', 'Data Instansi')
 
-@push('styles')
-<style>
-    #tableInstansi_wrapper .dt-search input,
-    #tableInstansi_wrapper .dataTables_filter input {
-        min-width: 240px;
-    }
-</style>
-@endpush
-
 @section('content')
 <div class="space-y-4">
 
     {{-- Header --}}
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 sm:p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl">
         <div>
-            <h1 class="text-2xl font-extrabold text-white tracking-tight flex items-center gap-3">
-                <span class="w-9 h-9 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center">
-                    <i class="fa-solid fa-building text-indigo-400 text-sm"></i>
+            <h1 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight flex items-center gap-2.5 sm:gap-3">
+                <span class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-building text-indigo-400 text-xs sm:text-sm"></i>
                 </span>
                 Data Instansi
             </h1>
-            <p class="text-slate-400 text-sm mt-1 ml-12">Kelola data instansi/pengirim surat pada sistem.</p>
+            <p class="text-slate-400 text-xs sm:text-sm mt-1 ml-10 sm:ml-12">Kelola data instansi/pengirim surat pada sistem.</p>
         </div>
         <a href="{{ route('instansi.create') }}"
-           class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white text-sm font-semibold shadow-lg shadow-indigo-500/25 transition-all duration-200">
+           class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white text-sm font-semibold shadow-lg shadow-indigo-500/25 transition-all duration-200 w-full sm:w-auto">
             <i class="fa-solid fa-plus text-xs"></i>
             <span>Tambah Instansi</span>
         </a>
@@ -34,7 +25,7 @@
 
     {{-- Table Card --}}
     <div class="rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl overflow-hidden">
-        <div class="px-6 py-3.5 border-b border-slate-800/80 flex items-center justify-between">
+        <div class="px-4 sm:px-6 py-3.5 border-b border-slate-800/80 flex items-center justify-between">
             <h2 class="text-sm font-semibold text-slate-300 flex items-center gap-2">
                 <i class="fa-solid fa-table-cells text-indigo-400"></i>
                 Daftar Instansi

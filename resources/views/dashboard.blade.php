@@ -6,13 +6,13 @@
 <div class="space-y-8" x-data="{ activeTab: 'surat_masuk' }">
 
     <!-- Header & Welcome Banner -->
-    <div class="relative overflow-hidden flex flex-col xl:flex-row xl:items-center xl:justify-between gap-6 p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-slate-900/90 via-slate-900/80 to-indigo-950/50 border border-slate-800/80 backdrop-blur-xl shadow-2xl">
+    <div class="relative overflow-hidden flex flex-col xl:flex-row xl:items-center xl:justify-between gap-5 p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-slate-900/90 via-slate-900/80 to-indigo-950/50 border border-slate-800/80 backdrop-blur-xl shadow-2xl">
         <!-- Glow Effects -->
         <div class="absolute -right-16 -top-16 w-72 h-72 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
         <div class="absolute -left-16 -bottom-16 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
         <div class="space-y-3 relative z-10">
-            <div class="flex items-center gap-3 flex-wrap">
+            <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold uppercase tracking-wider">
                     <i class="fa-solid fa-chart-pie"></i>
                     <span>Ringkasan Sistem</span>
@@ -23,26 +23,25 @@
                 </span>
             </div>
 
-            <h1 class="text-2xl sm:text-3xl font-black text-white tracking-tight">
+            <h1 class="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight">
                 Dashboard Manajemen Surat & Arsip
             </h1>
-            <p class="text-slate-400 text-sm max-w-2xl leading-relaxed">
+            <p class="text-slate-400 text-xs sm:text-sm max-w-2xl leading-relaxed">
                 Selamat datang kembali, <strong class="text-indigo-400 font-semibold">{{ Auth::user()->name ?? 'Pengguna' }}</strong>! Berikut adalah ringkasan real-time untuk lalu lintas <span class="text-indigo-300 font-medium">Surat Masuk</span>, <span class="text-purple-300 font-medium">Surat Keluar</span>, dan <span class="text-amber-300 font-medium">Arsip Digital</span>.
             </p>
         </div>
 
         <!-- Quick Action Buttons Bar -->
-        {{-- flex-wrap + gap: tombol otomatis wrap ke baris berikutnya di mobile --}}
-        <div class="flex items-center flex-wrap gap-2.5 relative z-10">
-            <a href="{{ route('surat_masuk.create') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-lg shadow-indigo-600/30 transition-all duration-200 hover:scale-105 active:scale-95">
+        <div class="flex items-center flex-wrap gap-2 sm:gap-2.5 relative z-10 w-full xl:w-auto">
+            <a href="{{ route('surat_masuk.create') }}" class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-lg shadow-indigo-600/30 transition-all duration-200 hover:scale-105 active:scale-95 whitespace-nowrap">
                 <i class="fa-solid fa-plus text-xs"></i>
                 <span>Surat Masuk</span>
             </a>
-            <a href="{{ route('surat_keluar.create') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold shadow-lg shadow-purple-600/30 transition-all duration-200 hover:scale-105 active:scale-95">
+            <a href="{{ route('surat_keluar.create') }}" class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold shadow-lg shadow-purple-600/30 transition-all duration-200 hover:scale-105 active:scale-95 whitespace-nowrap">
                 <i class="fa-solid fa-paper-plane text-xs"></i>
                 <span>Surat Keluar</span>
             </a>
-            <a href="{{ route('arsip.index') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-amber-400 text-xs font-bold transition-all duration-200 hover:scale-105 active:scale-95">
+            <a href="{{ route('arsip.index') }}" class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-amber-400 text-xs font-bold transition-all duration-200 hover:scale-105 active:scale-95 whitespace-nowrap">
                 <i class="fa-solid fa-box-archive text-xs"></i>
                 <span>Cari Arsip</span>
             </a>
@@ -50,7 +49,7 @@
     </div>
 
     <!-- Interactive Cards Grid (Terkoneksi ke Surat Masuk, Keluar, Arsip & Pengguna) -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
         
         <!-- Card 1: Surat Masuk -->
         <a href="{{ route('surat_masuk.index') }}" class="group relative p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl hover:border-indigo-500/50 transition-all duration-300 shadow-xl hover:shadow-indigo-500/10 block overflow-hidden">
@@ -168,44 +167,44 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
         <!-- Chart Komparasi (8 cols) -->
-        <div class="lg:col-span-8 p-6 rounded-3xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl space-y-4">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800/80">
+        <div class="lg:col-span-8 p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 pb-4 border-b border-slate-800/80">
                 <div>
-                    <h2 class="text-lg font-bold text-white tracking-tight flex items-center gap-2">
+                    <h2 class="text-base sm:text-lg font-bold text-white tracking-tight flex items-center gap-2">
                         <i class="fa-solid fa-chart-line text-indigo-400"></i>
                         <span>Grafik Tren Lalu Lintas Surat</span>
                     </h2>
                     <p class="text-xs text-slate-400 mt-0.5">Perbandingan Surat Masuk, Surat Keluar & Arsip (6 Bulan Terakhir)</p>
                 </div>
-                <div class="flex items-center gap-3 text-xs">
+                <div class="flex items-center flex-wrap gap-2.5 sm:gap-3 text-xs">
                     <span class="flex items-center gap-1.5 text-indigo-400 font-semibold">
-                        <span class="w-3 h-3 rounded bg-indigo-500"></span> Surat Masuk
+                        <span class="w-2.5 h-2.5 rounded bg-indigo-500"></span> Masuk
                     </span>
                     <span class="flex items-center gap-1.5 text-purple-400 font-semibold">
-                        <span class="w-3 h-3 rounded bg-purple-500"></span> Surat Keluar
+                        <span class="w-2.5 h-2.5 rounded bg-purple-500"></span> Keluar
                     </span>
                     <span class="flex items-center gap-1.5 text-amber-400 font-semibold">
-                        <span class="w-3 h-3 rounded bg-amber-500"></span> Arsip
+                        <span class="w-2.5 h-2.5 rounded bg-amber-500"></span> Arsip
                     </span>
                 </div>
             </div>
-            <div class="relative w-full h-[300px]">
+            <div class="relative w-full h-[240px] sm:h-[300px]">
                 <canvas id="suratChart"></canvas>
             </div>
         </div>
 
         <!-- Ringkasan Statistik & Status Modul (4 cols) -->
-        <div class="lg:col-span-4 p-6 rounded-3xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl flex flex-col justify-between space-y-6">
+        <div class="lg:col-span-4 p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl flex flex-col justify-between space-y-5 sm:space-y-6">
             <div>
-                <div class="flex items-center justify-between pb-4 border-b border-slate-800/80">
-                    <h2 class="text-lg font-bold text-white tracking-tight flex items-center gap-2">
+                <div class="flex items-center justify-between pb-3 sm:pb-4 border-b border-slate-800/80">
+                    <h2 class="text-base sm:text-lg font-bold text-white tracking-tight flex items-center gap-2">
                         <i class="fa-solid fa-list-check text-amber-400"></i>
                         <span>Distribusi Status</span>
                     </h2>
                     <span class="text-xs font-semibold text-slate-400 bg-slate-800/60 px-2.5 py-1 rounded-lg border border-slate-700/50">Realtime</span>
                 </div>
 
-                <div class="space-y-4 mt-4">
+                <div class="space-y-3 sm:space-y-4 mt-4">
                     <!-- Surat Masuk Stats -->
                     <div class="p-3.5 rounded-2xl bg-slate-950/50 border border-slate-800/80 space-y-2">
                         <div class="flex items-center justify-between text-xs font-bold">
@@ -268,50 +267,42 @@
     </div>
 
     <!-- Data Terbaru Terintegrasi (Surat Masuk, Surat Keluar, & Arsip Tabs) -->
-    <div class="p-6 rounded-3xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl space-y-6">
+    <div class="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl space-y-5 sm:space-y-6">
         
         <!-- Tab Navigation & Header -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800/80">
             <div>
-                <h2 class="text-lg font-bold text-white tracking-tight">Dokumen & Transaksi Terbaru</h2>
+                <h2 class="text-base sm:text-lg font-bold text-white tracking-tight">Dokumen & Transaksi Terbaru</h2>
                 <p class="text-xs text-slate-400">Data aktivitas terbaru yang telah dicatat dalam sistem</p>
             </div>
 
             <!-- Switcher Tabs -->
-            {{--
-                overflow-x-auto  : tab bisa di-scroll horizontal di mobile
-                pb-1             : sedikit ruang bawah agar scrollbar tidak menindih tombol
-                -mb-1            : kompensasi padding bawah
-            --}}
-            <div class="overflow-x-auto pb-1 -mb-1 self-start sm:self-auto">
-                <div class="flex items-center gap-1.5 p-1 rounded-xl bg-slate-950/80 border border-slate-800/80 min-w-max">
+            <div class="flex flex-wrap sm:flex-nowrap items-center gap-1.5 p-1 rounded-xl bg-slate-950/80 border border-slate-800/80 w-full sm:w-auto">
                 <button @click="activeTab = 'surat_masuk'"
                         :class="activeTab === 'surat_masuk' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'"
-                        class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 flex items-center gap-2">
+                        class="flex-1 sm:flex-initial px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 flex items-center justify-center gap-1.5 whitespace-nowrap">
                     <i class="fa-solid fa-inbox text-[11px]"></i>
                     <span>Surat Masuk</span>
                 </button>
                 <button @click="activeTab = 'surat_keluar'"
                         :class="activeTab === 'surat_keluar' ? 'bg-purple-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'"
-                        class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 flex items-center gap-2">
+                        class="flex-1 sm:flex-initial px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 flex items-center justify-center gap-1.5 whitespace-nowrap">
                     <i class="fa-solid fa-paper-plane text-[11px]"></i>
                     <span>Surat Keluar</span>
                 </button>
                 <button @click="activeTab = 'arsip'"
                         :class="activeTab === 'arsip' ? 'bg-amber-500 text-slate-950 shadow-md font-bold' : 'text-slate-400 hover:text-slate-200'"
-                        class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 flex items-center gap-2">
+                        class="flex-1 sm:flex-initial px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 flex items-center justify-center gap-1.5 whitespace-nowrap">
                     <i class="fa-solid fa-box-archive text-[11px]"></i>
-                    <span>Arsip Terbaru</span>
+                    <span>Arsip</span>
                 </button>
-            </div>{{-- end min-w-max div --}}
-            </div>{{-- end overflow-x-auto div --}}
+            </div>
         </div>
 
         <!-- Tab 1: Surat Masuk Terbaru -->
         <div x-show="activeTab === 'surat_masuk'" x-cloak transition:enter="transition ease-out duration-200" transition:enter-start="opacity-0 translate-y-1" transition:enter-end="opacity-100 translate-y-0">
             <div class="overflow-x-auto">
-                {{-- min-w: pastikan tabel punya lebar minimum agar tidak "gepeng" di mobile --}}
-                <table class="w-full text-left text-sm text-slate-300" style="min-width: 640px;">
+                <table class="w-full text-left text-sm text-slate-300">
                     <thead class="text-xs uppercase bg-slate-950/70 text-slate-400 border-b border-slate-800">
                         <tr>
                             <th class="px-4 py-3.5 font-bold rounded-l-xl">No</th>
@@ -384,7 +375,7 @@
         <!-- Tab 2: Surat Keluar Terbaru -->
         <div x-show="activeTab === 'surat_keluar'" x-cloak transition:enter="transition ease-out duration-200" transition:enter-start="opacity-0 translate-y-1" transition:enter-end="opacity-100 translate-y-0">
             <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm text-slate-300" style="min-width: 640px;">
+                <table class="w-full text-left text-sm text-slate-300">
                     <thead class="text-xs uppercase bg-slate-950/70 text-slate-400 border-b border-slate-800">
                         <tr>
                             <th class="px-4 py-3.5 font-bold rounded-l-xl">No</th>
@@ -456,7 +447,7 @@
         <!-- Tab 3: Arsip Terbaru -->
         <div x-show="activeTab === 'arsip'" x-cloak transition:enter="transition ease-out duration-200" transition:enter-start="opacity-0 translate-y-1" transition:enter-end="opacity-100 translate-y-0">
             <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm text-slate-300" style="min-width: 680px;">
+                <table class="w-full text-left text-sm text-slate-300">
                     <thead class="text-xs uppercase bg-slate-950/70 text-slate-400 border-b border-slate-800">
                         <tr>
                             <th class="px-4 py-3.5 font-bold rounded-l-xl">No</th>
