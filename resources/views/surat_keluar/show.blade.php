@@ -7,24 +7,24 @@
 <div class="max-w-7xl mx-auto">
 
     {{-- Header --}}
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
 
-        <div>
+        <div class="min-w-0">
 
-            <h1 class="text-3xl font-bold text-white">
+            <h1 class="text-2xl sm:text-3xl font-bold text-white">
                 Detail Surat Keluar
             </h1>
 
-            <p class="text-slate-400 mt-1">
+            <p class="text-slate-400 mt-1 text-sm sm:text-base">
                 Informasi lengkap surat keluar.
             </p>
 
         </div>
 
-        <div class="flex gap-3">
+        <div class="flex flex-wrap gap-3 shrink-0">
 
             <a href="{{ route('surat_keluar.edit', $surat->id) }}"
-               class="inline-flex items-center gap-2 bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-3 rounded-xl font-semibold transition">
+               class="inline-flex items-center justify-center gap-2 bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-3 rounded-xl font-semibold transition min-h-[44px]">
 
                 <i class="fa-solid fa-pen"></i>
 
@@ -33,7 +33,7 @@
             </a>
 
             <a href="{{ route('surat_keluar.index') }}"
-               class="inline-flex items-center gap-2 bg-slate-700 hover:bg-slate-600 text-white px-5 py-3 rounded-xl font-semibold transition">
+               class="inline-flex items-center justify-center gap-2 bg-slate-700 hover:bg-slate-600 text-white px-5 py-3 rounded-xl font-semibold transition min-h-[44px]">
 
                 <i class="fa-solid fa-arrow-left"></i>
 
@@ -60,7 +60,42 @@
 
         </div>
 
-        <div class="p-6">
+            @php
+                $dk = $surat->data_khusus ?? [];
+                $isKuasa = ($dk['tipe_form'] ?? '') === 'kuasa' 
+                    || (isset($surat->jenisSurat) && $surat->jenisSurat->form_type === 'kuasa')
+                    || Str::contains(strtolower($surat->jenis_surat), 'kuasa')
+                    || !empty($dk['pemberi']['nama']);
+            @endphp
+
+            @if($isKuasa)
+                <div class="md:col-span-2 bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 mb-2">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">
+                            <i class="fa-solid fa-file-signature"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Tipe Surat</span>
+                            <h3 class="text-base font-bold text-white">Surat Kuasa (Dual Penandatangan)</h3>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 text-sm">
+                        <div class="bg-slate-950/70 border border-slate-800 rounded-lg p-3">
+                            <h4 class="font-bold text-amber-300 text-xs uppercase mb-2 border-b border-slate-800 pb-1">1. Pemberi Kuasa</h4>
+                            <p class="text-white font-semibold">{{ $dk['pemberi']['nama'] ?? '-' }}</p>
+                            <p class="text-xs text-slate-400">Jabatan: {{ $dk['pemberi']['jabatan'] ?? '-' }}</p>
+                            <p class="text-xs text-slate-400">Alamat: {{ $dk['pemberi']['alamat'] ?? '-' }}</p>
+                        </div>
+                        <div class="bg-slate-950/70 border border-slate-800 rounded-lg p-3">
+                            <h4 class="font-bold text-amber-300 text-xs uppercase mb-2 border-b border-slate-800 pb-1">2. Penerima Kuasa</h4>
+                            <p class="text-white font-semibold">{{ $dk['penerima']['nama'] ?? '-' }}</p>
+                            <p class="text-xs text-slate-400">Jabatan: {{ $dk['penerima']['jabatan'] ?? '-' }}</p>
+                            <p class="text-xs text-slate-400">Alamat: {{ $dk['penerima']['alamat'] ?? '-' }}</p>
+                        </div>
+                    </div>
+                </div>
+            @endif
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
@@ -248,7 +283,7 @@
     @if($surat->file_surat)
 
         <a
-            href="{{ asset('storage/'.$surat->file_surat) }}"
+            href="{{ asset('storage/surat_keluar/'.$surat->file_surat) }}"
             target="_blank"
             class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-5 py-3 rounded-xl transition">
 
@@ -272,11 +307,11 @@
             </div>
 
             {{-- Tombol --}}
-            <div class="mt-8 flex flex-col sm:flex-row gap-3">
+            <div class="mt-8 flex flex-wrap gap-3">
 
                 <a
                     href="{{ route('surat_keluar.preview', $surat->id) }}"
-                    class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 rounded-xl text-white font-semibold transition duration-200 shadow">
+                    class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 rounded-xl text-white font-semibold transition duration-200 shadow min-h-[44px]">
 
                     <i class="fa-solid fa-file-lines"></i>
 
@@ -286,7 +321,7 @@
 
                 <a
                     href="{{ route('surat_keluar.edit', $surat->id) }}"
-                    class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-yellow-500 hover:bg-yellow-600 rounded-xl text-white font-semibold transition duration-200 shadow">
+                    class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-yellow-500 hover:bg-yellow-600 rounded-xl text-white font-semibold transition duration-200 shadow min-h-[44px]">
 
                     <i class="fa-solid fa-pen-to-square"></i>
 
@@ -296,7 +331,7 @@
 
                 <a
                     href="{{ route('surat_keluar.index') }}"
-                    class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-slate-700 hover:bg-slate-600 rounded-xl text-white font-semibold transition duration-200">
+                    class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-slate-700 hover:bg-slate-600 rounded-xl text-white font-semibold transition duration-200 min-h-[44px]">
 
                     <i class="fa-solid fa-arrow-left"></i>
 
