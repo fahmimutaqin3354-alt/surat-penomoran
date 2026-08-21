@@ -7,22 +7,22 @@
 <div class="px-4 py-6">
 
     {{-- Header --}}
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
 
-        <div>
+        <div class="min-w-0">
 
-            <h4 class="text-3xl font-bold text-white">
+            <h4 class="text-2xl sm:text-3xl font-bold text-white">
                 Detail Arsip Surat
             </h4>
 
-            <p class="text-slate-400 mt-1">
+            <p class="text-slate-400 mt-1 text-sm sm:text-base">
                 Informasi lengkap arsip surat PT Microdata Indonesia.
             </p>
 
         </div>
 
         <a href="{{ route('arsip.index') }}"
-            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-white transition">
+            class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-white transition shrink-0 min-h-[44px]">
 
             <svg xmlns="http://www.w3.org/2000/svg"
                 class="w-5 h-5"

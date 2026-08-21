@@ -273,7 +273,7 @@
         {{-- Modal Email (notifikasi sukses) --}}
         <div x-data="{ show: false }"
              @open-modal-email-notif-{{ $suratBaru->id }}.window="show = true"
-             x-show="show" x-cloak
+             x-show="show" x-cloak style="display: none;"
              class="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div class="absolute inset-0 bg-black/60" @click="show = false"></div>
             <div class="relative bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm p-6">
@@ -299,7 +299,7 @@
         {{-- Modal WhatsApp (notifikasi sukses) --}}
         <div x-data="{ show: false }"
              @open-modal-wa-notif-{{ $suratBaru->id }}.window="show = true"
-             x-show="show" x-cloak
+             x-show="show" x-cloak style="display: none;"
              class="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div class="absolute inset-0 bg-black/60" @click="show = false"></div>
             <div class="relative bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm p-6">

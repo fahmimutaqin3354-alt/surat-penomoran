@@ -77,19 +77,24 @@
 <div class="max-w-[1600px] mx-auto" x-data="suratMasukForm()">
 
     {{-- Header --}}
-    <div class="flex items-center justify-between mb-6">
-        <div>
-            <h1 class="text-3xl font-bold text-white flex items-center gap-3">
-                <i class="fa-solid fa-inbox text-indigo-500"></i>
+    {{--
+        flex-col sm:flex-row : stack di mobile, horizontal di sm+
+        gap-4                : jarak cukup agar tidak berhimpit
+    --}}
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <div class="min-w-0">
+            {{-- text-2xl di mobile, 3xl di sm ke atas --}}
+            <h1 class="text-2xl sm:text-3xl font-bold text-white flex items-center gap-3 flex-wrap">
+                <i class="fa-solid fa-inbox text-indigo-500 shrink-0"></i>
                 Tambah Surat Masuk
             </h1>
-            <p class="text-slate-400 mt-1">
+            <p class="text-slate-400 mt-1 text-sm sm:text-base">
                 Form <span class="text-indigo-400 font-semibold">Surat Masuk</span> — lembar agenda A4 ter-update secara <span class="text-indigo-400 font-semibold">real-time</span>.
             </p>
         </div>
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-3 shrink-0">
             <a href="{{ route('surat_masuk.index') }}"
-               class="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold transition inline-flex items-center gap-2 border border-slate-700">
+               class="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold transition inline-flex items-center gap-2 border border-slate-700 min-h-[44px]">
                 <i class="fa-solid fa-arrow-left"></i>
                 <span>Kembali</span>
             </a>

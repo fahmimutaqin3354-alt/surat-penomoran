@@ -287,13 +287,18 @@
 
             </div>
 
-            {{-- Tombol --}}
-            <div class="mt-8 flex flex-col sm:flex-row gap-3">
+            {{-- Tombol Aksi --}}
+            {{--
+                flex-wrap   : tombol wrap ke baris baru jika layar tidak cukup lebar
+                gap-3       : jarak antar tombol
+                min-h-[44px]: touch target minimum (Apple HIG: 44pt)
+            --}}
+            <div class="mt-8 flex flex-wrap gap-3">
 
                 <a
     href="{{ asset('storage/surat_masuk/'.$surat->file_surat) }}"
     target="_blank"
-    class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 rounded-xl text-white font-semibold transition duration-200 shadow">
+    class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 rounded-xl text-white font-semibold transition duration-200 shadow min-h-[44px]">
 
     <i class="fa-solid fa-file-lines"></i>
 
@@ -303,7 +308,7 @@
 
                 <a
                     href="{{ route('surat_masuk.edit', $surat->id) }}"
-                    class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-yellow-500 hover:bg-yellow-600 rounded-xl text-white font-semibold transition duration-200 shadow">
+                    class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-yellow-500 hover:bg-yellow-600 rounded-xl text-white font-semibold transition duration-200 shadow min-h-[44px]">
 
                     <i class="fa-solid fa-pen-to-square"></i>
 
@@ -313,7 +318,7 @@
 
                 <a
                     href="{{ route('surat_masuk.index') }}"
-                    class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-slate-700 hover:bg-slate-600 rounded-xl text-white font-semibold transition duration-200">
+                    class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-slate-700 hover:bg-slate-600 rounded-xl text-white font-semibold transition duration-200 min-h-[44px]">
 
                     <i class="fa-solid fa-arrow-left"></i>
 
@@ -322,7 +327,7 @@
                 </a>
 
                 <a href="{{ route('surat_keluar.create', ['surat_masuk' => $surat->id]) }}"
-   class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 rounded-xl text-white font-semibold">
+   class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 rounded-xl text-white font-semibold min-h-[44px]">
 
     <i class="fa-solid fa-reply"></i>
 

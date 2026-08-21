@@ -32,6 +32,7 @@
         </div>
 
         <!-- Quick Action Buttons Bar -->
+        {{-- flex-wrap + gap: tombol otomatis wrap ke baris berikutnya di mobile --}}
         <div class="flex items-center flex-wrap gap-2.5 relative z-10">
             <a href="{{ route('surat_masuk.create') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-lg shadow-indigo-600/30 transition-all duration-200 hover:scale-105 active:scale-95">
                 <i class="fa-solid fa-plus text-xs"></i>
@@ -277,7 +278,13 @@
             </div>
 
             <!-- Switcher Tabs -->
-            <div class="flex items-center gap-1.5 p-1 rounded-xl bg-slate-950/80 border border-slate-800/80 self-start sm:self-auto">
+            {{--
+                overflow-x-auto  : tab bisa di-scroll horizontal di mobile
+                pb-1             : sedikit ruang bawah agar scrollbar tidak menindih tombol
+                -mb-1            : kompensasi padding bawah
+            --}}
+            <div class="overflow-x-auto pb-1 -mb-1 self-start sm:self-auto">
+                <div class="flex items-center gap-1.5 p-1 rounded-xl bg-slate-950/80 border border-slate-800/80 min-w-max">
                 <button @click="activeTab = 'surat_masuk'"
                         :class="activeTab === 'surat_masuk' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'"
                         class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 flex items-center gap-2">
@@ -296,13 +303,15 @@
                     <i class="fa-solid fa-box-archive text-[11px]"></i>
                     <span>Arsip Terbaru</span>
                 </button>
-            </div>
+            </div>{{-- end min-w-max div --}}
+            </div>{{-- end overflow-x-auto div --}}
         </div>
 
         <!-- Tab 1: Surat Masuk Terbaru -->
         <div x-show="activeTab === 'surat_masuk'" x-cloak transition:enter="transition ease-out duration-200" transition:enter-start="opacity-0 translate-y-1" transition:enter-end="opacity-100 translate-y-0">
             <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm text-slate-300">
+                {{-- min-w: pastikan tabel punya lebar minimum agar tidak "gepeng" di mobile --}}
+                <table class="w-full text-left text-sm text-slate-300" style="min-width: 640px;">
                     <thead class="text-xs uppercase bg-slate-950/70 text-slate-400 border-b border-slate-800">
                         <tr>
                             <th class="px-4 py-3.5 font-bold rounded-l-xl">No</th>
@@ -375,7 +384,7 @@
         <!-- Tab 2: Surat Keluar Terbaru -->
         <div x-show="activeTab === 'surat_keluar'" x-cloak transition:enter="transition ease-out duration-200" transition:enter-start="opacity-0 translate-y-1" transition:enter-end="opacity-100 translate-y-0">
             <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm text-slate-300">
+                <table class="w-full text-left text-sm text-slate-300" style="min-width: 640px;">
                     <thead class="text-xs uppercase bg-slate-950/70 text-slate-400 border-b border-slate-800">
                         <tr>
                             <th class="px-4 py-3.5 font-bold rounded-l-xl">No</th>
@@ -447,7 +456,7 @@
         <!-- Tab 3: Arsip Terbaru -->
         <div x-show="activeTab === 'arsip'" x-cloak transition:enter="transition ease-out duration-200" transition:enter-start="opacity-0 translate-y-1" transition:enter-end="opacity-100 translate-y-0">
             <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm text-slate-300">
+                <table class="w-full text-left text-sm text-slate-300" style="min-width: 680px;">
                     <thead class="text-xs uppercase bg-slate-950/70 text-slate-400 border-b border-slate-800">
                         <tr>
                             <th class="px-4 py-3.5 font-bold rounded-l-xl">No</th>

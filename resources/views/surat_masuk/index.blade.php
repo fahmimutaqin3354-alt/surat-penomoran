@@ -52,7 +52,11 @@
             </span>
         </div>
 
-        <div class="overflow-x-auto">
+        {{--
+            overflow-x-auto : memastikan tabel bisa di-scroll horizontal di layar kecil
+            -mx-0.5 px-0.5  : kompensasi border agar tidak terpotong
+        --}}
+        <div class="overflow-x-auto w-full">
             <table id="tableSuratMasuk" class="w-full text-sm">
                 <thead>
                     <tr>

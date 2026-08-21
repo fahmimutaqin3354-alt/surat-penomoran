@@ -45,22 +45,34 @@ href="https://cdn.datatables.net/searchbuilder/1.8.2/css/searchBuilder.dataTable
 <link rel="stylesheet"
 href="https://cdn.datatables.net/searchpanes/2.3.2/css/searchPanes.dataTables.css">
 <style>
+/* Hide Alpine.js cloak elements until initialized */
+[x-cloak] { display: none !important; }
+
 /* =========================================================
-   DataTables Dark Modern Theme (DataTables v2 Compatible)
+   DataTables Dark Modern Theme — Fully Responsive
    ========================================================= */
 .dataTables_wrapper, .dt-container {
     color: #cbd5e1;
     font-size: 0.875rem;
-    padding: 0.75rem 1.25rem 1.25rem 1.25rem;
+    /* Gunakan padding kecil di mobile, lebih lebar di desktop */
+    padding: 0.5rem 0.75rem 1rem 0.75rem;
 }
 
-/* Reset DataTables v2 layout row margins to remove excess gap */
+@media (min-width: 640px) {
+    .dataTables_wrapper, .dt-container {
+        padding: 0.75rem 1.25rem 1.25rem 1.25rem;
+    }
+}
+
+/* Reset DataTables v2 layout row margins */
 div.dt-container div.dt-layout-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
     margin: 0.25rem 0 !important;
+    flex-wrap: wrap; /* Izinkan wrap di layar kecil */
+    gap: 0.5rem;
 }
 
 div.dt-container div.dt-layout-row.dt-layout-table {
@@ -70,14 +82,61 @@ div.dt-container div.dt-layout-row.dt-layout-table {
 /* Top Controls Header Bar */
 .dataTables_wrapper .dataTables_length,
 .dt-container .dt-length {
-    float: left;
     margin-bottom: 0.35rem !important;
 }
 
 .dataTables_wrapper .dataTables_filter,
 .dt-container .dt-search {
-    float: right;
     margin-bottom: 0.35rem !important;
+}
+
+/* Di mobile: length & filter full width, stack vertikal */
+@media (max-width: 639px) {
+    .dataTables_wrapper .dataTables_length,
+    .dt-container .dt-length,
+    .dataTables_wrapper .dataTables_filter,
+    .dt-container .dt-search {
+        width: 100%;
+        float: none !important;
+    }
+
+    .dataTables_wrapper .dataTables_filter label,
+    .dt-container .dt-search label {
+        width: 100%;
+    }
+
+    .dataTables_wrapper .dataTables_filter input,
+    .dt-container .dt-search input {
+        width: 100% !important;
+        box-sizing: border-box;
+    }
+
+    /* Pagination & Info stack vertikal di mobile */
+    .dataTables_wrapper .dataTables_info,
+    .dt-container .dt-info {
+        width: 100%;
+        float: none !important;
+        text-align: center;
+    }
+
+    .dataTables_wrapper .dataTables_paginate,
+    .dt-container .dt-paging {
+        width: 100%;
+        float: none !important;
+        justify-content: center;
+        padding-top: 0.5rem !important;
+    }
+
+    /* Tombol pagination lebih kecil di mobile */
+    .dataTables_wrapper .dataTables_paginate .paginate_button,
+    .dt-container .dt-paging .dt-paging-button {
+        padding: 0.3rem 0.6rem !important;
+        font-size: 0.8rem !important;
+        min-height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
 }
 
 .dataTables_wrapper .dataTables_length label,
@@ -90,6 +149,7 @@ div.dt-container div.dt-layout-row.dt-layout-table {
     color: #94a3b8;
     font-weight: 600;
     font-size: 0.875rem;
+    flex-wrap: wrap;
 }
 
 /* Search Field */
@@ -122,6 +182,8 @@ div.dt-container div.dt-layout-row.dt-layout-table {
     font-size: 0.875rem !important;
     outline: none !important;
     cursor: pointer;
+    /* Touch-friendly minimum height */
+    min-height: 38px;
 }
 
 .dataTables_wrapper .dataTables_length select:focus,
@@ -137,6 +199,8 @@ table.dataTable {
     border: none !important;
     margin-top: 0.25rem !important;
     margin-bottom: 0.75rem !important;
+    /* Min-width agar kolom tidak terlalu sempit */
+    min-width: 600px;
 }
 
 table.dataTable thead th {
@@ -147,13 +211,14 @@ table.dataTable thead th {
     font-size: 0.75rem !important;
     letter-spacing: 0.05em;
     border-bottom: 1px solid #334155 !important;
-    padding: 0.75rem 1rem !important;
+    padding: 0.65rem 0.75rem !important;
+    white-space: nowrap;
 }
 
 table.dataTable tbody td {
     background-color: transparent !important;
     color: #cbd5e1;
-    padding: 0.75rem 1rem !important;
+    padding: 0.65rem 0.75rem !important;
     border-bottom: 1px solid #1e293b !important;
     vertical-align: middle;
 }
@@ -182,6 +247,7 @@ table.dataTable tbody tr:hover {
     display: flex;
     align-items: center;
     gap: 0.25rem;
+    flex-wrap: wrap; /* wrap tombol paginasi */
 }
 
 .dataTables_wrapper .dataTables_paginate .paginate_button,
@@ -196,6 +262,11 @@ table.dataTable tbody tr:hover {
     font-weight: 600 !important;
     cursor: pointer !important;
     transition: all 0.2s ease-in-out;
+    /* Touch-friendly: min 36px height */
+    min-height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .dataTables_wrapper .dataTables_paginate .paginate_button:hover,
@@ -234,32 +305,42 @@ table.dataTable tbody tr:hover {
 
     @stack('styles')
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans antialiased selection:bg-indigo-500 selection:text-white min-h-screen">
+{{--
+    overflow-x-hidden: cegah konten melebar keluar layar secara horizontal
+    min-h-screen: pastikan halaman setidaknya setinggi viewport
+--}}
+<body class="bg-slate-950 text-slate-100 font-sans antialiased selection:bg-indigo-500 selection:text-white min-h-screen overflow-x-hidden">
 
     <!-- Top Navbar -->
     <header class="fixed top-0 left-0 right-0 h-16 bg-slate-900/80 backdrop-blur-md border-b border-slate-800/80 z-40 flex items-center justify-between px-4 md:px-6">
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-3 min-w-0">
             <!-- Sidebar Toggle Button (Mobile) -->
-            <button id="toggleSidebar" aria-label="Toggle Navigation" class="md:hidden text-slate-400 hover:text-white p-2 rounded-lg hover:bg-slate-800/60 transition">
+            <button id="toggleSidebar" aria-label="Toggle Navigation"
+                    class="md:hidden text-slate-400 hover:text-white p-2 rounded-lg hover:bg-slate-800/60 transition shrink-0"
+                    style="min-width:40px; min-height:40px;">
                 <i class="fa-solid fa-bars text-lg"></i>
             </button>
 
-            <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5">
-                <i class="fa-solid fa-box-archive text-indigo-500 text-xl"></i>
-                <span class="font-bold text-lg tracking-tight text-white hidden sm:inline">Sistem Arsip Surat</span>
+            <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5 min-w-0">
+                <i class="fa-solid fa-box-archive text-indigo-500 text-xl shrink-0"></i>
+                {{-- sm:inline bukan xs:inline (xs bukan breakpoint standar Tailwind) --}}
+                <span class="font-bold text-lg tracking-tight text-white hidden sm:inline truncate">Sistem Arsip Surat</span>
             </a>
         </div>
 
         <!-- User Profile Dropdown / Logout -->
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-4 shrink-0">
             <div class="flex items-center gap-3 bg-slate-800/50 border border-slate-700/50 px-3 py-1.5 rounded-full">
-                <div class="w-7 h-7 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center font-bold text-xs uppercase">
+                <div class="w-7 h-7 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center font-bold text-xs uppercase shrink-0">
                     {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}
                 </div>
-                <span class="text-sm font-medium text-slate-200 hidden xs:inline">{{ Auth::user()->name ?? 'User' }}</span>
+                {{-- Tampilkan nama hanya di sm ke atas --}}
+                <span class="text-sm font-medium text-slate-200 hidden sm:inline max-w-[120px] truncate">{{ Auth::user()->name ?? 'User' }}</span>
                 <form method="POST" action="{{ route('logout') }}" class="inline">
                     @csrf
-                    <button type="submit" title="Logout" class="text-slate-400 hover:text-rose-400 transition-colors ml-1 p-1">
+                    <button type="submit" title="Logout"
+                            class="text-slate-400 hover:text-rose-400 transition-colors ml-1 p-1"
+                            style="min-width:28px; min-height:28px;">
                         <i class="fa-solid fa-right-from-bracket text-xs"></i>
                     </button>
                 </form>
@@ -286,7 +367,8 @@ table.dataTable tbody tr:hover {
 
                 <!-- Dashboard -->
                 <a href="{{ route('dashboard') }}"
-                   class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold transition-all {{ request()->routeIs('dashboard') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50' }}">
+                   class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold transition-all {{ request()->routeIs('dashboard') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50' }}"
+                   style="min-height: 44px;">
                     <i class="fa-solid fa-chart-pie w-5 text-center text-indigo-400"></i>
                     <span>Dashboard</span>
                 </a>
@@ -295,7 +377,8 @@ table.dataTable tbody tr:hover {
                 <div x-data="{ open: {{ request()->routeIs('instansi.*', 'jenis_surat.*') ? 'true' : 'false' }} }" class="space-y-1">
                     <button @click="open = !open"
                             type="button"
-                            class="w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-slate-200 tracking-wide uppercase transition-all hover:bg-slate-800/40">
+                            class="w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-slate-200 tracking-wide uppercase transition-all hover:bg-slate-800/40"
+                            style="min-height: 44px;">
                         <span class="flex items-center gap-2.5">
                             <i class="fa-solid fa-table-cells text-slate-400 text-sm"></i>
                             <span>DATA MASTER</span>
@@ -306,13 +389,15 @@ table.dataTable tbody tr:hover {
                     <div x-show="open" x-transition class="ml-4 pl-3 border-l border-slate-800 space-y-1 font-mono text-xs">
                         <!-- Data Instansi -->
                         <a href="{{ route('instansi.index') }}"
-                           class="flex items-center gap-2 px-3 py-2 rounded-xl transition-all {{ request()->routeIs('instansi.*') ? 'bg-indigo-600 text-white font-sans font-semibold shadow-lg shadow-indigo-600/30' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 font-sans font-medium' }}">
+                           class="flex items-center gap-2 px-3 py-2 rounded-xl transition-all {{ request()->routeIs('instansi.*') ? 'bg-indigo-600 text-white font-sans font-semibold shadow-lg shadow-indigo-600/30' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 font-sans font-medium' }}"
+                           style="min-height: 40px;">
                             <span class="text-slate-500 font-mono">├─</span>
                             <span>Data Instansi</span>
                         </a>
                         <!-- Data Jenis Surat -->
                         <a href="{{ route('jenis_surat.index') }}"
-                           class="flex items-center gap-2 px-3 py-2 rounded-xl transition-all {{ request()->routeIs('jenis_surat.*') ? 'bg-indigo-600 text-white font-sans font-semibold shadow-lg shadow-indigo-600/30' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 font-sans font-medium' }}">
+                           class="flex items-center gap-2 px-3 py-2 rounded-xl transition-all {{ request()->routeIs('jenis_surat.*') ? 'bg-indigo-600 text-white font-sans font-semibold shadow-lg shadow-indigo-600/30' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 font-sans font-medium' }}"
+                           style="min-height: 40px;">
                             <span class="text-slate-500 font-mono">└─</span>
                             <span>Data Jenis Surat</span>
                         </a>
@@ -323,7 +408,8 @@ table.dataTable tbody tr:hover {
                 <div x-data="{ open: {{ request()->routeIs('surat_masuk.*', 'surat_keluar.*', 'arsip.*', 'laporan.*') ? 'true' : 'false' }} }" class="space-y-1">
                     <button @click="open = !open"
                             type="button"
-                            class="w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-slate-200 tracking-wide uppercase transition-all hover:bg-slate-800/40">
+                            class="w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-slate-200 tracking-wide uppercase transition-all hover:bg-slate-800/40"
+                            style="min-height: 44px;">
                         <span class="flex items-center gap-2.5">
                             <i class="fa-solid fa-paper-plane text-slate-400 text-sm"></i>
                             <span>MANAJEMEN SURAT</span>
@@ -334,25 +420,29 @@ table.dataTable tbody tr:hover {
                     <div x-show="open" x-transition class="ml-4 pl-3 border-l border-slate-800 space-y-1 font-mono text-xs">
                         <!-- Surat Masuk -->
                         <a href="{{ route('surat_masuk.index') }}"
-                           class="flex items-center gap-2 px-3 py-2 rounded-xl transition-all {{ request()->routeIs('surat_masuk.*') ? 'bg-indigo-600 text-white font-sans font-semibold shadow-lg shadow-indigo-600/30' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 font-sans font-medium' }}">
+                           class="flex items-center gap-2 px-3 py-2 rounded-xl transition-all {{ request()->routeIs('surat_masuk.*') ? 'bg-indigo-600 text-white font-sans font-semibold shadow-lg shadow-indigo-600/30' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 font-sans font-medium' }}"
+                           style="min-height: 40px;">
                             <span class="text-slate-500 font-mono">├─</span>
                             <span>Surat Masuk</span>
                         </a>
                         <!-- Surat Keluar -->
                         <a href="{{ route('surat_keluar.index') }}"
-                           class="flex items-center gap-2 px-3 py-2 rounded-xl transition-all {{ request()->routeIs('surat_keluar.*') ? 'bg-indigo-600 text-white font-sans font-semibold shadow-lg shadow-indigo-600/30' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 font-sans font-medium' }}">
+                           class="flex items-center gap-2 px-3 py-2 rounded-xl transition-all {{ request()->routeIs('surat_keluar.*') ? 'bg-indigo-600 text-white font-sans font-semibold shadow-lg shadow-indigo-600/30' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 font-sans font-medium' }}"
+                           style="min-height: 40px;">
                             <span class="text-slate-500 font-mono">├─</span>
                             <span>Surat Keluar</span>
                         </a>
                         <!-- Arsip Surat -->
                         <a href="{{ route('arsip.index') }}"
-                           class="flex items-center gap-2 px-3 py-2 rounded-xl transition-all {{ request()->routeIs('arsip.*') ? 'bg-indigo-600 text-white font-sans font-semibold shadow-lg shadow-indigo-600/30' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 font-sans font-medium' }}">
+                           class="flex items-center gap-2 px-3 py-2 rounded-xl transition-all {{ request()->routeIs('arsip.*') ? 'bg-indigo-600 text-white font-sans font-semibold shadow-lg shadow-indigo-600/30' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 font-sans font-medium' }}"
+                           style="min-height: 40px;">
                             <span class="text-slate-500 font-mono">├─</span>
                             <span>Arsip Surat</span>
                         </a>
                         <!-- Laporan -->
                         <a href="{{ route('laporan.index') }}"
-                           class="flex items-center gap-2 px-3 py-2 rounded-xl transition-all {{ request()->routeIs('laporan.*') ? 'bg-indigo-600 text-white font-sans font-semibold shadow-lg shadow-indigo-600/30' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 font-sans font-medium' }}">
+                           class="flex items-center gap-2 px-3 py-2 rounded-xl transition-all {{ request()->routeIs('laporan.*') ? 'bg-indigo-600 text-white font-sans font-semibold shadow-lg shadow-indigo-600/30' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 font-sans font-medium' }}"
+                           style="min-height: 40px;">
                             <span class="text-slate-500 font-mono">└─</span>
                             <span>Laporan</span>
                         </a>
@@ -363,14 +453,16 @@ table.dataTable tbody tr:hover {
 
                 <!-- Pengaturan Akun -->
                 <a href="{{ route('akun.index') }}"
-                   class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold transition-all {{ request()->routeIs('akun.*') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50' }}">
+                   class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold transition-all {{ request()->routeIs('akun.*') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50' }}"
+                   style="min-height: 44px;">
                     <i class="fa-solid fa-users w-5 text-center text-indigo-400"></i>
                     <span>Pengaturan Akun</span>
                 </a>
 
                 <!-- Tempat Sampah -->
                 <a href="{{ route('recycle-bin.index') }}"
-                   class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold transition-all {{ request()->routeIs('recycle-bin.*') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50' }}">
+                   class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold transition-all {{ request()->routeIs('recycle-bin.*') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/50' }}"
+                   style="min-height: 44px;">
                     <i class="fa-solid fa-trash-can w-5 text-center text-rose-400"></i>
                     <span>Tempat Sampah</span>
                 </a>
@@ -382,8 +474,14 @@ table.dataTable tbody tr:hover {
 
 
     <!-- Main Content Container -->
-    <main class="pt-20 pb-10 md:pl-64 transition-all">
-        <div class="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    {{--
+        pt-20      : beri jarak dari navbar fixed (h-16 = 4rem, + sedikit breathing room)
+        pb-10      : jarak bawah
+        md:pl-64   : geser konten ke kanan saat sidebar tampil di md ke atas
+        min-w-0    : penting! cegah flex child overflow keluar container
+    --}}
+    <main class="pt-20 pb-10 md:pl-64 transition-all min-w-0">
+        <div class="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto min-w-0">
             @yield('content')
         </div>
     </main>
@@ -408,6 +506,15 @@ table.dataTable tbody tr:hover {
         if (backdrop) {
             backdrop.addEventListener('click', toggleMenu);
         }
+
+        // Tutup sidebar otomatis saat resize ke desktop
+        window.addEventListener('resize', function () {
+            if (window.innerWidth >= 768) {
+                if (backdrop && !backdrop.classList.contains('hidden')) {
+                    backdrop.classList.add('hidden');
+                }
+            }
+        });
     </script>
 
     <!-- Flash Alert Handler (SweetAlert2) -->

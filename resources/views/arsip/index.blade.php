@@ -32,21 +32,26 @@
     @endif
 
     {{-- Filter Bar --}}
-    <div class="flex flex-wrap items-center gap-3 p-4 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl">
-        <div class="flex items-center gap-2 text-slate-400 text-xs font-semibold uppercase tracking-wider mr-2">
+    {{--
+        flex-col sm:flex-row : stack vertikal di mobile, horizontal di sm ke atas
+        gap-3                : jarak konsisten antar elemen
+        flex-wrap            : fallback wrap jika layar terlalu sempit
+    --}}
+    <div class="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 p-4 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl">
+        <div class="flex items-center gap-2 text-slate-400 text-xs font-semibold uppercase tracking-wider">
             <i class="fa-solid fa-filter"></i>
             Filter:
         </div>
-        {{-- Diubah value-nya agar cocok dengan teks yang dirender di tabel (Masuk / Keluar) --}}
+        {{-- w-full sm:w-auto : full width di mobile, auto di tablet+ --}}
         <select id="filterJenis"
-                class="bg-slate-950 border border-slate-700 rounded-xl px-4 py-2 text-sm text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition cursor-pointer">
+                class="w-full sm:w-auto bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition cursor-pointer min-h-[44px]">
             <option value="">Semua Jenis</option>
             <option value="Masuk">Surat Masuk</option>
             <option value="Keluar">Surat Keluar</option>
         </select>
 
         <select id="filterStatus"
-                class="bg-slate-950 border border-slate-700 rounded-xl px-4 py-2 text-sm text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition cursor-pointer">
+                class="w-full sm:w-auto bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition cursor-pointer min-h-[44px]">
             <option value="">Semua Status</option>
             <option value="Baru">Baru</option>
             <option value="Diproses">Diproses</option>
@@ -55,13 +60,14 @@
             <option value="Selesai">Selesai</option>
         </select>
 
+        {{-- w-full sm:w-auto : full width di mobile, auto di tablet+ --}}
         <button id="resetFilter"
-                class="px-4 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 text-white text-sm font-semibold transition-all duration-150 flex items-center gap-2">
+                class="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-slate-700 hover:bg-slate-600 text-white text-sm font-semibold transition-all duration-150 flex items-center justify-center gap-2 min-h-[44px]">
             <i class="fa-solid fa-rotate-left text-xs"></i>
             Reset
         </button>
 
-        <div class="ml-auto flex items-center gap-2 text-slate-500 text-xs">
+        <div class="sm:ml-auto flex items-center gap-2 text-slate-500 text-xs">
             <i class="fa-solid fa-database text-slate-600"></i>
             Total: <span class="text-slate-300 font-semibold">{{ count($arsipSurat) }}</span> arsip
         </div>
@@ -74,7 +80,7 @@
             <h2 class="text-sm font-semibold text-slate-300">Daftar Arsip Surat</h2>
         </div>
 
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto w-full">
             <table id="tableArsip" class="w-full text-sm">
                 <thead>
                     <tr>
