@@ -31,13 +31,37 @@
         opacity: 0.9 !important;
     }
     [x-cloak] { display: none !important; }
-    .a4-paper {
-        width: 100%;
-        min-height: 297mm;
-        background: white;
-        color: #000;
-        font-family: "Times New Roman", Times, serif;
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+  .a4-paper {
+    width: 100%;
+    height: 297mm;
+    min-height: 297mm;
+    max-height: 297mm;
+
+    box-sizing: border-box;
+
+    background: white;
+    color: #000;
+    font-family: "Times New Roman", Times, serif;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+}
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: #020617;
+        border-radius: 8px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #334155;
+        border-radius: 8px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #6366f1;
     }
 </style>
 
@@ -195,17 +219,43 @@
             return this.nomorUrut;
         },
 
-        downloadPreviewPdf() {
-            const element = document.getElementById('surat-keluar-preview-paper');
-            const opt = {
-                margin: [10, 10, 10, 10],
-                filename: 'Surat_Keluar_Preview.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true, logging: false },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-            html2pdf().set(opt).from(element).save();
+       downloadPreviewPdf() {
+    const element = document.getElementById('surat-keluar-preview-paper');
+
+    const opt = {
+        margin: 0,
+
+        filename: 'Surat_Keluar_Preview.pdf',
+
+        image: {
+            type: 'jpeg',
+            quality: 0.98
+        },
+
+        html2canvas: {
+            scale: 2,
+            useCORS: true,
+            logging: false,
+            scrollX: 0,
+            scrollY: 0
+        },
+
+        jsPDF: {
+            unit: 'mm',
+            format: 'a4',
+            orientation: 'portrait'
+        },
+
+        pagebreak: {
+            mode: ['avoid-all']
         }
+    };
+
+    html2pdf()
+        .set(opt)
+        .from(element)
+        .save();
+}
      }"
      x-init="$nextTick(() => {
         $watch('jenis_surat', () => updateJenisSurat());
@@ -342,18 +392,20 @@
         </div>
     </div>
 
-    {{-- Resizable Split Container --}}
-    <div class="flex flex-col lg:flex-row items-start relative w-full gap-0"
+    {{-- Resizable Split Container (Equal Height with Independent Scrolling) --}}
+    <div class="flex flex-col lg:flex-row items-stretch relative w-full gap-0 lg:h-[calc(100vh-8rem)] lg:min-h-[600px]"
          x-data="resizableSplit('split_pos_surat_keluar', 50)"
          x-ref="splitContainer"
          :class="{ 'select-none': isDragging }">
 
-        {{-- LEFT COLUMN: FORM INPUTS --}}
-        <div class="w-full shrink-0 space-y-6"
+        {{-- LEFT COLUMN: FORM INPUTS (Independent Scroll) --}}
+        <div class="w-full shrink-0 flex flex-col lg:h-full lg:overflow-hidden"
              :style="isDesktop ? { width: leftWidth + '%', minWidth: '320px' } : { width: '100%' }">
 
-            {{-- Mode Indicator Card --}}
-            <div class="p-4 rounded-2xl border transition-all duration-300 flex items-center justify-between"
+            <div class="flex-1 lg:overflow-y-auto custom-scrollbar space-y-6 pr-0 lg:pr-2">
+
+                {{-- Mode Indicator Card --}}
+                <div class="p-4 rounded-2xl border transition-all duration-300 flex items-center justify-between"
                  :class="isKuasa ? 'bg-amber-500/10 border-amber-500/30 text-amber-300' : 'bg-indigo-500/10 border-indigo-500/30 text-indigo-300'">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-lg"
@@ -447,6 +499,8 @@
                                 <option value="HRD">HRD</option>
                                 <option value="DIR-I">Direktur I</option>
                                 <option value="DIR-II">Direktur II</option>
+                                <option value="DIR-III">Direktur III</option>
+                                <option value="KOM">Komisaris</option>
                                 <option value="IT">IT & Software</option>
                                 <option value="OPS">Operasional</option>
                             </select>
@@ -876,6 +930,8 @@
 
             </form>
 
+            </div>
+
         </div>
 
         {{-- SPLITTER / DIVIDER BAR --}}
@@ -899,21 +955,28 @@
             </div>
         </div>
 
-        {{-- RIGHT COLUMN: REALTIME A4 LETTER PREVIEW --}}
-        <div class="w-full lg:flex-1 min-w-0 shrink-0 lg:sticky lg:top-20 mt-6 lg:mt-0"
+        {{-- RIGHT COLUMN: REALTIME A4 LETTER PREVIEW (Independent Scroll) --}}
+        <div class="w-full lg:flex-1 min-w-0 shrink-0 mt-6 lg:mt-0 flex flex-col lg:h-full lg:overflow-hidden"
              :style="isDesktop ? { minWidth: '320px' } : { width: '100%' }">
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden">
-                <div class="border-b border-slate-800 px-4 sm:px-6 py-4 bg-slate-950/80 flex items-center justify-between">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col flex-1 lg:h-full">
+                <div class="border-b border-slate-800 px-4 sm:px-6 py-3.5 bg-slate-950/80 flex flex-wrap items-center justify-between gap-3 shrink-0">
                     <h2 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
                         <i class="fa-solid fa-eye text-emerald-400"></i>
                         <span>Pratinjau Surat (A4)</span>
                     </h2>
+                    <div class="flex items-center gap-2">
+                        <button type="button" @click="downloadPreviewPdf()"
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-emerald-600/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer">
+                            <i class="fa-solid fa-file-pdf text-xs"></i>
+                            <span>Unduh PDF</span>
+                        </button>
+                    </div>
                 </div>
 
                 {{-- A4 Container Scroll Area --}}
-                <div class="p-2 sm:p-6 bg-slate-950 max-h-[85vh] overflow-x-auto overflow-y-auto flex justify-center -webkit-overflow-scrolling-touch">
-                    <div id="surat-keluar-preview-paper" class="a4-paper p-4 sm:p-10 text-slate-900 relative text-xs sm:text-sm md:text-base leading-relaxed flex flex-col">
-
+                <div class="custom-scrollbar p-3 sm:p-6 bg-slate-950 flex-1 overflow-x-auto overflow-y-auto flex justify-center -webkit-overflow-scrolling-touch">
+                   <div id="surat-keluar-preview-paper"
+     class="a4-paper w-full p-6 sm:p-10 text-slate-900 relative text-xs sm:text-sm md:text-base leading-relaxed shrink-0">
                         {{-- Kop Surat Header --}}
                         <div>
                             <img src="{{ asset('image/kop-surat.png') }}" alt="Kop Surat" class="w-full h-auto block"

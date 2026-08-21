@@ -4,19 +4,90 @@
 <meta charset="UTF-8">
 <title>{{ $surat->jenis_surat }} - {{ $surat->nomor_surat }}</title>
 <style>
-@page{size:A4;margin:20mm 20mm;}
-body{font-family:"Times New Roman",serif;font-size:12pt;color:#000;line-height:1.5}
-.kop img{width:100%; height:auto; display:block;}
-.judul{text-align:center;margin:15px 0}
-.judul h2{margin:0;font-size:16pt;font-weight:bold;text-decoration:underline;text-transform:uppercase;}
-.judul p{margin:4px 0 0 0;font-size:12pt;}
-.tanggal{text-align:right;margin:15px 0}
-table{width:100%;border-collapse:collapse}
-.info td{padding:3px 0;vertical-align:top}
-.isi{margin-top:15px;text-align:justify;line-height:1.6;white-space:pre-line}
-.ttd-table{width:100%;margin-top:35px;text-align:center}
-.ttd-space{height:70px}
-.footer{margin-top:40px;font-size:9pt;text-align:center;color:#666;border-top:1px solid #ccc;padding-top:8px}
+@page {
+    size: A4;
+    margin: 20mm 20mm;
+}
+
+body {
+    font-family: "Times New Roman", serif;
+    font-size: 12pt;
+    color: #000;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.kop img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.judul {
+    text-align: center;
+    margin: 15px 0;
+}
+
+.judul h2 {
+    margin: 0;
+    font-size: 16pt;
+    font-weight: bold;
+    text-decoration: underline;
+    text-transform: uppercase;
+}
+
+.judul p {
+    margin: 4px 0 0 0;
+    font-size: 12pt;
+}
+
+.tanggal {
+    text-align: right;
+    margin: 15px 0;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.info td {
+    padding: 3px 0;
+    vertical-align: top;
+}
+
+.isi {
+    margin-top: 15px;
+    text-align: justify;
+    line-height: 1.6;
+    white-space: pre-line;
+}
+
+.ttd-table {
+    width: 100%;
+    margin-top: 35px;
+    text-align: center;
+}
+
+.ttd-space {
+    height: 70px;
+}
+
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    margin: 0 20mm;
+
+    border-top: 1px solid #ccc;
+    padding-top: 8px;
+
+    font-size: 9pt;
+    text-align: center;
+    color: #666;
+}
 
 /* Custom Table in Surat Umum */
 .data-table{width:100%;border-collapse:collapse;margin:15px 0;}
@@ -32,7 +103,7 @@ table{width:100%;border-collapse:collapse}
 
 @php
     $dk = $surat->data_khusus ?? [];
-    $isKuasa = (isset($surat->jenisSurat) && $surat->jenisSurat->form_type === 'kuasa') 
+    $isKuasa = (isset($surat->jenisSurat) && $surat->jenisSurat->form_type === 'kuasa')
         || Str::contains(strtolower($surat->jenis_surat), 'kuasa')
         || !empty($dk['pemberi']);
 @endphp
@@ -42,8 +113,8 @@ table{width:100%;border-collapse:collapse}
         $pemberi = $dk['pemberi'] ?? [];
         $penerima = $dk['penerima'] ?? [];
         $pembukaMaksud = $dk['pembuka_maksud'] ?? ($dk['maksud'] ?? 'mewakili Direktur untuk melaksanakan Pembuktian Kualifikasi');
-        $kegiatanItems = is_array($dk['kegiatan_items'] ?? null) 
-            ? array_values(array_filter($dk['kegiatan_items'])) 
+        $kegiatanItems = is_array($dk['kegiatan_items'] ?? null)
+            ? array_values(array_filter($dk['kegiatan_items']))
             : (is_array($dk['kegiatan'] ?? null) ? $dk['kegiatan'] : []);
         $lokasiInstansi = $dk['lokasi_instansi'] ?? '';
         $penutupText = $dk['penutup'] ?? 'Demikian Surat Kuasa ini dibuat untuk dipergunakan sebagaimana mestinya.';
@@ -75,7 +146,7 @@ table{width:100%;border-collapse:collapse}
         <p style="margin-bottom:6px;">
             Dengan ini {{ $pembukaMaksud }} dengan Kegiatan sebagai berikut :
         </p>
-        
+
         @if(count($kegiatanItems) > 0)
             <ol style="margin-top:4px; margin-bottom:10px; padding-left:30px;">
                 @foreach($kegiatanItems as $item)

@@ -11,17 +11,33 @@
         cursor: pointer !important;
         opacity: 0.9 !important;
     }
-    .a4-paper {
+   .a4-paper {
     width: 100%;
-    max-width: 210mm;
     min-height: 297mm;
-    background: #ffffff !important;
-    color: #000000 !important;
+    background: white;
+    color: #000;
     font-family: "Times New Roman", Times, serif;
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
-    box-sizing: border-box;
-    position: relative;
+
+    /* Membuat isi A4 tersusun dari atas ke bawah */
+    display: flex;
+    flex-direction: column;
 }
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: #020617;
+        border-radius: 8px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #334155;
+        border-radius: 8px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #6366f1;
+    }
     /* Override Tailwind dark mode inside preview */
     .a4-paper,
     .a4-paper *,
@@ -96,18 +112,18 @@
         </div>
     </div>
 
-    {{-- Resizable Split Container --}}
-    <div class="flex flex-col lg:flex-row items-start relative w-full gap-0"
+    {{-- Resizable Split Container (Equal Height with Independent Scrolling) --}}
+    <div class="flex flex-col lg:flex-row items-stretch relative w-full gap-0 lg:h-[calc(100vh-8rem)] lg:min-h-[600px]"
          x-data="resizableSplit('split_pos_surat_masuk', 50)"
          x-ref="splitContainer"
          :class="{ 'select-none': isDragging }">
 
-        {{-- LEFT COLUMN: FORM INPUTS --}}
-        <div class="w-full shrink-0 space-y-6"
+        {{-- LEFT COLUMN: FORM INPUTS (Independent Scroll) --}}
+        <div class="w-full shrink-0 flex flex-col lg:h-full lg:overflow-hidden"
              :style="isDesktop ? { width: leftWidth + '%', minWidth: '320px' } : { width: '100%' }">
 
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
-                <div class="border-b border-slate-800 px-6 py-4 bg-slate-950/50 flex items-center justify-between">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden flex flex-col flex-1 lg:h-full">
+                <div class="border-b border-slate-800 px-6 py-4 bg-slate-950/50 flex items-center justify-between shrink-0">
                     <h2 class="text-lg font-bold text-white flex items-center gap-2">
                         <i class="fa-solid fa-envelope-open-text text-indigo-400"></i>
                         Form Surat Masuk
@@ -117,7 +133,7 @@
                     </span>
                 </div>
 
-                <div class="p-6">
+                <div class="p-6 flex-1 lg:overflow-y-auto custom-scrollbar">
                     @if ($errors->any())
                         <div class="mb-6 rounded-xl bg-red-500/10 border border-red-500/30 p-4">
                             <div class="text-red-400 font-semibold mb-2 flex items-center gap-2">
@@ -372,11 +388,11 @@
             </div>
         </div>
 
-        {{-- RIGHT COLUMN: REALTIME A4 LEMBAR AGENDA PREVIEW --}}
-        <div class="w-full lg:flex-1 min-w-0 shrink-0 lg:sticky lg:top-20 mt-6 lg:mt-0"
+        {{-- RIGHT COLUMN: REALTIME A4 LEMBAR AGENDA PREVIEW (Independent Scroll) --}}
+        <div class="w-full lg:flex-1 min-w-0 shrink-0 mt-6 lg:mt-0 flex flex-col lg:h-full lg:overflow-hidden"
              :style="isDesktop ? { minWidth: '320px' } : { width: '100%' }">
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden">
-                <div class="border-b border-slate-800 px-4 sm:px-6 py-4 bg-slate-950/80 flex flex-wrap items-center justify-between gap-3">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col flex-1 lg:h-full">
+                <div class="border-b border-slate-800 px-4 sm:px-6 py-3.5 bg-slate-950/80 flex flex-wrap items-center justify-between gap-3 shrink-0">
                     <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
                         <i class="fa-solid fa-eye text-emerald-400"></i>
                         <span>Preview Agenda (A4)</span>
@@ -384,13 +400,13 @@
                     <div class="flex items-center gap-2">
                         {{-- Cetak Surat --}}
                         <button type="button" @click="printPreview()"
-                                class="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 text-xs sm:text-sm font-semibold transition-all duration-200">
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer">
                             <i class="fa-solid fa-print text-xs"></i>
                             <span>Cetak</span>
                         </button>
                         {{-- Unduh PDF --}}
                         <button type="button" @click="downloadPreviewPdf()"
-                                class="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-emerald-600/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 text-xs sm:text-sm font-semibold transition-all duration-200">
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-emerald-600/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer">
                             <i class="fa-solid fa-file-pdf text-xs"></i>
                             <span>Unduh PDF</span>
                         </button>
@@ -398,8 +414,9 @@
                 </div>
 
                 {{-- A4 Container Scroll Area --}}
-                <div class="p-2 sm:p-6 bg-slate-950 max-h-[85vh] overflow-x-auto overflow-y-auto flex justify-center -webkit-overflow-scrolling-touch">
-                    <div id="surat-masuk-preview-paper" class="a4-paper p-4 sm:p-8 text-slate-900 relative text-xs sm:text-sm md:text-base">
+                <div class="custom-scrollbar p-3 sm:p-6 bg-slate-950 flex-1 overflow-x-auto overflow-y-auto flex justify-center -webkit-overflow-scrolling-touch">
+                    <div id="surat-masuk-preview-paper"
+                         class="a4-paper w-full p-6 sm:p-10 text-slate-900 relative text-xs sm:text-sm md:text-base leading-relaxed shrink-0">
 
                         {{-- Kop Surat Header --}}
                         <div>
@@ -490,18 +507,9 @@
                             </div>
                         </div>
 
-                       <div style="
-                        position: absolute;
-                        left: 20mm;
-                        right: 20mm;
-                        bottom: 5mm;
-                        border-top: 1px solid #ccc;
-                        padding-top: 8px;
-                        text-align: center;
-                        color: #666;
-                        font-size: 9pt;
-                                        ">
-                        Dokumen ini dibuat melalui <strong>Sistem Arsip Surat PT Microdata Indonesia</strong>
+                        {{-- Footer --}}
+                        <div class="mt-auto pt-6 border-t border-slate-300 text-center text-[10px] text-slate-500">
+                            Dokumen ini dibuat melalui <strong>Sistem Arsip Surat PT Microdata Indonesia</strong>
                         </div>
                     </div>
                 </div>
@@ -706,56 +714,101 @@ function suratMasukForm() {
         },
 
         downloadPreviewPdf() {
-            const element = document.getElementById('surat-masuk-preview-paper');
-            if (!element) return;
+    const element = document.getElementById('surat-masuk-preview-paper');
 
-            const clone = element.cloneNode(true);
-            clone.style.width = '794px';
-            clone.style.minHeight = 'auto';
-            clone.style.maxHeight = 'none';
-            clone.style.padding = '30px 40px';
-            clone.style.boxSizing = 'border-box';
-            clone.style.boxShadow = 'none';
-            clone.style.margin = '0';
-            clone.style.background = '#ffffff';
+    if (!element) {
+        console.error('Element preview surat masuk tidak ditemukan.');
+        return;
+    }
 
-            const container = document.createElement('div');
-            container.style.position = 'fixed';
-            container.style.top = '0';
-            container.style.left = '-99999px';
-            container.style.width = '794px';
-            container.style.background = '#ffffff';
-            container.style.zIndex = '-9999';
-            container.appendChild(clone);
-            document.body.appendChild(container);
+    // Clone preview agar tampilan asli tidak berubah
+    const clone = element.cloneNode(true);
 
-            const agendaClean = (this.nomor_agenda || 'Preview').replace(/[/\\?%*:|"<>]/g, '-');
-            const opt = {
-                margin: [5, 0, 5, 0],
-                filename: 'Surat_Masuk_Agenda_' + agendaClean + '.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: {
-                    scale: 2,
-                    useCORS: true,
-                    logging: false,
-                    scrollY: 0,
-                    scrollX: 0,
-                    windowWidth: 794
-                },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
+    // Paksa ukuran menjadi A4 sebenarnya
+    clone.style.width = '210mm';
+    clone.style.height = '297mm';
+    clone.style.minWidth = '210mm';
+    clone.style.minHeight = '297mm';
+    clone.style.maxWidth = '210mm';
+    clone.style.maxHeight = '297mm';
 
-            html2pdf().set(opt).from(clone).save().then(() => {
-                if (document.body.contains(container)) {
-                    document.body.removeChild(container);
-                }
-            }).catch(err => {
-                console.error(err);
-                if (document.body.contains(container)) {
-                    document.body.removeChild(container);
-                }
-            });
+    clone.style.boxSizing = 'border-box';
+    clone.style.padding = '10mm 15mm';
+    clone.style.margin = '0';
+    clone.style.background = '#ffffff';
+    clone.style.color = '#000000';
+    clone.style.boxShadow = 'none';
+
+    // Supaya tidak menghasilkan halaman kedua
+    clone.style.overflow = 'hidden';
+
+    // Container khusus PDF
+    const container = document.createElement('div');
+
+    container.style.position = 'fixed';
+    container.style.left = '-100000px';
+    container.style.top = '0';
+    container.style.width = '210mm';
+    container.style.height = '297mm';
+    container.style.background = '#ffffff';
+    container.style.margin = '0';
+    container.style.padding = '0';
+    container.style.overflow = 'hidden';
+    container.style.zIndex = '-9999';
+
+    container.appendChild(clone);
+    document.body.appendChild(container);
+
+    const agendaClean = (this.nomor_agenda || 'Preview')
+        .replace(/[\/\\?%*:|"<>]/g, '-');
+
+    const opt = {
+        margin: 0,
+
+        filename: 'Surat_Masuk_Agenda_' + agendaClean + '.pdf',
+
+        image: {
+            type: 'jpeg',
+            quality: 0.98
         },
+
+        html2canvas: {
+            scale: 2,
+            useCORS: true,
+            logging: false,
+            scrollX: 0,
+            scrollY: 0,
+            backgroundColor: '#ffffff'
+        },
+
+        jsPDF: {
+            unit: 'mm',
+            format: 'a4',
+            orientation: 'portrait'
+        },
+
+        pagebreak: {
+            mode: ['avoid-all']
+        }
+    };
+
+    html2pdf()
+        .set(opt)
+        .from(clone)
+        .save()
+        .then(() => {
+            if (document.body.contains(container)) {
+                document.body.removeChild(container);
+            }
+        })
+        .catch(error => {
+            console.error('Gagal membuat PDF:', error);
+
+            if (document.body.contains(container)) {
+                document.body.removeChild(container);
+            }
+        });
+},
 
         printPreview() {
             const element = document.getElementById('surat-masuk-preview-paper');
@@ -796,8 +849,31 @@ function suratMasukForm() {
                             line-height: 1.35;
                         }
                         .print-wrap {
-                            width: 100%;
-                        }
+    width: 100%;
+    height: 273mm;
+    min-height: 273mm;
+
+    display: flex;
+    flex-direction: column;
+
+    box-sizing: border-box;
+}
+
+.mt-auto {
+    margin-top: auto !important;
+}
+
+.border-t {
+    border-top: 1px solid #cbd5e1;
+}
+
+.pt-6 {
+    padding-top: 14px;
+}
+
+.text-center {
+    text-align: center;
+}
                         img {
                             max-width: 100%;
                             height: auto;

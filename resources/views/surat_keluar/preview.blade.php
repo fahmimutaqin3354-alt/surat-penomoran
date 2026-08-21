@@ -80,22 +80,34 @@
         }
 
         @media print {
-            body {
-                background: white;
-            }
+    body {
+        background: white;
+    }
 
-            .toolbar {
-                display: none;
-            }
+    .toolbar {
+        display: none;
+    }
 
-            .paper {
-                width: 100%;
-                min-height: auto;
-                margin: 0;
-                padding: 0;
-                box-shadow: none;
-            }
-        }
+    .paper {
+        width: 100%;
+        height: 257mm;
+        min-height: 257mm;
+
+        margin: 0;
+        padding: 0;
+
+        box-sizing: border-box;
+
+        box-shadow: none;
+
+        display: flex;
+        flex-direction: column;
+    }
+
+    .paper > div:last-child {
+        margin-top: auto !important;
+    }
+}
     </style>
 </head>
 
