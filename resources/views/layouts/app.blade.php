@@ -45,6 +45,9 @@ href="https://cdn.datatables.net/searchbuilder/1.8.2/css/searchBuilder.dataTable
 <link rel="stylesheet"
 href="https://cdn.datatables.net/searchpanes/2.3.2/css/searchPanes.dataTables.css">
 <style>
+/* IMPORTANT FIX: Menyembunyikan elemen Alpine.js x-cloak sebelum JS di-load untuk cegah popup otomatis */
+[x-cloak] { display: none !important; }
+
 /* =========================================================
    DataTables Dark Modern Theme (DataTables v2 Compatible)
    ========================================================= */

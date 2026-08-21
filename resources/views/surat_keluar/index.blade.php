@@ -180,10 +180,10 @@
 
 {{-- MODALS EMAIL & WA (di luar tabel agar HTML tetap bersih) --}}
 @foreach($surat as $item)
-    {{-- Modal Email --}}
+    {{-- Modal Email (FIX: style="display: none;" & x-cloak untuk cegah modal muncul otomatis saat load) --}}
     <div x-data="{ show: false }"
          @open-modal-email-surat-{{ $item->id }}.window="show = true"
-         x-show="show" x-cloak
+         x-show="show" x-cloak style="display: none;"
          class="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" @click="show = false"></div>
         <div class="relative bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-sm p-6 shadow-2xl">
@@ -229,10 +229,10 @@
         </div>
     </div>
 
-    {{-- Modal WhatsApp --}}
+    {{-- Modal WhatsApp (FIX: style="display: none;" & x-cloak untuk cegah modal muncul otomatis saat load) --}}
     <div x-data="{ show: false }"
          @open-modal-wa-surat-{{ $item->id }}.window="show = true"
-         x-show="show" x-cloak
+         x-show="show" x-cloak style="display: none;"
          class="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" @click="show = false"></div>
         <div class="relative bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-sm p-6 shadow-2xl">
