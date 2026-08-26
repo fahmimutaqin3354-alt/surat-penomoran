@@ -42,6 +42,7 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
         pdo \
         pdo_mysql \
         pdo_pgsql \
+        pgsql \
         mbstring \
         exif \
         pcntl \

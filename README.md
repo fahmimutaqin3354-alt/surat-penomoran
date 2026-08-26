@@ -158,7 +158,7 @@ Berdasarkan analisis migration `create_kelola_users_table` dan `UserController`,
 |-----------|------------|
 | **Laravel 12** | Framework backend utama |
 | **PHP 8.2+** | Bahasa pemrograman server-side |
-| **MySQL** | Database relasional |
+| **PostgreSQL 16+** | Database relasional utama (driver `pgsql` / `pdo_pgsql`) |
 | **Blade** | Template engine Laravel |
 | **Tailwind CSS 3** | Framework CSS untuk styling |
 | **Alpine.js 3** | Framework JavaScript untuk interaktivitas frontend |
@@ -306,10 +306,10 @@ Screenshot aplikasi belum tersedia dalam project ini. Screenshot dapat ditambahk
 
 ### Prasyarat
 
-- PHP >= 8.2
+- PHP >= 8.2 (dengan ekstensi `pdo_pgsql` & `pgsql`)
 - Composer
 - Node.js dan NPM
-- MySQL
+- PostgreSQL 16+
 - Git
 
 ### Langkah Instalasi
@@ -381,15 +381,15 @@ Server WhatsApp API akan berjalan di `http://localhost:3000`. Scan QR code yang 
 
 Salin file `.env.example` menjadi `.env` dan sesuaikan konfigurasi berikut:
 
-### Database
+### Database (PostgreSQL)
 
 ```env
-DB_CONNECTION=mysql
+DB_CONNECTION=pgsql
 DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=nama_database
-DB_USERNAME=root
-DB_PASSWORD=
+DB_PORT=5432
+DB_DATABASE=surat_penomoran
+DB_USERNAME=postgres
+DB_PASSWORD=secret
 ```
 
 ### Email (untuk fitur pengiriman surat dan laporan via email)

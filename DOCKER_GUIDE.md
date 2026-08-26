@@ -19,10 +19,10 @@ Dokumentasi ini menjelaskan cara menjalankan, mengelola, dan memecahkan masalah 
 | Layanan | Nama Container | Port Host | Deskripsi |
 |---|---|---|---|
 | **Web Server** | `surat_penomoran_nginx` | `http://localhost:8000` | Nginx web server melayani aplikasi Laravel |
-| **Laravel App** | `surat_penomoran_app` | *Internal (9000)* | PHP 8.2-FPM dengan ekstensi lengkap (GD, DomPDF, Excel, Redis) |
-| **Database** | `surat_penomoran_db` | `localhost:3306` | MySQL 8.0 Database (data persisten di volume `db_data`) |
+| **Laravel App** | `surat_penomoran_app` | *Internal (9000)* | PHP 8.2-FPM dengan ekstensi lengkap (GD, DomPDF, Excel, Redis, pgsql, pdo_pgsql) |
+| **Database** | `surat_penomoran_db` | `localhost:5432` | PostgreSQL 16 Alpine Database (data persisten di volume `postgres_data`) |
 | **WhatsApp API** | `surat_penomoran_wa` | `http://localhost:3000` | Node.js 20 Baileys WA Server (sesi login tersimpan di `wa_auth_data`) |
-| **phpMyAdmin** | `surat_penomoran_pma` | `http://localhost:8081` | Web UI Database (User: `root`, Password: `secret`) |
+| **Adminer GUI** | `surat_penomoran_adminer` | `http://localhost:8081` | Web UI Database Adminer (User: `postgres`, Password: `secret`) |
 | **Redis** | `surat_penomoran_redis` | `localhost:6379` | In-memory cache & queue session |
 
 ---
@@ -78,6 +78,11 @@ Dokumentasi ini menjelaskan cara menjalankan, mengelola, dan memecahkan masalah 
    docker compose exec app php artisan db:seed
    ```
 
+5. **Migrasi Data dari MySQL Lama (Jika ada data lama):**
+   ```bash
+   docker compose exec app php artisan db:migrate-from-mysql
+   ```
+
 ---
 
 ## 📱 Menghubungkan WhatsApp (Scan QR Code)
@@ -128,6 +133,9 @@ docker compose logs -f db
 docker compose exec app php artisan route:list
 docker compose exec app php artisan optimize:clear
 
+# Sinkronisasi sequence PostgreSQL ID
+docker compose exec app php artisan db:sync-sequences
+
 # Composer command
 docker compose exec app composer require <package-name>
 ```
@@ -140,22 +148,22 @@ docker compose exec app bash
 # Masuk ke container WhatsApp Server
 docker compose exec wa-server sh
 
-# Masuk ke MySQL CLI
-docker compose exec db mysql -u root -psecret surat_penomoran
+# Masuk ke PostgreSQL CLI (psql)
+docker compose exec db psql -U postgres -d surat_penomoran
 ```
 
 ---
 
 ## 🔍 Troubleshooting & Solusi
 
-### 1. Port Conflict (Port 8000, 3306, 8081, atau 3000 sudah dipakai)
-Jika port lokal sudah dipakai oleh aplikasi lain (misal XAMPP/MySQL lokal):
+### 1. Port Conflict (Port 8000, 5432, 8081, atau 3000 sudah dipakai)
+Jika port lokal sudah dipakai oleh aplikasi lain (misal PostgreSQL lokal):
 Buka file `.env`, ubah port yang diinginkan:
 ```env
 APP_PORT=8080
-DB_PORT=3307
+DB_PORT=5433
 WA_PORT=3001
-PMA_PORT=8082
+DB_GUI_PORT=8082
 ```
 Lalu restart: `docker compose up -d`
 

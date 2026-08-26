@@ -17,7 +17,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'sqlite'),
+    'default' => env('DB_CONNECTION', 'pgsql'),
 
     /*
     |--------------------------------------------------------------------------
@@ -55,6 +55,26 @@ return [
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => env('DB_CHARSET', 'utf8mb4'),
             'collation' => env('DB_COLLATION', 'utf8mb4_unicode_ci'),
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                (PHP_VERSION_ID >= 80500 ? Mysql::ATTR_SSL_CA : PDO::MYSQL_ATTR_SSL_CA) => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+
+        'mysql_source' => [
+            'driver' => 'mysql',
+            'url' => env('DB_MYSQL_SOURCE_URL'),
+            'host' => env('DB_MYSQL_SOURCE_HOST', '127.0.0.1'),
+            'port' => env('DB_MYSQL_SOURCE_PORT', '3306'),
+            'database' => env('DB_MYSQL_SOURCE_DATABASE', 'surat_penomoran'),
+            'username' => env('DB_MYSQL_SOURCE_USERNAME', 'root'),
+            'password' => env('DB_MYSQL_SOURCE_PASSWORD', ''),
+            'unix_socket' => env('DB_MYSQL_SOURCE_SOCKET', ''),
+            'charset' => env('DB_MYSQL_SOURCE_CHARSET', 'utf8mb4'),
+            'collation' => env('DB_MYSQL_SOURCE_COLLATION', 'utf8mb4_unicode_ci'),
             'prefix' => '',
             'prefix_indexes' => true,
             'strict' => true,

@@ -21,6 +21,8 @@
 /storage/framework/sessions/*
 /storage/framework/views/*
 !/storage/app/public/.gitignore
+public/storage
+/public/storage
 
 # Sub-services with their own context
 /wa-baileys-server/node_modules
