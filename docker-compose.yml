@@ -7,7 +7,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: surat_penomoran_app
-    restart: unless-stopped
+    restart: always
     working_dir: /var/www/html
     volumes:
       - .:/var/www/html
@@ -91,19 +91,7 @@ services:
     networks:
       - surat_network
 
-  # ----------------------------------------------------------------------------
-  # Redis In-Memory Cache & Queue Service
-  # ----------------------------------------------------------------------------
-  redis:
-    image: redis:7-alpine
-    container_name: surat_penomoran_redis
-    restart: always
-    ports:
-      - "${REDIS_PORT:-6379}:6379"
-    volumes:
-      - redis_data:/data
-    networks:
-      - surat_network
+
 
   # ----------------------------------------------------------------------------
   # Adminer Web UI for Database Management
