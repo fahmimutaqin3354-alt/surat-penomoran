@@ -36,6 +36,10 @@ return [
     ],
 
     'fonnte' => [
-    'token' => env('FONNTE_TOKEN'),
-    ]
+        'token' => env('FONNTE_TOKEN'),
+    ],
+
+    'wa_server' => [
+        'url' => env('WA_SERVER_URL', 'http://localhost:3000'),
+    ],
 ];
