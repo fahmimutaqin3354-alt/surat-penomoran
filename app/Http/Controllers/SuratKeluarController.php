@@ -596,7 +596,9 @@ public function preview($id)
 
     $pesan = "Berikut surat keluar No. {$surat->nomor_surat}, perihal: {$surat->perihal}.";
 
-    $response = Http::post('http://localhost:3000/send-file', [
+    $waServerUrl = rtrim(config('services.wa_server.url', env('WA_SERVER_URL', 'http://localhost:3000')), '/');
+
+    $response = Http::timeout(15)->post($waServerUrl . '/send-file', [
         'nomor'    => $nomor,
         'pesan'    => $pesan,
         'filePath' => $path,
