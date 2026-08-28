@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SuratKeluarStoreRequest;
+use App\Http\Requests\SuratKeluarUpdateRequest;
 use App\Models\SuratKeluar;
 use App\Models\SuratMasuk;
 use App\Models\Arsip;
@@ -202,34 +204,8 @@ public function nextNomor(Request $request)
 /**
  * Menyimpan surat keluar
  */
-public function store(Request $request)
+public function store(SuratKeluarStoreRequest $request)
 {
-    $tipeForm = $request->input('tipe_form');
-    if (!empty($tipeForm)) {
-        $isKuasa = ($tipeForm === 'kuasa');
-    } else {
-        $isKuasa = JenisSurat::where('nama', $request->jenis_surat)
-            ->where('form_type', 'kuasa')
-            ->exists() || \Illuminate\Support\Str::contains(strtolower($request->jenis_surat), 'kuasa');
-    }
-
-    $request->validate([
-        'tanggal_surat' => 'required|date',
-        'jenis_surat' => 'required|string|max:100',
-        'kode_surat' => 'nullable|string|max:10',
-        'kode_divisi' => 'required|string|max:20',
-        'instansi_id' => 'nullable|exists:instansis,id',
-        'tujuan' => $isKuasa ? 'nullable|string|max:255' : 'required|string|max:255',
-        'perihal' => $isKuasa ? 'nullable|string|max:255' : 'required|string|max:255',
-        'isi_surat' => $isKuasa ? 'nullable|string' : 'required|string',
-        'data_khusus' => $isKuasa ? 'required|array' : 'nullable|array',
-        'lampiran' => 'nullable|string|max:255',
-        'penandatangan' => $isKuasa ? 'nullable|string|max:255' : 'required|string|max:255',
-        'jabatan_penandatangan' => $isKuasa ? 'nullable|string|max:255' : 'required|string|max:255',
-        'status' => 'required|in:Draft,Dikirim,Selesai',
-        'file_surat' => 'nullable|mimes:pdf|max:2048',
-    ]);
-
     // Kumpulkan data khusus (misal data Surat Kuasa)
     $kuasaData = $this->buildKuasaData($request);
     $dataKhusus = $kuasaData['data_khusus'];
@@ -354,36 +330,9 @@ public function edit($id)
 /**
  * Mengupdate data surat keluar
  */
-public function update(Request $request, $id)
+public function update(SuratKeluarUpdateRequest $request, $id)
 {
     $surat = SuratKeluar::findOrFail($id);
-
-    $tipeForm = $request->input('tipe_form');
-    if (!empty($tipeForm)) {
-        $isKuasa = ($tipeForm === 'kuasa');
-    } else {
-        $isKuasa = JenisSurat::where('nama', $request->jenis_surat)
-            ->where('form_type', 'kuasa')
-            ->exists() || \Illuminate\Support\Str::contains(strtolower($request->jenis_surat), 'kuasa');
-    }
-
-    $request->validate([
-        'tanggal_surat' => 'required|date',
-        'nomor_surat'   => 'nullable|string|max:100',
-        'jenis_surat'   => 'required|string|max:100',
-        'kode_surat'    => 'nullable|string|max:10',
-        'kode_divisi'   => 'required|string|max:20',
-        'instansi_id'   => 'nullable|exists:instansis,id',
-        'tujuan'        => $isKuasa ? 'nullable|string|max:255' : 'required|string|max:255',
-        'perihal'       => $isKuasa ? 'nullable|string|max:255' : 'required|string|max:255',
-        'isi_surat'     => $isKuasa ? 'nullable|string' : 'required|string',
-        'data_khusus'   => $isKuasa ? 'required|array' : 'nullable|array',
-        'lampiran'      => 'nullable|string|max:255',
-        'penandatangan' => $isKuasa ? 'nullable|string|max:255' : 'required|string|max:255',
-        'jabatan_penandatangan' => $isKuasa ? 'nullable|string|max:255' : 'required|string|max:255',
-        'status'        => 'required|in:Draft,Dikirim,Selesai',
-        'file_surat'    => 'nullable|mimes:pdf|max:2048',
-    ]);
 
     // Kumpulkan data khusus (misal data Surat Kuasa)
     $kuasaData = $this->buildKuasaData($request);

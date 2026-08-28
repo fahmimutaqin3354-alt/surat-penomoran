@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UserStoreRequest;
+use App\Http\Requests\UserUpdateRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -47,16 +49,9 @@ class UserController extends Controller
     /**
      * Simpan user baru.
      */
-    public function store(Request $request)
+    public function store(UserStoreRequest $request)
     {
-        $validated = $request->validate([
-            'name'       => 'required|string|max:255',
-            'email'      => 'required|email|unique:users,email',
-            'password'   => 'required|string|min:8|confirmed',
-            'role'       => 'required|in:Admin,Operator,Verifikator,Viewer',
-            'unit_kerja' => 'nullable|string|max:255',
-            'status'     => 'nullable|in:Aktif,Nonaktif',
-        ]);
+        $validated = $request->validated();
 
         $validated['password'] = Hash::make($validated['password']);
         $validated['status'] = $validated['status'] ?? 'Aktif';
@@ -89,18 +84,11 @@ class UserController extends Controller
     /**
      * Perbarui data user.
      */
-    public function update(Request $request, $id)
+    public function update(UserUpdateRequest $request, $id)
     {
         $user = User::findOrFail($id);
 
-        $validated = $request->validate([
-            'name'       => 'required|string|max:255',
-            'email'      => 'required|email|unique:users,email,' . $user->id,
-            'password'   => 'nullable|string|min:8|confirmed',
-            'role'       => 'required|in:Admin,Operator,Verifikator,Viewer',
-            'unit_kerja' => 'nullable|string|max:255',
-            'status'     => 'required|in:Aktif,Nonaktif',
-        ]);
+        $validated = $request->validated();
 
         if (!empty($validated['password'])) {
             $validated['password'] = Hash::make($validated['password']);

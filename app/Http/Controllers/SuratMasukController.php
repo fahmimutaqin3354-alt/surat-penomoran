@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SuratMasukStoreRequest;
+use App\Http\Requests\SuratMasukUpdateRequest;
 use App\Models\Arsip;
 use App\Models\Instansi;
 use App\Models\JenisSurat;
@@ -66,23 +68,8 @@ class SuratMasukController extends Controller
 /**
  * Simpan surat masuk
  */
-public function store(Request $request)
+public function store(SuratMasukStoreRequest $request)
 {
-    $request->validate([
-        'nomor_agenda'   => 'required|unique:surat_masuks',
-        'nomor_surat'    => 'required|string|max:255',
-        'instansi_id' => 'required|exists:instansis,id',
-        'tanggal_surat'  => 'required|date',
-        'tanggal_terima' => 'required|date',
-        'jenis_surat'    => 'required|string|max:255',
-        'perihal'        => 'required|string|max:255',
-        'isi_ringkas'    => 'nullable|string',
-        'lampiran'       => 'nullable|string|max:255',
-        'keterangan'     => 'nullable|string',
-        'status'         => 'required|in:Baru,Diproses,Selesai',
-        'file_surat'     => 'nullable|mimes:pdf|max:2048',
-    ]);
-
     $namaFile = null;
 
     if ($request->hasFile('file_surat')) {
@@ -200,23 +187,9 @@ public function edit($id)
 /**
  * Update surat masuk
  */
-public function update(Request $request, string $id)
+public function update(SuratMasukUpdateRequest $request, string $id)
 {
     $surat = SuratMasuk::findOrFail($id);
-
-    $request->validate([
-        'nomor_surat'    => 'required|string|max:255',
-        'instansi_id'    => 'required|exists:instansis,id',
-        'tanggal_surat'  => 'required|date',
-        'tanggal_terima' => 'required|date',
-        'jenis_surat'    => 'required|string|max:255',
-        'perihal'        => 'required|string|max:255',
-        'isi_ringkas'    => 'nullable|string',
-        'lampiran'       => 'nullable|string|max:255',
-        'keterangan'     => 'nullable|string',
-        'status'         => 'required|in:Baru,Diproses,Selesai',
-        'file_surat'     => 'nullable|mimes:pdf|max:2048',
-    ]);
 
     $namaFile = $surat->file_surat;
 

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\AccountUpdatePasswordRequest;
+use App\Http\Requests\AccountUpdateRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules\Password;
 
 class AccountController extends Controller
 {
@@ -14,27 +14,17 @@ class AccountController extends Controller
         return view('akun.index');
     }
 
-    public function update(Request $request)
+    public function update(AccountUpdateRequest $request)
     {
         $user = Auth::user();
-
-        $request->validate([
-            'name'  => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
-        ]);
 
         $user->update($request->only('name', 'email'));
 
         return back()->with('success', 'Profil berhasil diperbarui.');
     }
 
-    public function updatePassword(Request $request)
+    public function updatePassword(AccountUpdatePasswordRequest $request)
     {
-        $request->validate([
-            'current_password' => 'required',
-            'password'         => ['required', 'confirmed', Password::min(8)],
-        ]);
-
         $user = Auth::user();
 
         if (! Hash::check($request->current_password, $user->password)) {

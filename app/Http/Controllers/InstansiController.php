@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\InstansiStoreRequest;
+use App\Http\Requests\InstansiUpdateRequest;
 use App\Models\Instansi;
-use Illuminate\Http\Request;
 
 class InstansiController extends Controller
 {
@@ -19,18 +20,10 @@ class InstansiController extends Controller
         return view('instansi.create');
     }
 
-    public function store(Request $request)
+    public function store(InstansiStoreRequest $request)
     {
-        // Validasi input (termasuk telepon & alamat)
-        $validated = $request->validate([
-            'kode_instansi' => 'required|string|max:100|unique:instansis,kode_instansi',
-            'nama_instansi' => 'required|string|max:255',
-            'telepon'       => 'nullable|string|max:20', // <--- DITAMBAHKAN
-            'alamat'        => 'nullable|string',        // <--- DITAMBAHKAN
-        ]);
-
         // Simpan langsung ke database
-        Instansi::create($validated);
+        Instansi::create($request->validated());
 
         return redirect()
             ->route('instansi.index')
@@ -42,18 +35,10 @@ class InstansiController extends Controller
         return view('instansi.edit', compact('instansi'));
     }
 
-    public function update(Request $request, Instansi $instansi)
+    public function update(InstansiUpdateRequest $request, Instansi $instansi)
     {
-        // Validasi input (termasuk telepon & alamat)
-        $validated = $request->validate([
-            'kode_instansi' => 'required|string|max:100|unique:instansis,kode_instansi,' . $instansi->id,
-            'nama_instansi' => 'required|string|max:255',
-            'telepon'       => 'nullable|string|max:20', // <--- DITAMBAHKAN
-            'alamat'        => 'nullable|string',        // <--- DITAMBAHKAN
-        ]);
-
         // Update data di database
-        $instansi->update($validated);
+        $instansi->update($request->validated());
 
         return redirect()
             ->route('instansi.index')
