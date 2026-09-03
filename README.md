@@ -1,192 +1,301 @@
-# Sistem Informasi Arsip Surat PT Microdata Indonesia
+# Sistem Informasi Manajemen Arsip & Penomoran Surat (SIMAS)
+### PT Microdata Indonesia
 
-Sistem informasi berbasis web untuk pengelolaan arsip surat masuk dan surat keluar di PT Microdata Indonesia. Dibangun menggunakan framework Laravel 12 dengan antarmuka modern yang responsif.
+![Laravel](https://img.shields.io/badge/Laravel-12.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-316192?style=for-the-badge&logo=postgresql&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-3.x-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![NodeJS](https://img.shields.io/badge/Node.js-Baileys_WA-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+
+Sistem informasi berbasis web modern untuk pengelolaan administrasi persuratan dan pengarsipan digital di **PT Microdata Indonesia**. Dilengkapi dengan automasi penomoran surat berstandar korporasi, dukungan multi-template dinamis (Surat Umum & Surat Kuasa), pembangkitan dokumen PDF, distribusi digital via Email & WhatsApp (Baileys), pelaporan analitik, dan perlindungan data dengan Tempat Sampah (*Recycle Bin*).
 
 ---
 
-## Daftar Isi
+## 📑 Daftar Isi
 
 - [Tentang Project](#tentang-project)
-- [Tujuan](#tujuan)
-- [Fitur](#fitur)
-- [Role dan Hak Akses](#role-dan-hak-akses)
+- [Tujuan & Manfaat](#tujuan--manfaat)
+- [Fitur Utama](#fitur-utama)
+- [Arsitektur Sistem](#arsitektur-sistem)
+- [Entity Relationship Diagram (ERD)](#entity-relationship-diagram-erd)
 - [Teknologi yang Digunakan](#teknologi-yang-digunakan)
-- [Struktur Project](#struktur-project)
-- [Database](#database)
-- [Entity Relationship Diagram](#entity-relationship-diagram)
-- [Screenshot Aplikasi](#screenshot-aplikasi)
-- [Instalasi dan Menjalankan Project](#instalasi-dan-menjalankan-project)
-- [Konfigurasi Environment](#konfigurasi-environment)
-- [Akun Demo](#akun-demo)
-- [Alur Sistem](#alur-sistem)
-- [Testing](#testing)
-- [Pengembangan Sistem](#pengembangan-sistem)
+- [Struktur Direktori Project](#struktur-direktori-project)
+- [Instalasi & Menjalankan Project](#instalasi--menjalankan-project)
+  - [Opsi 1: Menjalankan dengan Docker (Direkomendasikan)](#opsi-1-menjalankan-dengan-docker-direkomendasikan)
+  - [Opsi 2: Menjalankan Secara Lokal (Manual)](#opsi-2-menjalankan-secara-lokal-manual)
+- [Menghubungkan WhatsApp Gateway (Baileys)](#menghubungkan-whatsapp-gateway-baileys)
+- [Konfigurasi Environment (.env)](#konfigurasi-environment-env)
+- [Akun Demo & Role Akses](#akun-demo--role-akses)
+- [Alur Kerja Sistem (Workflow)](#alur-kerja-sistem-workflow)
+- [Pengujian (Testing)](#pengujian-testing)
+- [Dokumentasi Terkait](#dokumentasi-terkait)
 - [Tim Pengembang](#tim-pengembang)
-- [Git Workflow](#git-workflow)
-- [Security](#security)
-- [Status Project](#status-project)
 - [Lisensi](#lisensi)
 
 ---
 
-## Tentang Project
+## 🏢 Tentang Project
 
-**Sistem Informasi Arsip Surat PT Microdata Indonesia** adalah aplikasi web yang dirancang untuk mengelola seluruh proses administrasi surat masuk dan surat keluar secara digital. Sistem ini mengatasi permasalahan pengelolaan surat secara konvensional yang rentan terhadap kehilangan dokumen, pencarian yang memakan waktu, serta kurangnya pencatatan yang terstruktur.
+**Sistem Informasi Manajemen Arsip & Penomoran Surat PT Microdata Indonesia** dirancang untuk mengeliminasi kelemahan tata kelola arsip konvensional seperti duplikasi nomor surat, pencarian dokumen yang lambat, resiko dokumen fisik hilang/rusak, dan lambatnya distribusi dokumen ke pihak eksternal.
 
-Aplikasi ini menyediakan fitur pencatatan surat masuk dan surat keluar, pengarsipan otomatis, pembuatan nomor surat otomatis dengan format standar perusahaan, generate dokumen PDF, pengiriman surat via email dan WhatsApp, serta pelaporan statistik yang komprehensif.
-
----
-
-## Tujuan
-
-1. **Digitalisasi arsip surat** - Mengubah proses pengelolaan surat dari manual menjadi digital untuk meningkatkan efisiensi dan keamanan data.
-2. **Penomoran surat otomatis** - Menyediakan sistem penomoran surat keluar secara otomatis dengan format standar perusahaan.
-3. **Pengarsipan terpusat** - Menyimpan seluruh data surat masuk dan surat keluar dalam satu sistem yang terintegrasi.
-4. **Kemudahan pencarian** - Memudahkan pencarian dan pelacakan surat berdasarkan berbagai kriteria.
-5. **Pelaporan** - Menyediakan laporan statistik surat dalam periode tertentu yang dapat diekspor ke PDF dan Excel.
-6. **Distribusi surat digital** - Memungkinkan pengiriman surat keluar melalui email dan WhatsApp secara langsung dari sistem.
+Aplikasi ini menyatukan proses administrasi surat masuk dan keluar dalam satu platform terintegrasi dengan automasi nomor surat instan, pembangkitan dokumen PDF resmi siap cetak, pengarsipan otomatis tanpa input ganda, pelaporan statistik interaktif, serta integrasi gateway WhatsApp dan Email.
 
 ---
 
-## Fitur
+## 🎯 Tujuan & Manfaat
 
-### Autentikasi
-- Login dan Logout pengguna
-- Registrasi akun baru
-- Lupa password dan reset password via email
-- Verifikasi email
-- Konfirmasi password untuk aksi sensitif
-
-### Dashboard
-- Statistik total surat masuk, surat keluar, arsip, dan pengguna
-- Rincian status surat masuk (Baru, Diproses, Selesai)
-- Rincian status surat keluar (Draft, Dikirim, Selesai)
-- Grafik komparasi surat 6 bulan terakhir (surat masuk, surat keluar, arsip)
-- Daftar 5 surat masuk, surat keluar, dan arsip terbaru
-
-### Surat Masuk
-- Daftar surat masuk dengan pencarian (nomor agenda, nomor surat, asal surat, perihal)
-- Tambah surat masuk dengan nomor agenda otomatis (format: `AGD-XXXX`)
-- Edit dan hapus surat masuk (soft delete)
-- Detail surat masuk
-- Upload file PDF surat masuk
-- Download lembar agenda surat masuk ke PDF
-- Relasi otomatis dengan data instansi pengirim
-- Pengarsipan otomatis saat surat masuk disimpan
-
-### Surat Keluar
-- Daftar surat keluar dengan DataTables
-- Tambah surat keluar dengan penomoran otomatis (format: `XX/KODE/DIVISI/PT-MDI/BULAN_ROMAWI/TAHUN`)
-- Preview nomor surat secara realtime di form
-- Dukungan template khusus berdasarkan jenis surat (umum dan surat kuasa)
-- Form dinamis yang menyesuaikan jenis surat yang dipilih
-- Edit dan hapus surat keluar (soft delete)
-- Detail surat keluar
-- Preview surat keluar dalam format template
-- Upload file PDF surat keluar
-- Download/generate PDF surat keluar dari template
-- Pengiriman surat keluar via email
-- Pengiriman surat keluar via WhatsApp (integrasi Baileys)
-- Pembuatan surat keluar sebagai balasan dari surat masuk
-- Pengarsipan otomatis saat surat keluar disimpan
-
-### Arsip Surat
-- Daftar arsip surat (surat masuk dan surat keluar)
-- Pencarian arsip berdasarkan nomor surat, perihal, pengirim/penerima
-- Filter berdasarkan jenis (Surat Masuk / Surat Keluar)
-- Filter berdasarkan status
-- Detail arsip
-- Hapus arsip (soft delete beserta surat aslinya)
-- Ekspor arsip ke CSV
-
-### Data Master
-
-#### Data Instansi
-- Daftar instansi (kode, nama, telepon, alamat)
-- Tambah, edit, dan hapus instansi (soft delete)
-- Instansi digunakan sebagai referensi asal surat masuk dan tujuan surat keluar
-
-#### Data Jenis Surat
-- Daftar jenis surat dengan kode surat dan tipe form
-- Tambah jenis surat baru (dari halaman manajemen atau modal di form surat keluar)
-- Edit dan hapus jenis surat (soft delete)
-- Dukungan tipe form: umum dan kuasa
-- Data awal: Surat Tugas (ST), Surat Undangan (SU), Surat Pemberitahuan (SP), Surat Permohonan (PM), Surat Kuasa (SK)
-
-### Pengaturan Akun
-- Edit profil pengguna (nama dan email)
-- Ubah password dengan validasi password lama
-
-### Tempat Sampah (Recycle Bin)
-- Daftar data yang dihapus (surat keluar, surat masuk, arsip, instansi, jenis surat)
-- Pulihkan (restore) data yang dihapus
-- Hapus permanen data beserta file terkait
-
-### Laporan
-- Ringkasan statistik surat berdasarkan periode tanggal
-- Filter berdasarkan jenis surat (Surat Masuk / Surat Keluar)
-- Filter berdasarkan status
-- Grafik tren surat harian (line chart)
-- Ekspor laporan ke PDF (DomPDF)
-- Ekspor laporan ke Excel (Maatwebsite Excel)
-- Kirim laporan via email dengan lampiran file
-
-### Pengiriman Surat Digital
-- Kirim surat keluar via email (generate PDF otomatis atau gunakan file yang sudah diupload)
-- Kirim surat keluar via WhatsApp melalui server Baileys (Node.js) yang terintegrasi
+1. **Automasi Penomoran Surat**: Penomoran surat keluar dibuat otomatis sesuai format baku (`URUT/KODE_SURAT/DIVISI/PT-MDI/BULAN_ROMAWI/TAHUN`) tanpa resiko nomor ganda.
+2. **Pengarsipan Terpusat & Otomatis**: Setiap surat masuk dan keluar secara instan tercatat pada repositori arsip digital.
+3. **Multi-Template Dinamis**: Mendukung berbagai format surat resmi seperti Surat Tugas, Undangan, Pemberitahuan, hingga Surat Kuasa dengan isian klausul khusus.
+4. **Distribusi Dokumen Instan**: Pengiriman surat ke instansi tujuan melalui integrasi WhatsApp Web API (Baileys) dan Email SMTP dengan lampiran PDF serta *Signed URLs*.
+5. **Mitigasi Kehilangan Data**: Fitur *Recycle Bin* (Soft Deletes) memungkinkan pemulihan (*restore*) atau penghapusan permanen (*force delete*) data dan file berkas.
+6. **Laporan & Analitik Bisnis**: Rekapitulasi data statistik surat dengan grafik tren, ekspor PDF, ekspor Excel, dan pengiriman rekap via email.
 
 ---
 
-## Role dan Hak Akses
+## ⚡ Fitur Utama
 
-Berdasarkan analisis migration `create_kelola_users_table` dan `UserController`, sistem mendukung role berikut:
+### 🔐 1. Autentikasi & Pengaturan Akun
+- Login, Logout, dan Registrasi akun baru (Laravel Breeze).
+- Lupa password & reset password via email bertoken.
+- Edit profil akun (Nama, Email) dan pembaruan password dengan verifikasi password lama.
+- Proteksi keamanan: *Self-deletion prevention*, CSRF protection, dan password hashing Bcrypt.
 
-| Role | Hak Akses |
-|------|-----------|
-| **Admin** | Akses penuh ke seluruh fitur sistem termasuk manajemen pengguna |
-| **Operator** | Mengelola data surat dan arsip |
-| **Verifikator** | Verifikasi dan validasi surat |
-| **Viewer** | Hanya dapat melihat data (role default saat registrasi) |
+### 📊 2. Dashboard Interaktif
+- Kartu statistik total surat masuk, surat keluar, arsip, dan pengguna.
+- Visualisasi status surat (Baru/Draft, Diproses/Dikirim, Selesai).
+- Grafik komparasi surat 6 bulan terakhir menggunakan Chart.js.
+- Tabel pintasan 5 surat masuk, surat keluar, dan arsip terbaru.
 
-> **Catatan:** Saat ini seluruh route yang membutuhkan autentikasi dilindungi oleh middleware `auth`. Pembatasan akses berdasarkan role sudah tersedia pada struktur data (kolom `role` pada tabel `users` dengan default `Viewer`), namun middleware khusus untuk pembatasan akses per role belum ditemukan dalam implementasi saat ini. Semua pengguna yang sudah login dapat mengakses seluruh fitur.
+### 📥 3. Modul Surat Masuk
+- Pencatatan surat masuk dengan nomor agenda otomatis (`AGD-XXXX`).
+- Relasi terpadu dengan Data Master Instansi pengirim.
+- Upload berkas pindaian surat (PDF max 2MB).
+- Cetak / Download Lembar Agenda Disposisi Resmi ke PDF.
+- Tombol integrasi langsung untuk membuat Surat Keluar balasan.
+- Pengarsipan otomatis (*auto-archive*) saat data surat masuk disimpan.
+
+### 📤 4. Modul Surat Keluar & Template Dinamis
+- **Penomoran Otomatis**: Format `XX/KODE/DIVISI/PT-MDI/BULAN_ROMAWI/TAHUN`.
+- **Live Realtime Preview**: Pratinjau nomor surat secara langsung saat mengubah tanggal, divisi, atau jenis surat.
+- **Formulir Dinamis (Alpine.js)**:
+  - **Surat Umum**: Perihal, Lampiran, Isi Surat Bebas, Penandatangan & Jabatan.
+  - **Surat Kuasa**: Input khusus Pemberi Kuasa, Penerima Kuasa, dan Klausul Wewenang (disimpan dalam format JSON `data_khusus`).
+- **Pratinjau HTML & Ekspor PDF**: Generate dokumen resmi siap cetak lengkap dengan Kop Surat PT Microdata Indonesia.
+- **Upload Berkas Scan**: Opsi unggah berkas PDF final bertanda tangan/stempel basah.
+
+### 🚀 5. Distribusi Digital (WhatsApp & Email)
+- **WhatsApp Gateway (Baileys)**: Kirim dokumen surat beserta pesan kustom langsung ke nomor WhatsApp instansi tujuan via REST API Node.js.
+- **Email Delivery**: Kirim surat keluar langsung ke email instansi lengkap dengan lampiran PDF.
+- **Signed Public URLs**: Tautan unduhan dokumen publik terenkripsi berbatas waktu untuk pihak penerima tanpa harus login.
+
+### 🗄️ 6. Modul Arsip Terpadu
+- Sinkronisasi otomatis dari setiap transaksi surat masuk dan keluar.
+- Fitur pencarian multi-kolom (Nomor Surat, Perihal, Asal/Tujuan).
+- Filter interaktif berdasarkan Jenis Arsip dan Status.
+- Ekspor seluruh daftar arsip ke format CSV.
+
+### 🏢 7. Data Master
+- **Master Instansi**: Kelola kode, nama, nomor kontak, dan alamat instansi mitra/pemerintah.
+- **Master Jenis Surat**: Kelola nama, kode surat (`ST`, `SU`, `SK`, `SP`, `PM`), dan tipe formulir (`umum` / `kuasa`). Dapat ditambahkan langsung melalui modal di form surat keluar.
+
+### 📈 8. Laporan & Rekapitulasi
+- Filter rekapitulasi berdasarkan rentang tanggal (*start date* - *end date*), jenis surat, dan status.
+- Grafik tren harian surat (*Line Chart*).
+- Ekspor laporan ke dokumen PDF resmi berstempel dan bertanda tangan.
+- Ekspor laporan ke spreadsheet Microsoft Excel (`.xlsx`) via Maatwebsite Excel.
+- Pengiriman file laporan langsung ke email pimpinan/stakeholder.
+
+### ♻️ 9. Tempat Sampah (Recycle Bin & Data Lifecycle)
+- Diterapkan pada 5 entitas: Surat Masuk, Surat Keluar, Arsip, Instansi, dan Jenis Surat.
+- **Restore**: Mengembalikan data dan mempertahankan integritas relasi.
+- **Force Delete**: Menghapus permanen baris database sekaligus membersihkan berkas fisik dari storage.
 
 ---
 
-## Teknologi yang Digunakan
+## 🏗️ Arsitektur Sistem
 
-| Teknologi | Keterangan |
-|-----------|------------|
-| **Laravel 12** | Framework backend utama |
-| **PHP 8.2+** | Bahasa pemrograman server-side |
-| **PostgreSQL 16+** | Database relasional utama (driver `pgsql` / `pdo_pgsql`) |
-| **Blade** | Template engine Laravel |
-| **Tailwind CSS 3** | Framework CSS untuk styling |
-| **Alpine.js 3** | Framework JavaScript untuk interaktivitas frontend |
-| **DataTables** | Plugin jQuery untuk tabel data interaktif |
-| **Font Awesome 6** | Library ikon |
-| **Plus Jakarta Sans** | Tipografi utama aplikasi |
-| **Laravel Breeze** | Starter kit autentikasi |
-| **DomPDF** | Generate dokumen PDF (barryvdh/laravel-dompdf) |
-| **Maatwebsite Excel** | Ekspor data ke format Excel |
-| **Vite** | Build tool untuk aset frontend |
-| **Chart.js** | Grafik statistik pada dashboard dan laporan |
-| **Node.js + Express** | Server API WhatsApp (wa-baileys-server) |
-| **Baileys** | Library WhatsApp Web API (@whiskeysockets/baileys) |
-| **Axios** | HTTP client untuk request AJAX |
-| **Pest** | Framework testing PHP |
-| **Git** | Version control |
+```mermaid
+graph TB
+    subgraph Client["Klien & Pengguna"]
+        User["Web Browser (Admin / Operator)"]
+        PublicUser["Penerima Surat (Signed URL)"]
+    end
+
+    subgraph DockerServices["Docker Compose Environment"]
+        Nginx["Nginx Web Server\n(Port 8000)"]
+        Adminer["Adminer GUI\n(Port 8081)"]
+        
+        subgraph CoreApp["Aplikasi & Gateway"]
+            Laravel["Laravel 12 (PHP 8.2-FPM)\nDomPDF & Excel Engine"]
+            WAService["WhatsApp Baileys Service\nNode.js Express (Port 3000)"]
+        end
+        
+        subgraph StorageLayer["Data & Persistence"]
+            PostgreSQL[("PostgreSQL 16 DB\n(Port 5432)")]
+            Redis[("Redis 7.0 Cache & Queue\n(Port 6379)")]
+        end
+    end
+
+    subgraph External["Layanan Luar"]
+        SMTP["SMTP Mail Server"]
+        WANet["WhatsApp Network"]
+    end
+
+    User -->|HTTP 8000| Nginx
+    PublicUser -->|Signed URL| Nginx
+    User -->|HTTP 8081| Adminer
+    Adminer --> PostgreSQL
+
+    Nginx -->|FastCGI| Laravel
+    Laravel -->|SQL Query| PostgreSQL
+    Laravel -->|Cache/Session| Redis
+    Laravel -->|REST API| WAService
+    Laravel -->|SMTP Protocol| SMTP
+
+    WAService -->|WebSocket| WANet
+```
 
 ---
 
-## Struktur Project
+## 📊 Entity Relationship Diagram (ERD)
+
+```mermaid
+erDiagram
+    USERS ||--o{ SURAT_MASUKS : "menginput"
+    USERS ||--o{ SURAT_KELUARS : "membuat"
+    USERS ||--o{ ARSIPS : "mencatat"
+    
+    INSTANSIS ||--o{ SURAT_MASUKS : "asal pengirim"
+    INSTANSIS ||--o{ SURAT_KELUARS : "tujuan"
+    
+    JENIS_SURATS ||--o{ SURAT_KELUARS : "format kode"
+    
+    SURAT_MASUKS ||--o| ARSIPS : "auto archive"
+    SURAT_MASUKS ||--o{ SURAT_KELUARS : "balasan"
+    
+    SURAT_KELUARS ||--o| ARSIPS : "auto archive"
+
+    USERS {
+        bigint id PK
+        string name
+        string email
+        string password
+        string role
+        string unit_kerja
+        string status
+        timestamps timestamps
+    }
+
+    INSTANSIS {
+        bigint id PK
+        string kode_instansi
+        string nama_instansi
+        string no_telp
+        text alamat
+        timestamp deleted_at
+        timestamps timestamps
+    }
+
+    JENIS_SURATS {
+        bigint id PK
+        string nama
+        string kode_surat
+        string form_type
+        text template
+        timestamp deleted_at
+        timestamps timestamps
+    }
+
+    SURAT_MASUKS {
+        bigint id PK
+        bigint instansi_id FK
+        bigint user_id FK
+        string nomor_agenda
+        string nomor_surat
+        date tanggal_surat
+        date tanggal_terima
+        string asal_surat
+        string perihal
+        text isi_ringkas
+        string file_surat
+        string status
+        timestamp deleted_at
+        timestamps timestamps
+    }
+
+    SURAT_KELUARS {
+        bigint id PK
+        bigint user_id FK
+        bigint instansi_id FK
+        bigint surat_masuk_id FK
+        string nomor_surat
+        date tanggal_surat
+        string jenis_surat
+        string kode_surat
+        string kode_divisi
+        string tujuan
+        string perihal
+        text isi_surat
+        json data_khusus
+        string file_surat
+        string status
+        timestamp deleted_at
+        timestamps timestamps
+    }
+
+    ARSIPS {
+        bigint id PK
+        bigint user_id FK
+        bigint surat_masuk_id FK
+        bigint surat_keluar_id FK
+        string nomor_arsip
+        string nomor_surat
+        string jenis_arsip
+        date tanggal_surat
+        date tanggal_arsip
+        string perihal
+        string pengirim_penerima
+        string file_arsip
+        string status
+        timestamp deleted_at
+        timestamps timestamps
+    }
+```
+
+---
+
+## 🛠️ Teknologi yang Digunakan
+
+| Komponen | Teknologi | Keterangan |
+|---|---|---|
+| **Backend Framework** | **Laravel 12** | PHP 8.2+ MVC Web Framework |
+| **Database** | **PostgreSQL 16 Alpine** | Database relasional utama |
+| **Containerization** | **Docker & Docker Compose** | Multi-container orchestration |
+| **Web Server** | **Nginx Alpine** | Reverse proxy dan HTTP server |
+| **In-Memory Cache** | **Redis 7.0** | Cache & Queue session management |
+| **WhatsApp Gateway** | **Node.js + Baileys** | `@whiskeysockets/baileys` multi-device engine |
+| **Database GUI** | **Adminer** | Manajemen web UI database PostgreSQL |
+| **Frontend Styling** | **Tailwind CSS 3** | Utility-first CSS framework |
+| **Frontend Scripting** | **Alpine.js 3** | Interaktivitas UI ringan & reaktif |
+| **Tabel Interaktif** | **DataTables (jQuery)** | Pencarian, sorting, dan pagination tabel |
+| **PDF Generation** | **DomPDF (barryvdh/laravel-dompdf)** | Render dokumen PDF resmi dari Blade |
+| **Excel Export** | **Maatwebsite Excel** | Export data spreadsheet `.xlsx` |
+| **Visual Chart** | **Chart.js** | Visualisasi statistik pada dashboard & laporan |
+| **Asset Bundler** | **Vite** | Modern frontend build tool |
+| **Testing** | **Pest PHP** | Automated test framework |
+
+---
+
+## 📁 Struktur Direktori Project
 
 ```
 surat-penomoran/
 ├── app/
-│   ├── Exports/              # Class export data (LaporanExport)
+│   ├── Exports/              # Export class (LaporanExport)
 │   ├── Http/
-│   │   └── Controllers/      # Controller aplikasi
-│   │       ├── Auth/          # Controller autentikasi (Breeze)
+│   │   └── Controllers/      # Controller logika bisnis
+│   │       ├── Auth/          # Breeze Authentication Controllers
 │   │       ├── AccountController.php
 │   │       ├── ArsipController.php
 │   │       ├── DashboardController.php
@@ -198,380 +307,265 @@ surat-penomoran/
 │   │       ├── SuratMasukController.php
 │   │       └── UserController.php
 │   ├── Mail/                 # Mailable class (LaporanMail, SuratKeluarMail)
-│   ├── Models/               # Eloquent models
-│   │   ├── Arsip.php
-│   │   ├── Instansi.php
-│   │   ├── JenisSurat.php
-│   │   ├── KelolaUser.php
-│   │   ├── SuratKeluar.php
-│   │   ├── SuratMasuk.php
-│   │   └── User.php
-│   └── View/                 # View components
+│   └── Models/               # Eloquent Models (SuratMasuk, SuratKeluar, Arsip, dll.)
 ├── database/
-│   ├── migrations/           # File migration database
-│   └── seeders/              # Seeder data awal
-├── public/
-│   ├── image/                # Gambar (kop surat, logo)
-│   └── images/               # Logo Microdata
+│   ├── migrations/           # Skema migration database PostgreSQL
+│   └── seeders/              # Seeder data awal (User, Jenis Surat, dll.)
+├── docker/                   # Konfigurasi Nginx dan PHP-FPM Docker
 ├── resources/
-│   └── views/
-│       ├── akun/             # View pengaturan akun
-│       ├── arsip/            # View arsip surat
-│       ├── auth/             # View autentikasi (login, register, dll.)
-│       ├── components/       # Blade components
-│       ├── dashboard.blade.php
-│       ├── emails/           # Template email
-│       ├── instansi/         # View data instansi
-│       ├── jenis_surat/      # View jenis surat
-│       ├── laporan/          # View laporan
-│       ├── layouts/          # Layout utama (app, sidebar, navbar)
-│       ├── profile/          # View profil pengguna
-│       ├── recyclebin/       # View tempat sampah
-│       ├── surat_keluar/     # View surat keluar
-│       ├── surat_masuk/      # View surat masuk
-│       └── welcome.blade.php
+│   └── views/                # Blade Templates
+│       ├── akun/             # Pengaturan profil & password
+│       ├── arsip/            # Tampilan arsip surat
+│       ├── auth/             # Form login, register, reset password
+│       ├── instansi/         # CRUD Data Instansi
+│       ├── jenis_surat/      # CRUD Data Jenis Surat
+│       ├── laporan/          # Halaman laporan & preview PDF/Excel
+│       ├── layouts/          # Layout template (app, sidebar, navbar)
+│       ├── recyclebin/       # Tempat Sampah
+│       ├── surat_keluar/     # Form input, preview, template kuasa & umum
+│       └── surat_masuk/      # Form input, disposisi, lembar agenda
 ├── routes/
 │   ├── auth.php              # Route autentikasi
 │   └── web.php               # Route utama aplikasi
-├── tests/                    # Automated tests (Pest)
-├── wa-baileys-server/        # Server WhatsApp API (Node.js)
-│   ├── index.js
+├── wa-baileys-server/        # Microservice WhatsApp Gateway (Node.js)
+│   ├── index.js              # Server Express + Baileys
 │   └── package.json
-├── .env.example
-├── composer.json
-├── package.json
-├── tailwind.config.js
-├── vite.config.js
-└── README.md
+├── docker-compose.yml        # Orchestration 6 container services
+├── docker-setup.bat          # Helper script otomatis (Windows)
+├── docker-setup.sh           # Helper script otomatis (Linux / macOS)
+├── DOCKER_GUIDE.md           # Panduan lengkap Docker & Troubleshooting
+├── PRD.md                    # Product Requirements Document
+└── README.md                 # Dokumentasi utama project
 ```
 
 ---
 
-## Database
+## 🚀 Instalasi & Menjalankan Project
 
-### Tabel Utama
+### Opsi 1: Menjalankan dengan Docker (Direkomendasikan)
 
-| Tabel | Fungsi |
-|-------|--------|
-| `users` | Data pengguna sistem (nama, email, password, role, unit kerja, status) |
-| `surat_masuks` | Data surat masuk (nomor agenda, nomor surat, tanggal, asal surat, perihal, status, file) |
-| `surat_keluars` | Data surat keluar (nomor surat otomatis, tanggal, tujuan, perihal, isi surat, status, file) |
-| `arsips` | Data arsip surat (gabungan surat masuk dan keluar, dibuat otomatis) |
-| `instansis` | Data master instansi (kode, nama, telepon, alamat) |
-| `jenis_surats` | Data master jenis surat (nama, kode surat, tipe form, template) |
-| `sessions` | Data sesi pengguna aktif |
-| `password_reset_tokens` | Token reset password |
-| `cache` | Penyimpanan cache aplikasi |
-| `jobs` | Antrian pekerjaan background |
+Pastikan **Docker Desktop** sudah terinstall dan sedang berjalan di komputer Anda.
 
-### Relasi Antar Tabel
+#### 1. Setup Cepat (One-Click Script)
+- **Windows**: Jalankan script berikut di Command Prompt / PowerShell:
+  ```cmd
+  .\docker-setup.bat
+  ```
+- **Linux / macOS / WSL**:
+  ```bash
+  chmod +x docker-setup.sh
+  ./docker-setup.sh
+  ```
 
-- **SuratMasuk** belongsTo **User** (penginput surat)
-- **SuratMasuk** belongsTo **Instansi** (asal pengirim surat)
-- **SuratMasuk** hasMany **SuratKeluar** (surat keluar sebagai balasan)
-- **SuratMasuk** hasOne **Arsip** (arsip otomatis)
-- **SuratKeluar** belongsTo **User** (pembuat surat)
-- **SuratKeluar** belongsTo **Instansi** (instansi tujuan)
-- **SuratKeluar** belongsTo **JenisSurat** (jenis surat melalui kolom nama)
-- **Arsip** belongsTo **SuratMasuk** (opsional)
-- **Arsip** belongsTo **SuratKeluar** (opsional)
-- **Arsip** belongsTo **User** (penginput)
-- **Instansi** hasMany **SuratMasuk** dan **SuratKeluar**
-- **User** hasMany **SuratKeluar**
+#### 2. Setup Manual Docker
+```bash
+# 1. Salin konfigurasi environment docker
+cp .env.docker.example .env
 
-### Soft Deletes
+# 2. Build dan jalankan seluruh container di background
+docker compose up -d --build
 
-Tabel berikut menggunakan fitur soft deletes untuk mendukung mekanisme Tempat Sampah:
-- `surat_masuks`
-- `surat_keluars`
-- `arsips`
-- `instansis`
-- `jenis_surats`
+# 3. Generate Application Key
+docker compose exec app php artisan key:generate
 
----
+# 4. Buat Storage Link
+docker compose exec app php artisan storage:link
 
-## Entity Relationship Diagram
+# 5. Jalankan Migration dan Seeder
+docker compose exec app php artisan migrate --seed
+```
 
-ERD belum tersedia dalam bentuk file gambar di project ini. Diagram ERD dapat dibuat dan ditambahkan kemudian berdasarkan struktur database yang telah didokumentasikan di atas.
+Aplikasi siap diakses melalui browser:
+- **Aplikasi Web**: [http://localhost:8000](http://localhost:8000)
+- **Adminer Database GUI**: [http://localhost:8081](http://localhost:8081) *(Server: `db`, User: `postgres`, Pass: `secret`, DB: `surat_penomoran`)*
+- **WhatsApp Service API**: [http://localhost:3000](http://localhost:3000)
 
 ---
 
-## Screenshot Aplikasi
+### Opsi 2: Menjalankan Secara Lokal (Manual)
 
-Screenshot aplikasi belum tersedia dalam project ini. Screenshot dapat ditambahkan kemudian untuk mendokumentasikan tampilan antarmuka pengguna.
-
----
-
-## Instalasi dan Menjalankan Project
-
-### Prasyarat
-
-- PHP >= 8.2 (dengan ekstensi `pdo_pgsql` & `pgsql`)
-- Composer
-- Node.js dan NPM
+#### Prasyarat:
+- PHP >= 8.2 (dengan ekstensi `pdo_pgsql`, `pgsql`, `gd`, `zip`)
+- Composer 2.x
+- Node.js >= 18.x & NPM
 - PostgreSQL 16+
-- Git
-
-### Langkah Instalasi
 
 ```bash
-# 1. Clone repository
-git clone <repository-url>
-
-# 2. Masuk ke folder project
+# 1. Masuk ke direktori project
 cd surat-penomoran
 
-# 3. Install dependensi PHP
+# 2. Install dependensi PHP & JS
 composer install
-
-# 4. Install dependensi frontend
 npm install
 
-# 5. Salin file environment
+# 3. Salin file .env dan sesuaikan database PostgreSQL Anda
 cp .env.example .env
 
-# 6. Konfigurasi database di file .env (lihat bagian Konfigurasi Environment)
-
-# 7. Generate application key
+# 4. Generate App Key
 php artisan key:generate
 
-# 8. Jalankan migration dan seeder
+# 5. Jalankan Migration & Seeder
 php artisan migrate --seed
 
-# 9. Buat symbolic link untuk storage
+# 6. Buat Storage Link
 php artisan storage:link
 
-# 10. Build aset frontend
+# 7. Build asset frontend
 npm run build
 
-# 11. Jalankan development server
+# 8. Jalankan development server
 php artisan serve
 ```
 
-Aplikasi akan berjalan di `http://localhost:8000`.
+---
 
-### Menjalankan dengan Mode Development
+## 📱 Menghubungkan WhatsApp Gateway (Baileys)
 
-Project ini menyediakan script `composer dev` yang menjalankan server Laravel, queue listener, log viewer (Pail), dan Vite secara bersamaan:
+Untuk mengaktifkan fitur pengiriman surat via WhatsApp:
 
-```bash
-composer dev
-```
-
-### Server WhatsApp (Opsional)
-
-Jika ingin menggunakan fitur pengiriman surat via WhatsApp:
-
-```bash
-# Masuk ke folder wa-baileys-server
-cd wa-baileys-server
-
-# Install dependensi
-npm install
-
-# Jalankan server
-node index.js
-```
-
-Server WhatsApp API akan berjalan di `http://localhost:3000`. Scan QR code yang muncul di terminal untuk menghubungkan akun WhatsApp.
+1. Pantau log container WhatsApp:
+   ```bash
+   docker compose logs -f wa-server
+   ```
+2. QR Code akan tampil di terminal.
+3. Buka WhatsApp di ponsel Anda: **Perangkat Tertaut (Linked Devices) > Tautkan Perangkat (Link a Device)**.
+4. Scan QR Code tersebut.
+5. Sesi WhatsApp akan tersimpan persisten di volume `wa_auth_data` sehingga **tidak perlu scan ulang** saat restart container.
 
 ---
 
-## Konfigurasi Environment
+## ⚙️ Konfigurasi Environment (.env)
 
-Salin file `.env.example` menjadi `.env` dan sesuaikan konfigurasi berikut:
-
-### Database (PostgreSQL)
-
-```env
-DB_CONNECTION=pgsql
-DB_HOST=127.0.0.1
-DB_PORT=5432
-DB_DATABASE=surat_penomoran
-DB_USERNAME=postgres
-DB_PASSWORD=secret
-```
-
-### Email (untuk fitur pengiriman surat dan laporan via email)
-
-```env
-MAIL_MAILER=smtp
-MAIL_HOST=smtp.example.com
-MAIL_PORT=587
-MAIL_USERNAME=email@example.com
-MAIL_PASSWORD=
-MAIL_FROM_ADDRESS="noreply@example.com"
-MAIL_FROM_NAME="${APP_NAME}"
-```
-
-### Umum
+Pastikan konfigurasi kunci berikut disesuaikan:
 
 ```env
 APP_NAME="Sistem Arsip Surat"
 APP_ENV=local
 APP_DEBUG=true
 APP_URL=http://localhost:8000
+
+# Database PostgreSQL
+DB_CONNECTION=pgsql
+DB_HOST=db             # Gunakan 127.0.0.1 jika menjalankan tanpa Docker
+DB_PORT=5432
+DB_DATABASE=surat_penomoran
+DB_USERNAME=postgres
+DB_PASSWORD=secret
+
+# Redis Cache & Session
+REDIS_HOST=redis       # Gunakan 127.0.0.1 jika menjalankan tanpa Docker
+REDIS_PORT=6379
+
+# WhatsApp Baileys Service
+WA_SERVER_URL=http://wa-server:3000
+
+# Email (SMTP)
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.mailtrap.io
+MAIL_PORT=2525
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS="no-reply@microdata.id"
+MAIL_FROM_NAME="${APP_NAME}"
 ```
 
 ---
 
-## Akun Demo
+## 👤 Akun Demo & Role Akses
 
-Berdasarkan `DatabaseSeeder.php`, terdapat akun demo yang dibuat saat menjalankan seeder:
+Setelah menjalankan `php artisan db:seed`, akun demo default dapat digunakan untuk login:
 
-| Field | Nilai |
-|-------|-------|
-| **Nama** | Test User |
-| **Email** | test@example.com |
-| **Password** | password |
+| Field | Kredensial |
+|---|---|
+| **Email** | `test@example.com` |
+| **Password** | `password` |
 
-> **Catatan:** Akun ini dibuat untuk keperluan pengembangan. Pastikan untuk mengubah kredensial ini sebelum digunakan di lingkungan produksi.
-
----
-
-## Alur Sistem
-
-```
-Landing Page (Welcome)
-       │
-       ▼
-     Login
-       │
-       ▼
-   Dashboard ──────────────────────────────────────────────┐
-       │                                                   │
-       ├── Data Master                                     │
-       │   ├── Data Instansi (CRUD)                        │
-       │   └── Data Jenis Surat (CRUD)                     │
-       │                                                   │
-       ├── Manajemen Surat                                 │
-       │   ├── Surat Masuk ────► Arsip Otomatis            │
-       │   │   ├── Input surat masuk                       │
-       │   │   ├── Upload file PDF                         │
-       │   │   ├── Download lembar agenda PDF              │
-       │   │   └── Buat balasan (Surat Keluar)             │
-       │   │                                               │
-       │   ├── Surat Keluar ───► Arsip Otomatis            │
-       │   │   ├── Input surat keluar (nomor otomatis)     │
-       │   │   ├── Preview surat dari template             │
-       │   │   ├── Download PDF                            │
-       │   │   ├── Kirim via Email                         │
-       │   │   └── Kirim via WhatsApp                      │
-       │   │                                               │
-       │   ├── Arsip Surat                                 │
-       │   │   ├── Lihat & cari arsip                      │
-       │   │   └── Ekspor ke CSV                           │
-       │   │                                               │
-       │   └── Laporan                                     │
-       │       ├── Ringkasan statistik dengan grafik       │
-       │       ├── Ekspor PDF / Excel                      │
-       │       └── Kirim laporan via Email                 │
-       │                                                   │
-       ├── Pengaturan Akun (edit profil & password)        │
-       │                                                   │
-       └── Tempat Sampah (restore / hapus permanen)        │
-                                                           │
-       Logout ◄────────────────────────────────────────────┘
-```
+### Role Akses Sistem:
+| Role | Deskripsi Hak Akses |
+|---|---|
+| **Admin** | Akses penuh ke seluruh menu, manajemen pengguna, data master, dan pembersihan tempat sampah |
+| **Operator** | Mengelola surat masuk, membuat surat keluar, mengirim dokumen via WA/Email, dan mengunduh laporan |
+| **Verifikator** | Memeriksa dan memvalidasi keabsahan data surat |
+| **Viewer** | Membaca data surat dan laporan (role bawaan registrasi baru) |
 
 ---
 
-## Testing
+## 🔄 Alur Kerja Sistem (Workflow)
 
-Project ini menggunakan **Pest** sebagai framework testing. Terdapat beberapa test bawaan dari Laravel Breeze:
+```
+                     ┌──────────────────┐
+                     │   Landing Page   │
+                     └────────┬─────────┘
+                              │
+                              ▼
+                     ┌──────────────────┐
+                     │   Login Sistem   │
+                     └────────┬─────────┘
+                              │
+                              ▼
+                     ┌──────────────────┐
+                     │    Dashboard     │
+                     └────────┬─────────┘
+                              │
+       ┌──────────────────────┼──────────────────────┐
+       ▼                      ▼                      ▼
+┌──────────────┐      ┌──────────────┐      ┌──────────────────┐
+│  Data Master │      │ Surat Masuk  │      │   Surat Keluar   │
+│ • Instansi   │      │ • Agenda Auto│      │ • Auto No Format │
+│ • Jenis Surat│      │ • Upload PDF │      │ • Multi-Template │
+└──────────────┘      │ • Balasan    │      │ • Kirim WA/Email │
+                      └───────┬──────┘      └────────┬─────────┘
+                              │                      │
+                              └──────────┬───────────┘
+                                         ▼
+                             ┌────────────────────────┐
+                             │    Pengarsipan Auto    │
+                             │ • Filter, Search & CSV │
+                             └───────────┬────────────┘
+                                         │
+       ┌─────────────────────────────────┴─────────────────────────────────┐
+       ▼                                                                   ▼
+┌──────────────┐                                                   ┌──────────────┐
+│   Laporan    │                                                   │ Tempat Sampah│
+│ • PDF/Excel  │                                                   │ • Restore    │
+│ • Kirim Email│                                                   │ • Force Purge│
+└──────────────┘                                                   └──────────────┘
+```
 
-### Test yang Tersedia
+---
 
-- **Feature Tests:**
-  - `ExampleTest.php` - Test respons halaman utama
-  - `ProfileTest.php` - Test fitur profil pengguna
-  - `Auth/AuthenticationTest.php` - Test login dan logout
-  - `Auth/EmailVerificationTest.php` - Test verifikasi email
-  - `Auth/PasswordConfirmationTest.php` - Test konfirmasi password
-  - `Auth/PasswordResetTest.php` - Test reset password
-  - `Auth/PasswordUpdateTest.php` - Test update password
-  - `Auth/RegistrationTest.php` - Test registrasi pengguna
+## 🧪 Pengujian (Testing)
 
-- **Unit Tests:**
-  - `ExampleTest.php` - Test dasar unit
-
-### Menjalankan Test
+Project ini dilengkapi dengan test otomatis berbasis **Pest PHP**:
 
 ```bash
+# Menjalankan seluruh test (Lokal)
 php artisan test
-```
 
-atau menggunakan composer script:
-
-```bash
-composer test
+# Menjalankan test di dalam container Docker
+docker compose exec app php artisan test
 ```
 
 ---
 
-## Pengembangan Sistem
+## 📚 Dokumentasi Terkait
 
-Informasi mengenai metode pengembangan yang digunakan tidak dapat dipastikan dari source code. Project ini dikembangkan secara kolaboratif menggunakan Git sebagai version control.
-
-Berdasarkan file `TODO.md` yang ditemukan dalam project, pengembangan dilakukan secara iteratif dengan daftar tugas yang dicatat dan dilacak penyelesaiannya.
-
----
-
-## Tim Pengembang
-
-Project ini dikembangkan secara kolaboratif oleh:
-
-| Nama |
-|------|
-| **Fahmi Mutaqin** |
-| **Riyan Aditya** |
-| **Zulfakar Anggara Dinata** |
+Untuk panduan teknis yang lebih mendalam, silakan baca dokumentasi pendukung berikut:
+- 📄 [PRD.md](file:///d:/project/surat-penomoran/PRD.md) - *Product Requirements Document* resmi sistem
+- 🐳 [DOCKER_GUIDE.md](file:///d:/project/surat-penomoran/DOCKER_GUIDE.md) - Panduan lengkap Docker, port, dan solusi troubleshooting
 
 ---
 
-## Git Workflow
+## 👥 Tim Pengembang
 
-Project ini menggunakan Git dan GitHub untuk version control. Workflow dasar yang digunakan:
-
-```
-Repository (GitHub)
-       │
-       ├── Clone / Pull (mengambil perubahan terbaru)
-       │
-       ├── Pengembangan lokal
-       │
-       ├── Commit (menyimpan perubahan)
-       │
-       └── Push (mengirim perubahan ke repository)
-```
+Project ini dikembangkan oleh:
+- **Fahmi Mutaqin**
+- **Riyan Aditya**
+- **Zulfakar Anggara Dinata**
 
 ---
 
-## Security
+## 📄 Lisensi
 
-Aspek keamanan yang diimplementasikan dalam project ini:
-
-| Aspek | Implementasi |
-|-------|-------------|
-| **Authentication** | Laravel Breeze (login, register, logout, reset password) |
-| **Authorization** | Middleware `auth` untuk melindungi route yang membutuhkan login |
-| **CSRF Protection** | Token CSRF pada setiap form (disediakan oleh Laravel) |
-| **Password Hashing** | Bcrypt dengan 12 rounds (konfigurasi di `.env`) |
-| **Input Validation** | Validasi server-side pada setiap controller (required, email, unique, mimes, max, dll.) |
-| **Session Management** | Session berbasis database dengan enkripsi opsional |
-| **Signed URL** | URL bertanda tangan untuk download publik surat dan laporan |
-| **File Upload Validation** | Validasi tipe file (PDF only) dan ukuran maksimum (2MB) |
-| **Soft Deletes** | Data yang dihapus tidak langsung hilang, dapat dipulihkan dari Tempat Sampah |
-| **Self-Delete Prevention** | Pengguna tidak dapat menghapus akun miliknya sendiri |
-
----
-
-## Status Project
-
-Project ini merupakan sistem informasi arsip surat berbasis web yang sedang dalam tahap pengembangan aktif. Fitur-fitur utama seperti manajemen surat masuk, surat keluar, arsip, laporan, dan pengiriman digital (email dan WhatsApp) telah diimplementasikan. Beberapa pengembangan lanjutan seperti template khusus per jenis surat dan penyempurnaan hak akses berbasis role masih dalam proses pengerjaan.
-
----
-
-## Lisensi
-
-Project ini belum menentukan lisensi secara eksplisit. Silakan hubungi tim pengembang untuk informasi lebih lanjut mengenai hak penggunaan.
+Hak Cipta © 2026 PT Microdata Indonesia. Seluruh hak cipta dilindungi undang-undang.
